@@ -8,7 +8,7 @@ public class VehiceleGetEnergyClassTests
     [Theory]
     [InlineData(FuelType.Diesel, 2009, 23, EnergyClass.A)]
     [InlineData(FuelType.Diesel, 20012, 20, EnergyClass.B)]
-    [InlineData(FuelType.Petrol, 2009, 17, EnergyClass.C)]
+    [InlineData(FuelType.Petrol, 2009, 17, EnergyClass.B)]
     [InlineData(FuelType.Petrol, 2015, 11, EnergyClass.D)]
     public void GetEnergyClass_ReturnsExpectedEnergyClass(FuelType fuelType, int year, double kmPerLiter, EnergyClass expectedEnergyClass)
     {

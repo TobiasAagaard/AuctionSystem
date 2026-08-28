@@ -46,9 +46,18 @@ public abstract class Vehicle
             _ => throw new ArgumentException(nameof(FuelType))
         };
 
-        if (KmPerLiter >= a) return EnergyClass.A;
-        if (KmPerLiter >= b) return EnergyClass.B;
-        if (KmPerLiter >= c) return EnergyClass.C;
+        if (KmPerLiter >= a) 
+        {
+            return EnergyClass.A;
+        }
+        if (KmPerLiter >= b) 
+        {
+            return EnergyClass.B;
+        }
+        if (KmPerLiter >= c) 
+        {
+            return EnergyClass.C;
+        }
 
         return EnergyClass.D;
     }
