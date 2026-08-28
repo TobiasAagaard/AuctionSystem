@@ -3,16 +3,16 @@
 public class User
 {
 
-    public User(int id, string username, string password, int postalCode)
+    public User(int id, string username, string passwordHash, int postalCode)
     {
         ID = id;
         Username = username;
-        Password = password;
+        PasswordHash = passwordHash;
         PostalCode = postalCode;
     }
 
     public int ID { get; }
     public string Username { set; get; }
-    public string Password { set; get; }
+    public string PasswordHash { set; get; }
     public int PostalCode { set; get; }
 }
