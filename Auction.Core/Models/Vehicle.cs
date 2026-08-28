@@ -27,6 +27,7 @@ public class Vehicle
     public string EngineType { get; set; } = null!;
     public double KmPerLiter { get; set; }
     public FuelType FuelType { get; set; }
+    public string EnergyClass { get; set; } = null!;
 
 }
 
