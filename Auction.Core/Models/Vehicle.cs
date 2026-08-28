@@ -28,7 +28,10 @@ public abstract class Vehicle
     public LicenseType LicenseType { get; set; }
     public FuelType FuelType { get; set; }
     public EnergyClass EnergyClass { get; set; }
-
+    public override string ToString()
+    {
+        return $"{Name} - {Year} - {Kilometers} km - {BasePrice} kr";
+    }
   
 
 }
