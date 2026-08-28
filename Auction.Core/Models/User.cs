@@ -15,4 +15,5 @@ public class User
     public string Username { get; set; }
     public string PasswordHash { get; private set; }
     public int PostalCode { get; set; }
+    public decimal Balance { set; get; }
 }
