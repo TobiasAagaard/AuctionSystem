@@ -1,6 +1,6 @@
 ﻿namespace Auction.Core.Models;
 
-public class User
+public class User : ISeller, IBuyer
 {
 
     public User(int id, string username, string passwordHash, int postalCode)
@@ -16,4 +16,8 @@ public class User
     public string PasswordHash { get; private set; }
     public int PostalCode { get; set; }
     public decimal Balance { set; get; }
+
+    public void ReceiveNotificationOfBid(Auction auction, decimal bid)
+    {
+    }
 }
