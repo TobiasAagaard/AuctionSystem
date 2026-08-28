@@ -12,7 +12,7 @@ public class User
     }
 
     public int ID { get; }
-    public string Username { set; get; }
-    public string PasswordHash { set; get; }
-    public int PostalCode { set; get; }
+    public string Username { get; set; }
+    public string PasswordHash { get; private set; }
+    public int PostalCode { get; set; }
 }
