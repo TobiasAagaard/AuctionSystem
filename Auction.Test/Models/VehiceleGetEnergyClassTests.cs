@@ -12,13 +12,24 @@ public class VehiceleGetEnergyClassTests
     [InlineData(FuelType.Petrol, 2015, 11, EnergyClass.D)]
     public void GetEnergyClass_ReturnsExpectedEnergyClass(FuelType fuelType, int year, double kmPerLiter, EnergyClass expectedEnergyClass)
     {
-        // Arrange
+       
         var vehicle = new TestVehicle("Test Vehicle", 10000, year, 10000, false, LicenseType.B, 2.0, kmPerLiter, fuelType);
 
-        // Act
         var energyClass = vehicle.EnergyClass;
 
-        // Assert
+        Assert.Equal(expectedEnergyClass, energyClass);
+    }
+
+    [Theory]
+    [InlineData(FuelType.Electric, 2020, 0, EnergyClass.A)]
+    [InlineData(FuelType.Hydrogen, 2020, 0, EnergyClass.A)]
+    public void GetEnergyClass_ReturnsAForElectricAndHydrogen(FuelType fuelType, int year, double kmPerLiter, EnergyClass expectedEnergyClass)
+    {
+
+        var vehicle = new TestVehicle("Test Vehicle", 10000, year, 10000, false, LicenseType.B, 2.0, kmPerLiter, fuelType);
+
+        var energyClass = vehicle.EnergyClass;
+
         Assert.Equal(expectedEnergyClass, energyClass);
     }
 
