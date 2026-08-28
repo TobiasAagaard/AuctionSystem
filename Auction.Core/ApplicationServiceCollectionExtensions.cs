@@ -4,10 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Auction.Core;
 
 // This class is used to register dependencies for the application layer in the dependency injection container.
-public static class ApplicationServiceCollectionExtensions
+public static class CoreServiceCollectionExtensions
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static IServiceCollection AddCore(this IServiceCollection services)
     {
+        if (services == null) throw new ArgumentNullException(nameof(services));
+        
         return services;
     }
 }
