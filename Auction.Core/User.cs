@@ -3,7 +3,7 @@
 public class User
 {
 
-    public User(uint id, string username, string password, uint postalCode)
+    public User(int id, string username, string password, int postalCode)
     {
         ID = id;
         Username = username;
@@ -11,8 +11,8 @@ public class User
         PostalCode = postalCode;
     }
 
-    public uint ID { get; }
+    public int ID { get; }
     public string Username { set; get; }
     public string Password { set; get; }
-    public uint PostalCode { set; get; }
+    public int PostalCode { set; get; }
 }
