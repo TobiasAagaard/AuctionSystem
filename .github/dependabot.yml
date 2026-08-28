@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directories:
+      - "/Auction.Avalonia"
+      - "/Auction.Core"
+      - "/Auction.Test"
+    schedule:
+      interval: "daily"
