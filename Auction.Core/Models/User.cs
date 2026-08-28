@@ -19,5 +19,6 @@ public class User : ISeller, IBuyer
 
     public void ReceiveNotificationOfBid(Auction auction, decimal bid)
     {
+        throw new System.NotImplementedException();
     }
 }
