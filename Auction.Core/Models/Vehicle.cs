@@ -1,33 +1,34 @@
 
 namespace Auction.Core.Models;
 
-public class Vehicle
+public abstract class Vehicle
 {
-    public Vehicle(int id, string name, double kilometers, string registrationNumber, int year, bool towBar, string vehicleType, string engineType, double kmPerLiter, FuelType fuelType)
+    public Vehicle(string name, double kilometers, int year, double basePrice, bool towBar, LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType, EnergyClass energyClass)
     {
-        Id = id;
         Name = name;
         Kilometers = kilometers;
-        RegistrationNumber = registrationNumber;
         Year = year;
+        BasePrice = basePrice;
         TowBar = towBar;
-        VehicleType = vehicleType;
-        EngineType = engineType;
+        LicenseType = licenseType;
+        EngineSize = engineSize;
         KmPerLiter = kmPerLiter;
         FuelType = fuelType;
+        EnergyClass = energyClass;
     }
 
     public int Id { get; set; }
-    public string Name { get; set; } = null!;
+    public string Name { get; set; }
     public double Kilometers { get; set; }
-    public string RegistrationNumber { get; set; } = null!;
-    public int Year { get; set; }
-    public bool TowBar { get; set; } = false;
-    public string VehicleType { get; set; } = null!;
-    public string EngineType { get; set; } = null!;
-    public double KmPerLiter { get; set; }
+    public int Year { get; set; } 
+    public double BasePrice { get; set; }
+    public bool TowBar { get; set; }
+    public LicenseType LicenseType { get; set; }
+    public double EngineSize { get; set; }
+    public double KmPerLiter { get; set; } 
     public FuelType FuelType { get; set; }
-    public string EnergyClass { get; set; } = null!;
+    public EnergyClass EnergyClass { get; set; }
+
 
 }
 
@@ -38,4 +39,23 @@ public enum FuelType
     Petrol,
     Electric,
     Hydrogen,
+}
+
+public enum EnergyClass
+{
+    A,
+    B,
+    C,
+    D,
+}
+
+public enum LicenseType
+{
+    A,
+    B,
+    C,
+    D,
+    BE,
+    CE,
+    DE,
 }
