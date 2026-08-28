@@ -3,18 +3,18 @@ namespace Auction.Core.Models;
 
 public abstract class Vehicle
 {
-    public Vehicle(string name, double kilometers, int year, double basePrice, bool towBar, LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType, EnergyClass energyClass)
+      public Vehicle(string name, double kilometers, int year, double basePrice, bool towBar, LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType, EnergyClass energyClass)
     {
-        Name = name;
-        Kilometers = kilometers;
-        Year = year;
-        BasePrice = basePrice;
-        TowBar = towBar;
-        LicenseType = licenseType;
-        EngineSize = engineSize;
-        KmPerLiter = kmPerLiter;
-        FuelType = fuelType;
-        EnergyClass = energyClass;
+        this.Name = name;
+        this.Kilometers = kilometers;
+        this.Year = year;
+        this.BasePrice = basePrice;
+        this.TowBar = towBar;
+        this.LicenseType = licenseType;
+        this.EngineSize = engineSize;
+        this.KmPerLiter = kmPerLiter;
+        this.FuelType = fuelType;
+        this.EnergyClass = energyClass;
     }
 
     public int Id { get; set; }
@@ -23,12 +23,13 @@ public abstract class Vehicle
     public int Year { get; set; } 
     public double BasePrice { get; set; }
     public bool TowBar { get; set; }
-    public LicenseType LicenseType { get; set; }
     public double EngineSize { get; set; }
     public double KmPerLiter { get; set; } 
+    public LicenseType LicenseType { get; set; }
     public FuelType FuelType { get; set; }
     public EnergyClass EnergyClass { get; set; }
 
+  
 
 }
 
