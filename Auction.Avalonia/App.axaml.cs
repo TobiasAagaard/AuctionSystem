@@ -26,11 +26,14 @@ public partial class App : Application
 
         services.AddTransient<MainViewModel>();
 
-        Services = services.BuildServiceProvider();
+        var serviceProvider = services.BuildServiceProvider();
+        Services = serviceProvider;
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var mainViewModel = Services.GetRequiredService<MainViewModel>();
+            // Dispose the service provider when the application exits
+            desktop.Exit += (_, _) => serviceProvider.Dispose();
+            var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
 
             desktop.MainWindow = new MainWindow
             {
