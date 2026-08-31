@@ -1,4 +1,4 @@
-﻿namespace Auction.Core.Models;
+﻿namespace Auction_Core.Models;
 
 public class BusinessCustomer : User
 {
@@ -9,6 +9,6 @@ public class BusinessCustomer : User
         CVR = cvr;
     }
 
-    public decimal Credit { get; set;}
-    public string CVR { get; set; }
+    public decimal Credit { get; set; }
+    public string CVR { get; }
 }
