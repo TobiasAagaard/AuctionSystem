@@ -40,6 +40,13 @@ Table HeavyVehicle {
 
 }
 
+Table Bus {
+    VehicleID int [ref: - Vehicle.ID]
+    SeatCount int
+    BedCount int
+    Toilet bool
+}
+
 Table Auctions
 {
     ID int [pk]

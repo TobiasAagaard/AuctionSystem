@@ -11,37 +11,43 @@
         "name": "Users",
         "schemaName": "public",
         "x": 16,
-        "y": 128
+        "y": 16
       },
       {
         "name": "Vehicle",
         "schemaName": "public",
         "x": 16,
-        "y": 376
+        "y": 248
       },
       {
         "name": "Auctions",
         "schemaName": "public",
-        "x": 440,
-        "y": 344
+        "x": 504,
+        "y": 328
       },
       {
         "name": "PrivateCustomer",
         "schemaName": "public",
-        "x": 440,
-        "y": 192
+        "x": 504,
+        "y": 16
       },
       {
         "name": "BusinessCustomer",
         "schemaName": "public",
-        "x": 440,
-        "y": 16
+        "x": 504,
+        "y": 152
       },
       {
         "name": "HeavyVehicle",
         "schemaName": "public",
-        "x": 440,
-        "y": 560
+        "x": 504,
+        "y": 536
+      },
+      {
+        "name": "Bus",
+        "schemaName": "public",
+        "x": 504,
+        "y": 744
       }
     ],
     "tableGroupCollapseStates": [],
@@ -118,6 +124,21 @@
           "VehicleID"
         ],
         "secondTableName": "HeavyVehicle",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "Bus",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
