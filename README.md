@@ -1,7 +1,7 @@
 # AuctionSystem
 
 
-## Start Data base
+## Start Database
 
 ```
 // first time setup
@@ -11,7 +11,7 @@ docker compose up -d --build
 docker compose up -d
 ```
 
-## Close Data base
+## Close Database
 
 ```
 docker compose down
