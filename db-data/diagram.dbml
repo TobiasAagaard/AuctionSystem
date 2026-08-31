@@ -1,0 +1,49 @@
+Table Users
+{
+    ID int [pk]
+    Username varchar(255)
+    PasswordHash varchar(255)
+    PostalCode varchar(20)
+    Balance decimal(18,2)
+}
+
+Table PrivateCustomer {
+    UserID int [ref: - Users.ID]
+    CPR varchar(20)
+}
+
+Table BusinessCustomer {
+    UserID int [ref: - Users.ID]
+    CVR varchar(20)
+    Credit double
+}
+
+Table Vehicle
+{
+    ID int [pk]
+    Name varchar(255)
+    Kilometers double
+    Year int
+    BasePrice double
+    TowBar bool
+    EngineSize double
+    KmPerLiter double
+    LicenceType enum
+    FuelType enum
+}
+
+Table HeavyVehicle {
+    VehicleID int [ref: - Vehicle.ID]
+    Weight double
+    Height double
+    Length double
+
+}
+
+Table Auctions
+{
+    ID int [pk]
+    Seller int [ref: > Users.ID]
+    VehicleID int [ref: - Vehicle.ID]
+    MinimumPrice double
+}

@@ -40,7 +40,7 @@ ScaffoldingReadMe.txt
 .env
 
 # Local PostgreSQL data
-db-data/*
+db-data/*/
 !db-data/init-db
 
 # Others
