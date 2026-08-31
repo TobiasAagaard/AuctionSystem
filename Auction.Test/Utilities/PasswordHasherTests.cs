@@ -63,4 +63,23 @@ public class PasswordHasherTests
     {
         Assert.False(PasswordHasher.Verify("Password1", storedHash));
     }
+
+    // Precomputed with the current parameters (salt = bytes 0..15, PBKDF2-SHA256,
+    // 100_000 iterations, 32-byte key) for password "Password1".
+    // If these fail, the hashing parameters changed and every stored password would break.
+    private const string KnownPassword = "Password1";
+    private const string KnownHash =
+        "AAECAwQFBgcICQoLDA0ODw==:0vw0HWGmUxbw76tsP7KpA04QZgD0nNeOpkOrD0gSYYI=";
+
+    [Fact]
+    public void Verify_StillAcceptsHashProducedByCurrentParameters()
+    {
+        Assert.True(PasswordHasher.Verify(KnownPassword, KnownHash));
+    }
+
+    [Fact]
+    public void Verify_RejectsWrongPasswordAgainstKnownHash()
+    {
+        Assert.False(PasswordHasher.Verify("WrongPassword1", KnownHash));
+    }
 }

@@ -101,4 +101,15 @@ public class AuthServiceTests
 
         Assert.Throws<InvalidOperationException>(() => service.Authenticate("alice", "WrongPassword1"));
     }
+
+    [Fact]
+    public void RegisterThenAuthenticate_RoundTripsSuccessfully()
+    {
+        var service = new AuthService();
+        service.Register("regression-user", "Password1", 2200);
+
+        User user = service.Authenticate("regression-user", "Password1");
+
+        Assert.Equal("regression-user", user.Username);
+    }
 }
