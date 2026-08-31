@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 using Auction.Avalonia.ViewModels;
 using Auction.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
-using Auction.Core;
+using Auction_Core;
 using System;
 
 namespace Auction.Avalonia;
