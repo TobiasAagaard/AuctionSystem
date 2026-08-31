@@ -1,4 +1,4 @@
-﻿namespace Auction.Core.Models;
+﻿namespace Auction_Core.Models;
 
 public class PrivateCustomer : User
 {
@@ -8,5 +8,5 @@ public class PrivateCustomer : User
         CPR = cpr;
     }
 
-    public string CPR { get; set; }
+    public string CPR { get; }
 }
