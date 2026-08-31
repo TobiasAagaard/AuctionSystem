@@ -1,5 +1,5 @@
 
-namespace Auction.Core.Models;
+namespace Auction_Core.Models;
 
 public abstract class Vehicle
 {
