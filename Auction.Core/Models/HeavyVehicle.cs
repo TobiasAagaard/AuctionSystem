@@ -3,9 +3,6 @@ namespace Auction_Core.Models;
 
 public abstract class HeavyVehicle : Vehicle
 {
-    private double _weight;
-    private double _height;
-    private double _length;
 
     protected HeavyVehicle(
         string name, 
@@ -22,8 +19,17 @@ public abstract class HeavyVehicle : Vehicle
         double weight,
         double length) : base(name, kilometers, registrationNumber, year, basePrice, towBar, licenseType, engineSize, kmPerLiter, fuelType)
     {
-        this._height = height;
-        this._weight = weight;
-        this._length = length;
+        this.Height = height;
+        this.Weight = weight;
+        this.Length = length;
+    }
+
+    public double Height { get; set; }
+    public double Weight { get; set; }
+    public double Length { get; set; }
+
+    public override string ToString()
+    {
+        return $"{Name} - {Year} - {Kilometers} km - {BasePrice} kr - {Height} m - {Weight} kg - {Length} m";
     }
 }
