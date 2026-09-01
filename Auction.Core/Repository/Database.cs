@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 
+namespace Auction_Core.Repository;
+
 public partial class Database
 {
     /// <summary>
