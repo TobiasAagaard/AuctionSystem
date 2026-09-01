@@ -42,7 +42,7 @@ public abstract class Vehicle
     public bool TowBar { get; set; }
     public double EngineSize { get; set; }
     public double KmPerLiter { get; set; } 
-    public LicenseType LicenseType { get; }
+    public virtual LicenseType LicenseType { get; }
     public FuelType FuelType { get; }
     public EnergyClass EnergyClass => GetEnergyClass();
     public abstract override string ToString();
