@@ -5,6 +5,20 @@ namespace Auction.Test.Models;
 
 public class VehicleGetEnergyClassTests
 {
+        private sealed class TestVehicle : Vehicle
+    {
+        public TestVehicle(string name, double kilometers, string registrationNumber, int year, double basePrice, bool towBar,
+            LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType)
+            : base(name, kilometers, registrationNumber, year, basePrice, towBar, licenseType, engineSize, kmPerLiter, fuelType)
+        {
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} - {Year} - {Kilometers} km - {BasePrice} kr";
+        }
+    }
+
     [Theory]
     [InlineData(FuelType.Diesel, 2009, 23, EnergyClass.A)]
     [InlineData(FuelType.Diesel, 2012, 20, EnergyClass.B)]
@@ -34,17 +48,5 @@ public class VehicleGetEnergyClassTests
         Assert.Equal(expectedEnergyClass, energyClass);
     }
 
-    private sealed class TestVehicle : Vehicle
-    {
-        public TestVehicle(string name, double kilometers, string registrationNumber, int year, double basePrice, bool towBar,
-            LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType)
-            : base(name, kilometers, registrationNumber, year, basePrice, towBar, licenseType, engineSize, kmPerLiter, fuelType)
-        {
-        }
 
-        public override string ToString()
-        {
-            return $"{Name} - {Year} - {Kilometers} km - {BasePrice} kr";
-        }
-    }
 }
