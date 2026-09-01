@@ -17,7 +17,7 @@ public class SemiTruck : HeavyVehicle
         double height,
         double weight,
         double length
-    ) : base(name, kilometers, registrationNumber, year, basePrice, towBar, towBar ? LicenseType.C : LicenseType.CE, engineSize, kmPerLiter, FuelType.Diesel, height, weight, length)
+    ) : base(name, kilometers, registrationNumber, year, basePrice, towBar, towBar ? LicenseType.CE : LicenseType.C, engineSize, kmPerLiter, FuelType.Diesel, height, weight, length)
     {
         this.MaxLoad = maxLoad;
 
@@ -27,6 +27,6 @@ public class SemiTruck : HeavyVehicle
         }
     }
 
-    public override LicenseType LicenseType => TowBar ? LicenseType.C : LicenseType.CE;
-    public double MaxLoad  { get; set; }
+    public override LicenseType LicenseType => TowBar ? LicenseType.CE : LicenseType.C;
+    public double MaxLoad  { get; private set; }
 }
