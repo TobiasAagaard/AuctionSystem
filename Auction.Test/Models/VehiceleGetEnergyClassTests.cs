@@ -5,6 +5,20 @@ namespace Auction.Test.Models;
 
 public class VehicleGetEnergyClassTests
 {
+        private sealed class TestVehicle : Vehicle
+    {
+        public TestVehicle(string name, double kilometers, string registrationNumber, int year, double basePrice, bool towBar,
+            LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType)
+            : base(name, kilometers, registrationNumber, year, basePrice, towBar, licenseType, engineSize, kmPerLiter, fuelType)
+        {
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} - {Year} - {Kilometers} km - {BasePrice} kr";
+        }
+    }
+
     [Theory]
     [InlineData(FuelType.Diesel, 2009, 23, EnergyClass.A)]
     [InlineData(FuelType.Diesel, 2012, 20, EnergyClass.B)]
@@ -14,7 +28,7 @@ public class VehicleGetEnergyClassTests
     public void EnergyClass_ReturnsExpectedEnergyClass(FuelType fuelType, int year, double kmPerLiter, EnergyClass expectedEnergyClass)
     {
        
-        var vehicle = new TestVehicle("Test Vehicle", 10000, year, 10000, false, LicenseType.B, 2.0, kmPerLiter, fuelType);
+        var vehicle = new TestVehicle("Test Vehicle", 10000, "AB12345", year, 10000, false, LicenseType.B, 2.0, kmPerLiter, fuelType);
 
         var energyClass = vehicle.EnergyClass;
 
@@ -27,24 +41,12 @@ public class VehicleGetEnergyClassTests
     public void EnergyClass_ReturnsAForElectricAndHydrogen(FuelType fuelType, int year, double kmPerLiter, EnergyClass expectedEnergyClass)
     {
 
-        var vehicle = new TestVehicle("Test Vehicle", 10000, year, 10000, false, LicenseType.B, 2.0, kmPerLiter, fuelType);
+        var vehicle = new TestVehicle("Test Vehicle", 10000, "AB12345", year, 10000, false, LicenseType.B, 2.0, kmPerLiter, fuelType);
 
         var energyClass = vehicle.EnergyClass;
 
         Assert.Equal(expectedEnergyClass, energyClass);
     }
 
-    private sealed class TestVehicle : Vehicle
-    {
-        public TestVehicle(string name, double kilometers, int year, double basePrice, bool towBar,
-            LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType)
-            : base(name, basePrice, year, kilometers, towBar, licenseType, engineSize, kmPerLiter, fuelType)
-        {
-        }
 
-        public override string ToString()
-        {
-            return $"{Name} - {Year} - {Kilometers} km - {BasePrice} kr";
-        }
-    }
 }
