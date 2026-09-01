@@ -1,0 +1,233 @@
+{
+  "version": "3.0.0",
+  "darkMode": true,
+  "gridEnabling": false,
+  "currentViewName": null,
+  "defaultView": {
+    "detailLevel": "All",
+    "relationshipMode": "All",
+    "tablePositions": [
+      {
+        "name": "Users",
+        "schemaName": "public",
+        "x": 16,
+        "y": 128
+      },
+      {
+        "name": "Vehicle",
+        "schemaName": "public",
+        "x": 16,
+        "y": 760
+      },
+      {
+        "name": "Auctions",
+        "schemaName": "public",
+        "x": 448,
+        "y": 344
+      },
+      {
+        "name": "PrivateCustomer",
+        "schemaName": "public",
+        "x": 448,
+        "y": 192
+      },
+      {
+        "name": "BusinessCustomer",
+        "schemaName": "public",
+        "x": 448,
+        "y": 16
+      },
+      {
+        "name": "HeavyVehicle",
+        "schemaName": "public",
+        "x": 448,
+        "y": 1408
+      },
+      {
+        "name": "Bus",
+        "schemaName": "public",
+        "x": 448,
+        "y": 560
+      },
+      {
+        "name": "Truck",
+        "schemaName": "public",
+        "x": 448,
+        "y": 776
+      },
+      {
+        "name": "Car",
+        "schemaName": "public",
+        "x": 448,
+        "y": 1256
+      },
+      {
+        "name": "BusinessCar",
+        "schemaName": "public",
+        "x": 448,
+        "y": 1072
+      },
+      {
+        "name": "PrivateCar",
+        "schemaName": "public",
+        "x": 448,
+        "y": 920
+      }
+    ],
+    "tableGroupCollapseStates": [],
+    "stickyNoteLayouts": [],
+    "referencePaths": [
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "Auctions",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "Seller"
+        ],
+        "secondTableName": "Auctions",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "UserID"
+        ],
+        "secondTableName": "PrivateCustomer",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "UserID"
+        ],
+        "secondTableName": "BusinessCustomer",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "HeavyVehicle",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "Bus",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "Truck",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "Car",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "BusinessCar",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "PrivateCar",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      }
+    ]
+  },
+  "views": {}
+}

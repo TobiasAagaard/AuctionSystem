@@ -1,0 +1,101 @@
+Table Users
+{
+    ID int [pk]
+    Username varchar(255)
+    PasswordHash varchar(255)
+    PostalCode varchar(20)
+    Balance decimal(18,2)
+}
+
+Table PrivateCustomer {
+    UserID int [ref: - Users.ID]
+    CPR varchar(20)
+}
+
+Table BusinessCustomer {
+    UserID int [ref: - Users.ID]
+    CVR varchar(20)
+    Credit double
+}
+
+enum FuelType {
+    Petrol
+    Diesel
+    Electric
+    Hydrogen
+}
+
+enum EnergyClass {
+    A
+    B
+    C
+    D
+}
+
+enum LicenceType {
+    A
+    B
+    C
+    D
+    BE
+    CE
+    DE
+}
+
+Table Vehicle
+{
+    ID int [pk]
+    Name varchar(255)
+    Kilometers double
+    ReleaseYear int
+    BasePrice double
+    TowBar bool
+    EngineSize double
+    KmPerLiter double
+    LicenceType LicenceType
+    FuelType FuelType
+}
+
+Table HeavyVehicle {
+    VehicleID int [ref: - Vehicle.ID]
+    Weight double
+    Height double
+    Length double
+
+}
+
+Table Truck {
+    VehicleID int [ref: - Vehicle.ID]
+    CargoCapacity double
+}
+
+Table Bus {
+    VehicleID int [ref: - Vehicle.ID]
+    SeatCount int
+    BedCount int
+    Toilet bool
+}
+
+Table Car {
+    VehicleID int [ref: - Vehicle.ID]
+    SeatCount int
+}
+
+Table BusinessCar {
+    VehicleID int [ref: - Vehicle.ID]
+    CargoCapacity double
+    RollCage bool
+}
+
+Table PrivateCar {
+    VehicleID int [ref: - Vehicle.ID]
+    Isofix bool
+}
+
+Table Auctions
+{
+    ID int [pk]
+    Seller int [ref: > Users.ID]
+    VehicleID int [ref: - Vehicle.ID]
+    MinimumPrice double
+}
