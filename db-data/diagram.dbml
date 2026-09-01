@@ -52,7 +52,6 @@ Table Vehicle
     TowBar bool
     EngineSize double
     KmPerLiter double
-    EnergyClass EnergyClass
     LicenceType LicenceType
     FuelType FuelType
 }
