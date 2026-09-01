@@ -11,43 +11,67 @@
         "name": "Users",
         "schemaName": "public",
         "x": 16,
-        "y": 16
+        "y": 128
       },
       {
         "name": "Vehicle",
         "schemaName": "public",
         "x": 16,
-        "y": 248
+        "y": 760
       },
       {
         "name": "Auctions",
         "schemaName": "public",
-        "x": 504,
-        "y": 328
+        "x": 448,
+        "y": 344
       },
       {
         "name": "PrivateCustomer",
         "schemaName": "public",
-        "x": 504,
-        "y": 16
+        "x": 448,
+        "y": 192
       },
       {
         "name": "BusinessCustomer",
         "schemaName": "public",
-        "x": 504,
-        "y": 152
+        "x": 448,
+        "y": 16
       },
       {
         "name": "HeavyVehicle",
         "schemaName": "public",
-        "x": 504,
-        "y": 536
+        "x": 448,
+        "y": 1408
       },
       {
         "name": "Bus",
         "schemaName": "public",
-        "x": 504,
-        "y": 744
+        "x": 448,
+        "y": 560
+      },
+      {
+        "name": "Truck",
+        "schemaName": "public",
+        "x": 448,
+        "y": 776
+      },
+      {
+        "name": "Car",
+        "schemaName": "public",
+        "x": 448,
+        "y": 1256
+      },
+      {
+        "name": "BusinessCar",
+        "schemaName": "public",
+        "x": 448,
+        "y": 1072
+      },
+      {
+        "name": "PrivateCar",
+        "schemaName": "public",
+        "x": 448,
+        "y": 920
       }
     ],
     "tableGroupCollapseStates": [],
@@ -139,6 +163,66 @@
           "VehicleID"
         ],
         "secondTableName": "Bus",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "Truck",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "Car",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "BusinessCar",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "ID"
+        ],
+        "firstTableName": "Vehicle",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "VehicleID"
+        ],
+        "secondTableName": "PrivateCar",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
