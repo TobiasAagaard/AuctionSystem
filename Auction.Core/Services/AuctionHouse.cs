@@ -7,6 +7,7 @@ public delegate void NotificationDelegate(Auction auction, decimal bid);
 
 public class AuctionHouse
 {
+    private readonly object _lockableObject = new object();
     private Dictionary<int, Auction> _auctions = new Dictionary<int, Auction>();
     private int _næsteAuktionsId = 1;
 
@@ -75,5 +76,19 @@ public class AuctionHouse
         _auctions.Remove(auctionId); // Remove the auction from the list as it has been completed
 
         return true; // Bid accepted and auction completed
+    }
+    public Auction? FindAuctionById(int auctionId)
+    {
+        // 'lock' is used to ensure that only one thread can access the code block at a time, preventing potential race conditions when accessing shared resources like the _auctions dictionary.
+        lock (_lockableObject)
+        {
+            // Try to get the auction from the dictionary using the provided auctionId
+            if (_auctions.TryGetValue(auctionId, out var auction))
+            {
+                return auction;
+            }
+        }
+        // If the auction is not found, return null
+        return null;
     }
 }
