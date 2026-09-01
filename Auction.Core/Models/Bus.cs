@@ -24,6 +24,13 @@ public class Bus : HeavyVehicle
         Seats = seats;
         SleepingPlaces = sleepingPlaces;
         HasToilet = hasToilet;
+
+        if (!(engineSize >= 4.2 && engineSize <= 15.0))
+        {
+            throw new ArgumentOutOfRangeException(nameof(engineSize), "Engine size must be between 4.2 and 15.0.");
+        }
+
+
     }
 
     public override LicenseType LicenseType => TowBar ? LicenseType.DE : LicenseType.D;
