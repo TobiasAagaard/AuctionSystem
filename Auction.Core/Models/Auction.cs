@@ -4,7 +4,7 @@ namespace Auction_Core.Models;
 
 public class Auction
 {
-    public Auction(int id, Vehicle vehicle, User seller, decimal minimumPrice, NotificationDelegate notificationFunction)
+    public Auction(int id, Vehicle vehicle, ISeller seller, decimal minimumPrice, NotificationDelegate notificationFunction)
     {
         this.Id = id;
         this.Vehicle = vehicle;
@@ -14,8 +14,9 @@ public class Auction
     }
     public int Id { get; }
     public Vehicle Vehicle { get; }
-    public User Seller { get; }
+    public ISeller Seller { get; }
     public decimal MinimumPrice { get; }
     public decimal HighestBid { get; set; } = 0;
-    public NotificationDelegate NotificationFunction { get; set; }
+    public IBuyer HighestBidder { get; set; }
+    public NotificationDelegate NotificationFunction { get; }
 }
