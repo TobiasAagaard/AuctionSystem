@@ -1,21 +1,27 @@
 Table Users
 {
-    ID int [pk]
+    ID int [pk, increment]
     Username varchar(255)
     PasswordHash varchar(255)
     PostalCode varchar(20)
-    Balance decimal(18,2)
+    Balance double
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 Table PrivateCustomer {
     UserID int [ref: - Users.ID]
     CPR varchar(20)
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 Table BusinessCustomer {
     UserID int [ref: - Users.ID]
     CVR varchar(20)
     Credit double
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 enum FuelType {
@@ -44,7 +50,7 @@ enum LicenceType {
 
 Table Vehicle
 {
-    ID int [pk]
+    ID int [pk, increment]
     Name varchar(255)
     Kilometers double
     ReleaseYear int
@@ -54,6 +60,8 @@ Table Vehicle
     KmPerLiter double
     LicenceType LicenceType
     FuelType FuelType
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 Table HeavyVehicle {
@@ -61,12 +69,15 @@ Table HeavyVehicle {
     Weight double
     Height double
     Length double
-
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 Table Truck {
     VehicleID int [ref: - Vehicle.ID]
     CargoCapacity double
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 Table Bus {
@@ -74,28 +85,38 @@ Table Bus {
     SeatCount int
     BedCount int
     Toilet bool
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 Table Car {
     VehicleID int [ref: - Vehicle.ID]
     SeatCount int
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 Table BusinessCar {
     VehicleID int [ref: - Vehicle.ID]
     CargoCapacity double
     RollCage bool
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 Table PrivateCar {
     VehicleID int [ref: - Vehicle.ID]
     Isofix bool
+    CreatedAt datetime
+    UpdatedAt datetime
 }
 
 Table Auctions
 {
-    ID int [pk]
+    ID int [pk, increment]
     Seller int [ref: > Users.ID]
     VehicleID int [ref: - Vehicle.ID]
     MinimumPrice double
+    CreatedAt datetime
+    UpdatedAt datetime
 }
