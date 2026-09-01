@@ -16,5 +16,6 @@ public class Auction
     public Vehicle Vehicle { get; }
     public User Seller { get; }
     public decimal MinimumPrice { get; }
+    public decimal HighestBid { get; set; } = 0;
     public NotificationDelegate NotificationFunction { get; set; }
 }

@@ -7,7 +7,7 @@ public delegate void NotificationDelegate(Auction auction, decimal bid);
 
 public class AuctionHouse
 {
-    private List<Auction> _auctions = new List<Auction>();
+    private Dictionary<int, Auction> _auctions = new Dictionary<int, Auction>();
     private int _næsteAuktionsId = 1;
 
     // A3: Standard version (Calls the overloaded method with a standard delegate, that directly calls the notification method on the seller)
@@ -29,8 +29,33 @@ public class AuctionHouse
 
         int auctionId = _næsteAuktionsId++;
 
-        _auctions.Add(new Auction(auctionId, v, s, minPrice, notificationFunction));
+        _auctions[auctionId] = new Auction
+        (
+            auctionId,
+            v,
+            s,
+            minPrice,
+            notificationFunction
+        );
 
         return auctionId;
+    }
+
+    public bool RecieveBid(IBuyer buyer, int auctionId, decimal bid)
+    {
+        if (buyer == null) throw new ArgumentNullException(nameof(buyer), "Buyer cannot be null.");
+        if (bid < 0) throw new ArgumentOutOfRangeException(nameof(bid), "Bid cannot be negative.");
+
+        if (!_auctions.TryGetValue(auctionId, out var auction)) return false;
+
+        if (bid <= auction.HighestBid) return false; // Bid must be higher than the current highest bid
+
+        if (buyer.Balance < bid) return false; // Buyer must have enough balance to place the bid
+
+        auction.HighestBid = bid; // Update the highest bid
+
+        auction.NotificationFunction?.Invoke(auction, bid);
+
+        return true; // Bid accepted
     }
 }
