@@ -54,8 +54,26 @@ public class AuctionHouse
 
         auction.HighestBid = bid; // Update the highest bid
 
-        auction.NotificationFunction?.Invoke(auction, bid);
+        if (bid < auction.MinimumPrice) return false; // Bid must meet or exceed the minimum price
 
+        auction.NotificationFunction?.Invoke(auction, bid);
         return true; // Bid accepted
+    }
+
+    public bool AcceptBid(ISeller seller, int auctionId)
+    {
+        // Validate input parameters
+        if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
+        if (!_auctions.TryGetValue(auctionId, out var auction)) return false;
+        // Check if the seller is the one who created the auction
+        if (auction.Seller != seller) return false;
+        // Check if the highest bid meets or exceeds the minimum price
+        if (auction.HighestBid < auction.MinimumPrice) return false;
+
+        seller.Balance += auction.HighestBid; // Transfer the highest bid amount to the seller's balance
+
+        _auctions.Remove(auctionId); // Remove the auction from the list as it has been completed
+
+        return true; // Bid accepted and auction completed
     }
 }
