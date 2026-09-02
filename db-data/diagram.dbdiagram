@@ -14,7 +14,7 @@
         "y": 128
       },
       {
-        "name": "Vehicle",
+        "name": "Vehicles",
         "schemaName": "public",
         "x": 16,
         "y": 760
@@ -26,49 +26,49 @@
         "y": 344
       },
       {
-        "name": "PrivateCustomer",
+        "name": "PrivateCustomers",
         "schemaName": "public",
         "x": 448,
         "y": 192
       },
       {
-        "name": "BusinessCustomer",
+        "name": "BusinessCustomers",
         "schemaName": "public",
         "x": 448,
         "y": 16
       },
       {
-        "name": "HeavyVehicle",
+        "name": "HeavyVehicles",
         "schemaName": "public",
         "x": 448,
         "y": 1408
       },
       {
-        "name": "Bus",
+        "name": "Buses",
         "schemaName": "public",
         "x": 448,
         "y": 560
       },
       {
-        "name": "Truck",
+        "name": "SemiTrucks",
         "schemaName": "public",
         "x": 448,
         "y": 776
       },
       {
-        "name": "Car",
+        "name": "Cars",
         "schemaName": "public",
         "x": 448,
         "y": 1256
       },
       {
-        "name": "BusinessCar",
+        "name": "BusinessCars",
         "schemaName": "public",
         "x": 448,
         "y": 1072
       },
       {
-        "name": "PrivateCar",
+        "name": "PrivateCars",
         "schemaName": "public",
         "x": 448,
         "y": 920
@@ -81,7 +81,7 @@
         "firstFieldNames": [
           "ID"
         ],
-        "firstTableName": "Vehicle",
+        "firstTableName": "Vehicles",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
@@ -117,7 +117,7 @@
         "secondFieldNames": [
           "UserID"
         ],
-        "secondTableName": "PrivateCustomer",
+        "secondTableName": "PrivateCustomers",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
@@ -132,7 +132,7 @@
         "secondFieldNames": [
           "UserID"
         ],
-        "secondTableName": "BusinessCustomer",
+        "secondTableName": "BusinessCustomers",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
@@ -141,13 +141,13 @@
         "firstFieldNames": [
           "ID"
         ],
-        "firstTableName": "Vehicle",
+        "firstTableName": "Vehicles",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
           "VehicleID"
         ],
-        "secondTableName": "HeavyVehicle",
+        "secondTableName": "HeavyVehicles",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
@@ -156,13 +156,13 @@
         "firstFieldNames": [
           "ID"
         ],
-        "firstTableName": "Vehicle",
+        "firstTableName": "Vehicles",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
           "VehicleID"
         ],
-        "secondTableName": "Bus",
+        "secondTableName": "Buses",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
@@ -171,13 +171,13 @@
         "firstFieldNames": [
           "ID"
         ],
-        "firstTableName": "Vehicle",
+        "firstTableName": "Vehicles",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
           "VehicleID"
         ],
-        "secondTableName": "Truck",
+        "secondTableName": "SemiTrucks",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
@@ -186,13 +186,13 @@
         "firstFieldNames": [
           "ID"
         ],
-        "firstTableName": "Vehicle",
+        "firstTableName": "Vehicles",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
           "VehicleID"
         ],
-        "secondTableName": "Car",
+        "secondTableName": "Cars",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
@@ -201,13 +201,13 @@
         "firstFieldNames": [
           "ID"
         ],
-        "firstTableName": "Vehicle",
+        "firstTableName": "Vehicles",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
           "VehicleID"
         ],
-        "secondTableName": "BusinessCar",
+        "secondTableName": "BusinessCars",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
@@ -216,13 +216,13 @@
         "firstFieldNames": [
           "ID"
         ],
-        "firstTableName": "Vehicle",
+        "firstTableName": "Vehicles",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
           "VehicleID"
         ],
-        "secondTableName": "PrivateCar",
+        "secondTableName": "PrivateCars",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
