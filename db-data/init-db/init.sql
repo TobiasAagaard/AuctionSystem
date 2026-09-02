@@ -36,7 +36,7 @@ CREATE TABLE HeavyVehicles (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 
-CREATE TABLE Bus (
+CREATE TABLE Buses (
     VehicleID INT PRIMARY KEY REFERENCES Vehicles(id),
     SeatCount INT NOT NULL,
     BedCount INT NOT NULL,
