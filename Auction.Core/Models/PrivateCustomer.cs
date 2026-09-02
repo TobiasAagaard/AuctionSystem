@@ -9,4 +9,9 @@ public class PrivateCustomer : User
     }
 
     public string CPR { get; }
+
+    public override string ToString()
+    {
+        return $"{base.ToString()}, CPR: {CPR}";
+    }
 }
