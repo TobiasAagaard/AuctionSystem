@@ -9,14 +9,14 @@ Table Users
     UpdatedAt datetime
 }
 
-Table PrivateCustomer {
+Table PrivateCustomers {
     UserID int [ref: - Users.ID]
     CPR varchar(20)
     CreatedAt datetime
     UpdatedAt datetime
 }
 
-Table BusinessCustomer {
+Table BusinessCustomers {
     UserID int [ref: - Users.ID]
     CVR varchar(20)
     Credit double
@@ -48,7 +48,7 @@ enum LicenceType {
     DE
 }
 
-Table Vehicle
+Table Vehicles
 {
     ID int [pk, increment]
     Name varchar(255)
@@ -64,8 +64,8 @@ Table Vehicle
     UpdatedAt datetime
 }
 
-Table HeavyVehicle {
-    VehicleID int [ref: - Vehicle.ID]
+Table HeavyVehicles {
+    VehiclesID int [ref: - Vehicles.ID]
     Weight double
     Height double
     Length double
@@ -73,15 +73,15 @@ Table HeavyVehicle {
     UpdatedAt datetime
 }
 
-Table Truck {
-    VehicleID int [ref: - Vehicle.ID]
+Table SemiTrucks {
+    VehiclesID int [ref: - Vehicles.ID]
     CargoCapacity double
     CreatedAt datetime
     UpdatedAt datetime
 }
 
-Table Bus {
-    VehicleID int [ref: - Vehicle.ID]
+Table Buses {
+    VehiclesID int [ref: - Vehicles.ID]
     SeatCount int
     BedCount int
     Toilet bool
@@ -89,23 +89,23 @@ Table Bus {
     UpdatedAt datetime
 }
 
-Table Car {
-    VehicleID int [ref: - Vehicle.ID]
+Table Cars {
+    VehiclesID int [ref: - Vehicles.ID]
     SeatCount int
     CreatedAt datetime
     UpdatedAt datetime
 }
 
-Table BusinessCar {
-    VehicleID int [ref: - Vehicle.ID]
+Table BusinessCars {
+    VehiclesID int [ref: - Vehicles.ID]
     CargoCapacity double
     RollCage bool
     CreatedAt datetime
     UpdatedAt datetime
 }
 
-Table PrivateCar {
-    VehicleID int [ref: - Vehicle.ID]
+Table PrivateCars {
+    VehiclesID int [ref: - Vehicles.ID]
     Isofix bool
     CreatedAt datetime
     UpdatedAt datetime
@@ -115,7 +115,7 @@ Table Auctions
 {
     ID int [pk, increment]
     Seller int [ref: > Users.ID]
-    VehicleID int [ref: - Vehicle.ID]
+    VehiclesID int [ref: - Vehicles.ID]
     MinimumPrice double
     CreatedAt datetime
     UpdatedAt datetime
