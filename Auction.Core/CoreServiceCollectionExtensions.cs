@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 // TODO add the using of Auction.Core.Repositories and Auction.Core.Services here
+using Auction_Core.Repository;
 using Auction_Core.Services;
 namespace Auction_Core;
 
@@ -10,9 +11,9 @@ public static class CoreServiceCollectionExtensions
     {
         if (services == null) throw new ArgumentNullException(nameof(services));
         
-        // TODO register repositories and services here
+        services.AddSingleton<IAuctionRepository, AuctionRepository>();
 
-        services.AddSingleton<AuctionHouse>();
+        services.AddSingleton<IAuctionService, AuctionService>();
 
         return services;
     }
