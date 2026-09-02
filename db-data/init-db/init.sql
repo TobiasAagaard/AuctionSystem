@@ -8,6 +8,14 @@ CREATE TABLE users (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE BusinessCustomers (
+    UserID INT PRIMARY KEY REFERENCES users(id),
+    CVR VARCHAR(20) NOT NULL,
+    Credit DECIMAL(18, 2) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TYPE LicenceType AS ENUM ('A','B','C','D','BE','CE','DE');
 
 CREATE TYPE FuelType AS ENUM ('Diesel','Petrol','Electric','Hydrogen');
