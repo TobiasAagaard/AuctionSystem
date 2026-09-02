@@ -7,3 +7,22 @@ CREATE TABLE users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TYPE LicenceType AS ENUM ('A','B','C','D','BE','CE','DE');
+
+CREATE TYPE FuelType AS ENUM ('Diesel','Petrol','Electric','Hydrogen');
+
+CREATE TABLE Vehicles (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Kilometers DOUBLE PRECISION NOT NULL,
+    ReleaseYear INT NOT NULL,
+    BasePrice DECIMAL(18, 2) NOT NULL,
+    TowBar BOOLEAN NOT NULL,
+    EngineSize DOUBLE PRECISION NOT NULL,
+    KmPerLiter DOUBLE PRECISION NOT NULL,
+    LicenceType LicenceType NOT NULL,
+    FuelType FuelType NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+);
