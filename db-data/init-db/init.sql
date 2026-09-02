@@ -20,7 +20,7 @@ CREATE TABLE Vehicles (
     BasePrice DECIMAL(18, 2) NOT NULL,
     TowBar BOOLEAN NOT NULL,
     EngineSize DOUBLE PRECISION NOT NULL,
-    KmPerLiter DOUBLE PRECISION NOT NULL,
+    KmPerLiter DOUBLE PRECISION,
     LicenceType LicenceType NOT NULL,
     FuelType FuelType NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
