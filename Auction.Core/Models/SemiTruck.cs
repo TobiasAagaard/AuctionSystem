@@ -29,4 +29,8 @@ public class SemiTruck : HeavyVehicle
 
     public override LicenseType LicenseType => TowBar ? LicenseType.CE : LicenseType.C;
     public double MaxLoad  { get; private set; }
+    public override string ToString()
+    {
+        return $"{Name} ({RegistrationNumber}) - {Year}, {Kilometers:N0} km, {FuelType}, {EnergyClass}, Max Load: {MaxLoad} kg";
+    }
 }
