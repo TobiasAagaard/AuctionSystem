@@ -46,15 +46,15 @@ CREATE TYPE FuelType AS ENUM ('Diesel','Petrol','Electric','Hydrogen');
 
 CREATE TABLE vehicles (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    Kilometers DOUBLE PRECISION NOT NULL,
-    ReleaseYear INT NOT NULL,
-    BasePrice DECIMAL(18, 2) NOT NULL,
-    TowBar BOOLEAN NOT NULL,
-    EngineSize DOUBLE PRECISION NOT NULL,
-    KmPerLiter DOUBLE PRECISION,
-    LicenceType LicenceType NOT NULL,
-    FuelType FuelType NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    kilometers DOUBLE PRECISION NOT NULL,
+    release_year INT NOT NULL,
+    base_price DECIMAL(18, 2) NOT NULL,
+    tow_bar BOOLEAN NOT NULL,
+    engine_size DOUBLE PRECISION NOT NULL,
+    km_per_liter DOUBLE PRECISION,
+    licence_type LicenceType NOT NULL,
+    fuel_type FuelType NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
