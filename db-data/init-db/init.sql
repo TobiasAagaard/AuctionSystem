@@ -8,35 +8,35 @@ CREATE TABLE users (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE BusinessCustomers (
-    UserID INT PRIMARY KEY REFERENCES users(id),
-    CVR VARCHAR(20) NOT NULL,
-    Credit DECIMAL(18, 2) NOT NULL,
+CREATE TABLE business_customers (
+    user_id INT PRIMARY KEY REFERENCES users(id),
+    cvr VARCHAR(20) NOT NULL,
+    credit DECIMAL(18, 2) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE PrivateCustomers (
-    UserID INT PRIMARY KEY REFERENCES users(id),
-    CPR VARCHAR(20) NOT NULL,
+CREATE TABLE private_customers (
+    user_id INT PRIMARY KEY REFERENCES users(id),
+    cpr VARCHAR(20) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Auctions (
+CREATE TABLE auctions (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    SellerID INT NOT NULL REFERENCES users(id),
-    VehicleID INT NOT NULL REFERENCES Vehicles(id),
-    MinimumPrice DECIMAL(18, 2) NOT NULL,
+    seller_id INT NOT NULL REFERENCES users(id),
+    vehicle_id INT NOT NULL REFERENCES vehicles(id),
+    minimum_price DECIMAL(18, 2) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Bids (
+CREATE TABLE bids (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    AuctionID INT NOT NULL REFERENCES Auctions(id),
-    BidderID INT NOT NULL REFERENCES users(id),
-    Amount DECIMAL(18, 2) NOT NULL,
+    auction_id INT NOT NULL REFERENCES auctions(id),
+    bidder_id INT NOT NULL REFERENCES users(id),
+    amount DECIMAL(18, 2) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -44,7 +44,7 @@ CREATE TYPE LicenceType AS ENUM ('A','B','C','D','BE','CE','DE');
 
 CREATE TYPE FuelType AS ENUM ('Diesel','Petrol','Electric','Hydrogen');
 
-CREATE TABLE Vehicles (
+CREATE TABLE vehicles (
     id INT IDENTITY(1,1) PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
     Kilometers DOUBLE PRECISION NOT NULL,
@@ -59,49 +59,49 @@ CREATE TABLE Vehicles (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE HeavyVehicles (
-    VehicleID INT PRIMARY KEY REFERENCES Vehicles(id),
-    Weight DOUBLE PRECISION NOT NULL,
-    Height DOUBLE PRECISION NOT NULL,
-    Length DOUBLE PRECISION NOT NULL,
+CREATE TABLE heavy_vehicles (
+    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    weight DOUBLE PRECISION NOT NULL,
+    height DOUBLE PRECISION NOT NULL,
+    length DOUBLE PRECISION NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE SemiTrucks (
-    VehicleID INT PRIMARY KEY REFERENCES Vehicles(id),
-    CargoCapacity DOUBLE PRECISION NOT NULL,
+CREATE TABLE semi_trucks (
+    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    cargo_capacity DOUBLE PRECISION NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Buses (
-    VehicleID INT PRIMARY KEY REFERENCES Vehicles(id),
-    SeatCount INT NOT NULL,
-    BedCount INT NOT NULL,
-    Toilet BOOLEAN NOT NULL,
+CREATE TABLE buses (
+    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    seat_count INT NOT NULL,
+    bed_count INT NOT NULL,
+    toilet BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Cars (
-    VehicleID INT PRIMARY KEY REFERENCES Vehicles(id),
-    SeatCount INT NOT NULL,
+CREATE TABLE cars (
+    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    seat_count INT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE BusinessCar (
-    VehicleID INT PRIMARY KEY REFERENCES Vehicles(id),
-    CargoCapacity DOUBLE PRECISION NOT NULL,
-    RollCage BOOLEAN NOT NULL,
+CREATE TABLE business_cars (
+    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    cargo_capacity DOUBLE PRECISION NOT NULL,
+    roll_cage BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE PrivateCar (
-    VehicleID INT PRIMARY KEY REFERENCES Vehicles(id),
-    Isofix BOOLEAN NOT NULL,
+CREATE TABLE private_cars (
+    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    isofix BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
