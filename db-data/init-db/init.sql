@@ -23,6 +23,15 @@ CREATE TABLE PrivateCustomers (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE Auctions (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    SellerID INT NOT NULL REFERENCES users(id),
+    VehicleID INT NOT NULL REFERENCES Vehicles(id),
+    MinimumPrice DECIMAL(18, 2) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TYPE LicenceType AS ENUM ('A','B','C','D','BE','CE','DE');
 
 CREATE TYPE FuelType AS ENUM ('Diesel','Petrol','Electric','Hydrogen');
