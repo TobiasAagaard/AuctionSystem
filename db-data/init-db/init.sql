@@ -32,6 +32,14 @@ CREATE TABLE Auctions (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE Bids (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    AuctionID INT NOT NULL REFERENCES Auctions(id),
+    BidderID INT NOT NULL REFERENCES users(id),
+    Amount DECIMAL(18, 2) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TYPE LicenceType AS ENUM ('A','B','C','D','BE','CE','DE');
 
 CREATE TYPE FuelType AS ENUM ('Diesel','Petrol','Electric','Hydrogen');
