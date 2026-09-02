@@ -30,6 +30,6 @@ public abstract class HeavyVehicle : Vehicle
 
     public override string ToString()
     {
-        return $"{Name} - {Year} - {Kilometers} km - {BasePrice} kr - {Height} m - {Weight} kg - {Length} m";
+        return $"{base.ToString()}, {Length} m x {Height} m, {Weight} kg";
     }
 }
