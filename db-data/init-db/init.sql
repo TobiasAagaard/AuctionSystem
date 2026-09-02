@@ -16,6 +16,13 @@ CREATE TABLE BusinessCustomers (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE PrivateCustomers (
+    UserID INT PRIMARY KEY REFERENCES users(id),
+    CPR VARCHAR(20) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TYPE LicenceType AS ENUM ('A','B','C','D','BE','CE','DE');
 
 CREATE TYPE FuelType AS ENUM ('Diesel','Petrol','Electric','Hydrogen');
