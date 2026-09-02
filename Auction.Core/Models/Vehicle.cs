@@ -47,7 +47,7 @@ public abstract class Vehicle
     public EnergyClass EnergyClass => GetEnergyClass();
     public override string ToString()
     {
-        return $"{Name} ({RegistrationNumber}) - {Year}, {Kilometers:N0} km, {FuelType}, {EnergyClass}";
+        return $"{Name} ({RegistrationNumber}) - {Year}, {Kilometers:N0} km, {FuelType}, {EnergyClass}, {BasePrice:N0} kr";
     }
     
     protected EnergyClass GetEnergyClass()

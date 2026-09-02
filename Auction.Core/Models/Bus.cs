@@ -39,6 +39,6 @@ public class Bus : HeavyVehicle
     public bool HasToilet { get; set; }
     public override string ToString()
     {
-        return $"Bus: {Name}, Kilometers: {Kilometers}, RegistrationNumber: {RegistrationNumber}, Year: {Year}, BasePrice: {BasePrice}, TowBar: {TowBar}, LicenseType: {LicenseType}, EngineSize: {EngineSize}, KmPerLiter: {KmPerLiter}, FuelType: {FuelType}, EnergyClass: {EnergyClass}, Seats: {Seats}, SleepingPlaces: {SleepingPlaces}, HasToilet: {HasToilet}";
+        return $"{base.ToString()}, Seats: {Seats}, SleepingPlaces: {SleepingPlaces}, HasToilet: {HasToilet}";
     }
 }
