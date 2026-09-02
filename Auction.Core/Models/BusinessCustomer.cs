@@ -11,4 +11,9 @@ public class BusinessCustomer : User
 
     public decimal Credit { get; set; }
     public string CVR { get; }
+
+    public override string ToString()
+    {
+        return $"{base.ToString()}, Credit: {Credit}, CVR: {CVR}";
+    }
 }
