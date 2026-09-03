@@ -4,8 +4,9 @@ namespace Auction_Core.Models;
 
 public abstract class Vehicle
 {
-      protected Vehicle(string name, double kilometers, string registrationNumber, int year, double basePrice, bool towBar, LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType)
+    protected Vehicle(int id, string name, double kilometers, string registrationNumber, int year, double basePrice, bool towBar, LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType)
     {
+        this.Id = id;
         this.Name = name;
         this.Kilometers = kilometers;
         this.RegistrationNumber = registrationNumber;
@@ -16,21 +17,6 @@ public abstract class Vehicle
         this.EngineSize = engineSize;
         this.KmPerLiter = kmPerLiter;
         this.FuelType = fuelType;
-    }
-
-
-
-    protected Vehicle(string name, double kilometers, int year, string registrationNumber, bool towBar, LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType)
-    {
-        Name = name;
-        Kilometers = kilometers;
-        Year = year;
-        RegistrationNumber = registrationNumber;
-        TowBar = towBar;
-        LicenseType = licenseType;
-        EngineSize = engineSize;
-        KmPerLiter = kmPerLiter;
-        FuelType = fuelType;
     }
 
     public int Id { get; set; }

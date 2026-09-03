@@ -5,6 +5,7 @@ namespace Auction_Core.Models;
 public class SemiTruck : HeavyVehicle
 {
     public SemiTruck(
+        int id,
         string name,
         double kilometers,
         string registrationNumber,
@@ -17,7 +18,7 @@ public class SemiTruck : HeavyVehicle
         double height,
         double weight,
         double length
-    ) : base(name, kilometers, registrationNumber, year, basePrice, towBar, towBar ? LicenseType.CE : LicenseType.C, engineSize, kmPerLiter, FuelType.Diesel, height, weight, length)
+    ) : base(id, name, kilometers, registrationNumber, year, basePrice, towBar, towBar ? LicenseType.CE : LicenseType.C, engineSize, kmPerLiter, FuelType.Diesel, height, weight, length)
     {
         this.MaxLoad = maxLoad;
 

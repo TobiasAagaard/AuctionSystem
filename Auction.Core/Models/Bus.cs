@@ -5,6 +5,7 @@ namespace Auction_Core.Models;
 public class Bus : HeavyVehicle
 {
     public Bus(
+        int id,
         string name,
         double kilometers,
         string registrationNumber,
@@ -19,7 +20,7 @@ public class Bus : HeavyVehicle
         int seats,
         int sleepingPlaces,
         bool hasToilet
-    ) : base(name, kilometers, registrationNumber, year, basePrice, towBar, towBar ? LicenseType.DE : LicenseType.D, engineSize, kmPerLiter, FuelType.Diesel, height, weight, length)
+    ) : base(id, name, kilometers, registrationNumber, year, basePrice, towBar, towBar ? LicenseType.DE : LicenseType.D, engineSize, kmPerLiter, FuelType.Diesel, height, weight, length)
     {
         Seats = seats;
         SleepingPlaces = sleepingPlaces;
