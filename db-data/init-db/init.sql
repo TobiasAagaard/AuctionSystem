@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     postal_code VARCHAR(20) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE private_customers (
 );
 
 CREATE TABLE auctions (
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     seller_id INT NOT NULL REFERENCES users(id),
     vehicle_id INT NOT NULL REFERENCES vehicles(id),
     minimum_price DECIMAL(18, 2) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE auctions (
 );
 
 CREATE TABLE bids (
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     auction_id INT NOT NULL REFERENCES auctions(id),
     bidder_id INT NOT NULL REFERENCES users(id),
     amount DECIMAL(18, 2) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TYPE LicenceType AS ENUM ('A','B','C','D','BE','CE','DE');
 CREATE TYPE FuelType AS ENUM ('Diesel','Petrol','Electric','Hydrogen');
 
 CREATE TABLE vehicles (
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     kilometers DOUBLE PRECISION NOT NULL,
     release_year INT NOT NULL,
@@ -60,7 +60,8 @@ CREATE TABLE vehicles (
 );
 
 CREATE TABLE heavy_vehicles (
-    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    vehicle_id INT REFERENCES vehicles(id),
     weight DOUBLE PRECISION NOT NULL,
     height DOUBLE PRECISION NOT NULL,
     length DOUBLE PRECISION NOT NULL,
@@ -69,14 +70,14 @@ CREATE TABLE heavy_vehicles (
 );
 
 CREATE TABLE semi_trucks (
-    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    heavy_vehicle_id INT PRIMARY KEY REFERENCES heavy_vehicles(id),
     cargo_capacity DOUBLE PRECISION NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE buses (
-    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    heavy_vehicle_id INT PRIMARY KEY REFERENCES heavy_vehicles(id),
     seat_count INT NOT NULL,
     bed_count INT NOT NULL,
     toilet BOOLEAN NOT NULL,
@@ -85,6 +86,7 @@ CREATE TABLE buses (
 );
 
 CREATE TABLE cars (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
     seat_count INT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
@@ -92,7 +94,7 @@ CREATE TABLE cars (
 );
 
 CREATE TABLE business_cars (
-    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    car_id INT PRIMARY KEY REFERENCES cars(id),
     cargo_capacity DOUBLE PRECISION NOT NULL,
     roll_cage BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
@@ -100,7 +102,7 @@ CREATE TABLE business_cars (
 );
 
 CREATE TABLE private_cars (
-    vehicle_id INT PRIMARY KEY REFERENCES vehicles(id),
+    car_id INT PRIMARY KEY REFERENCES cars(id),
     isofix BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
