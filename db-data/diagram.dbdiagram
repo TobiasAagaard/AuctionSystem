@@ -16,14 +16,14 @@
       {
         "name": "business_customers",
         "schemaName": "public",
-        "x": 560,
-        "y": 56
+        "x": 562.940673828125,
+        "y": -481.21126128000117
       },
       {
         "name": "private_customers",
         "schemaName": "public",
-        "x": 560,
-        "y": 288
+        "x": 562.940673828125,
+        "y": -272.28421519376315
       },
       {
         "name": "vehicles",
@@ -34,50 +34,50 @@
       {
         "name": "heavy_vehicles",
         "schemaName": "public",
-        "x": 560,
-        "y": 768
+        "x": 562.940673828125,
+        "y": 383.71839553833
       },
       {
         "name": "semi_trucks",
         "schemaName": "public",
-        "x": 560,
-        "y": 1040
+        "x": 1037.1488498828592,
+        "y": 513.4528863807091
       },
       {
         "name": "buses",
         "schemaName": "public",
-        "x": 560,
-        "y": 1240
+        "x": 1038.7699436328592,
+        "y": 256.98333438931985
       },
       {
         "name": "cars",
         "schemaName": "public",
-        "x": 560,
-        "y": 1512
+        "x": 562.940673828125,
+        "y": 799.5701159621019
       },
       {
         "name": "business_cars",
         "schemaName": "public",
-        "x": 560,
-        "y": 1720
+        "x": 1037.1488498828592,
+        "y": 707.0488562187784
       },
       {
         "name": "private_cars",
         "schemaName": "public",
-        "x": 560,
-        "y": 1960
+        "x": 1037.1488498828592,
+        "y": 947.0488562187784
       },
       {
         "name": "auctions",
         "schemaName": "public",
-        "x": 560,
-        "y": 496
+        "x": 565.30517578125,
+        "y": 126.673953310218
       },
       {
         "name": "bids",
         "schemaName": "public",
-        "x": 1040,
-        "y": 16
+        "x": 565.30517578125,
+        "y": -90.04368544112003
       }
     ],
     "tableGroupCollapseStates": [],
@@ -138,67 +138,7 @@
         "secondFieldNames": [
           "vehicles_id"
         ],
-        "secondTableName": "semi_trucks",
-        "secondSchemaName": "public",
-        "secondRelation": "1",
-        "checkPoints": []
-      },
-      {
-        "firstFieldNames": [
-          "id"
-        ],
-        "firstTableName": "vehicles",
-        "firstSchemaName": "public",
-        "firstRelation": "1",
-        "secondFieldNames": [
-          "vehicles_id"
-        ],
-        "secondTableName": "buses",
-        "secondSchemaName": "public",
-        "secondRelation": "1",
-        "checkPoints": []
-      },
-      {
-        "firstFieldNames": [
-          "id"
-        ],
-        "firstTableName": "vehicles",
-        "firstSchemaName": "public",
-        "firstRelation": "1",
-        "secondFieldNames": [
-          "vehicles_id"
-        ],
         "secondTableName": "cars",
-        "secondSchemaName": "public",
-        "secondRelation": "1",
-        "checkPoints": []
-      },
-      {
-        "firstFieldNames": [
-          "id"
-        ],
-        "firstTableName": "vehicles",
-        "firstSchemaName": "public",
-        "firstRelation": "1",
-        "secondFieldNames": [
-          "vehicles_id"
-        ],
-        "secondTableName": "business_cars",
-        "secondSchemaName": "public",
-        "secondRelation": "1",
-        "checkPoints": []
-      },
-      {
-        "firstFieldNames": [
-          "id"
-        ],
-        "firstTableName": "vehicles",
-        "firstSchemaName": "public",
-        "firstRelation": "1",
-        "secondFieldNames": [
-          "vehicles_id"
-        ],
-        "secondTableName": "private_cars",
         "secondSchemaName": "public",
         "secondRelation": "1",
         "checkPoints": []
@@ -237,6 +177,21 @@
         "firstFieldNames": [
           "id"
         ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "bidder_id"
+        ],
+        "secondTableName": "bids",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
         "firstTableName": "auctions",
         "firstSchemaName": "public",
         "firstRelation": "1",
@@ -252,15 +207,60 @@
         "firstFieldNames": [
           "id"
         ],
-        "firstTableName": "users",
+        "firstTableName": "heavy_vehicles",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
-          "bidder_id"
+          "heavy_vehicle_id"
         ],
-        "secondTableName": "bids",
+        "secondTableName": "buses",
         "secondSchemaName": "public",
-        "secondRelation": "*",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "heavy_vehicles",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "heavy_vehicle_id"
+        ],
+        "secondTableName": "semi_trucks",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "cars",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "car_id"
+        ],
+        "secondTableName": "business_cars",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "cars",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "car_id"
+        ],
+        "secondTableName": "private_cars",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
         "checkPoints": []
       }
     ]

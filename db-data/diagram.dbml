@@ -58,6 +58,7 @@ Table vehicles
 }
 
 Table heavy_vehicles {
+    id int [pk, increment]
     vehicles_id int [ref: - vehicles.id]
     weight double [not null]
     height double [not null]
@@ -67,14 +68,14 @@ Table heavy_vehicles {
 }
 
 Table semi_trucks {
-    vehicles_id int [ref: - vehicles.id]
+    heavy_vehicle_id int [ref: - heavy_vehicles.id]
     cargo_capacity double [not null]
     created_at timestamptz [default: `CURRENT_TIMESTAMP`]
     updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
 Table buses {
-    vehicles_id int [ref: - vehicles.id]
+    heavy_vehicle_id int [ref: - heavy_vehicles.id]
     seat_count int [not null]
     bed_count int [not null]
     toilet bool [not null]
@@ -83,6 +84,7 @@ Table buses {
 }
 
 Table cars {
+    id int [pk, increment]
     vehicles_id int [ref: - vehicles.id]
     seat_count int [not null]
     created_at timestamptz [default: `CURRENT_TIMESTAMP`]
@@ -90,7 +92,7 @@ Table cars {
 }
 
 Table business_cars {
-    vehicles_id int [ref: - vehicles.id]
+    car_id int [ref: - cars.id]
     cargo_capacity double [not null]
     roll_cage bool [not null]
     created_at timestamptz [default: `CURRENT_TIMESTAMP`]
@@ -98,7 +100,7 @@ Table business_cars {
 }
 
 Table private_cars {
-    vehicles_id int [ref: - vehicles.id]
+    car_id int [ref: - cars.id]
     isofix bool [not null]
     created_at timestamptz [default: `CURRENT_TIMESTAMP`]
     updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
