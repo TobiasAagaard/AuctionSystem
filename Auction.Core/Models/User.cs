@@ -15,7 +15,7 @@ public class User : ISeller, IBuyer
     public string Username { get; set; }
     public string PasswordHash { get; private set; }
     public string PostalCode { get; set; }
-    public decimal Balance { get; set; }
+    public decimal Balance { get; set; } = 0;
 
     public void ReceiveNotificationOfBid(Auction auction, decimal bid)
     {
