@@ -43,6 +43,7 @@ ScaffoldingReadMe.txt
 # Local PostgreSQL data
 db-data/*/
 !db-data/init-db
+.dbdiagram
 
 # Others
 ~$*
