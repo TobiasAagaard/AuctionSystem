@@ -1,5 +1,6 @@
 using Auction_Core.Models;
 using Auction_Core.Utilities;
+using Auction_Core.Repository;
 
 namespace Auction_Core.Services;
 
@@ -7,8 +8,8 @@ public class AuthService
 {
     private const int MinUsernameLength = 3;
     private const int MinPasswordLength = 8;
+    private readonly UserRepository _userRepository = new();
 
-    private readonly Dictionary<string, User> _usersByUsername = new(StringComparer.OrdinalIgnoreCase);
     private int _nextId = 1;
 
     public User Register(string username, string password, string postalCode)
@@ -16,22 +17,28 @@ public class AuthService
         ValidateUsername(username);
         ValidatePassword(password);
 
-        if (_usersByUsername.ContainsKey(username))
+
+        if (_userRepository.GetAllUsers().Any(u => u.Username == username))
         {
             throw new InvalidOperationException($"Username '{username}' is already taken.");
         }
 
-        string passwordHash = PasswordHasher.Hash(password);
-        var user = new User(_nextId++, username, passwordHash, postalCode);
-        _usersByUsername[username] = user;
+        var success = _userRepository.AddUser(username, password, postalCode);
+        if (!success)
+        {
+            throw new InvalidOperationException("Failed to register user.");
+        }
+
+        var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Username == username)
+                   ?? throw new InvalidOperationException("Failed to retrieve the newly registered user.");
 
         return user;
     }
 
     public User Authenticate(string username, string password)
     {
-        if (!_usersByUsername.TryGetValue(username, out User? user)
-            || !PasswordHasher.Verify(password, user.PasswordHash))
+        var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Username == username);
+        if (user == null || !PasswordHasher.Verify(password, user.PasswordHash))
         {
             throw new InvalidOperationException("Invalid username or password.");
         }
