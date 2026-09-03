@@ -1,27 +1,27 @@
-Table Users
+Table users
 {
-    ID int [pk, increment]
-    Username varchar(255)
-    PasswordHash varchar(255)
-    PostalCode varchar(20)
-    Balance double
-    CreatedAt datetime
-    UpdatedAt datetime
+    id int [pk, increment]
+    username varchar(100) [unique]
+    password_hash varchar(255) [not null]
+    postal_code varchar(20) [not null]
+    balance decimal(18, 2) [default: 0.00]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table PrivateCustomers {
-    UserID int [ref: - Users.ID]
-    CPR varchar(20)
-    CreatedAt datetime
-    UpdatedAt datetime
+Table business_customers {
+    user_id int [ref: - users.id]
+    cvr varchar(20) [not null]
+    credit decimal(18, 2) [default: 0.00]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table BusinessCustomers {
-    UserID int [ref: - Users.ID]
-    CVR varchar(20)
-    Credit double
-    CreatedAt datetime
-    UpdatedAt datetime
+Table private_customers {
+    user_id int [ref: - users.id]
+    cpr varchar(20) [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
 enum FuelType {
@@ -29,13 +29,6 @@ enum FuelType {
     Diesel
     Electric
     Hydrogen
-}
-
-enum EnergyClass {
-    A
-    B
-    C
-    D
 }
 
 enum LicenceType {
@@ -48,75 +41,83 @@ enum LicenceType {
     DE
 }
 
-Table Vehicles
+Table vehicles
 {
-    ID int [pk, increment]
-    Name varchar(255)
-    Kilometers double
-    ReleaseYear int
-    BasePrice double
-    TowBar bool
-    EngineSize double
-    KmPerLiter double
-    LicenceType LicenceType
-    FuelType FuelType
-    CreatedAt datetime
-    UpdatedAt datetime
+    id int [pk, increment]
+    name varchar(255) [not null]
+    kilometers double [not null]
+    release_year int [not null]
+    base_price decimal(18, 2) [not null]
+    tow_bar bool [not null]
+    engine_size double [not null]
+    km_per_liter double [not null]
+    licence_type LicenceType [not null]
+    fuel_type FuelType [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table HeavyVehicles {
-    VehiclesID int [ref: - Vehicles.ID]
-    Weight double
-    Height double
-    Length double
-    CreatedAt datetime
-    UpdatedAt datetime
+Table heavy_vehicles {
+    vehicles_id int [ref: - vehicles.id]
+    weight double [not null]
+    height double [not null]
+    length double [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table SemiTrucks {
-    VehiclesID int [ref: - Vehicles.ID]
-    CargoCapacity double
-    CreatedAt datetime
-    UpdatedAt datetime
+Table semi_trucks {
+    vehicles_id int [ref: - vehicles.id]
+    cargo_capacity double [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table Buses {
-    VehiclesID int [ref: - Vehicles.ID]
-    SeatCount int
-    BedCount int
-    Toilet bool
-    CreatedAt datetime
-    UpdatedAt datetime
+Table buses {
+    vehicles_id int [ref: - vehicles.id]
+    seat_count int [not null]
+    bed_count int [not null]
+    toilet bool [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table Cars {
-    VehiclesID int [ref: - Vehicles.ID]
-    SeatCount int
-    CreatedAt datetime
-    UpdatedAt datetime
+Table cars {
+    vehicles_id int [ref: - vehicles.id]
+    seat_count int [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table BusinessCars {
-    VehiclesID int [ref: - Vehicles.ID]
-    CargoCapacity double
-    RollCage bool
-    CreatedAt datetime
-    UpdatedAt datetime
+Table business_cars {
+    vehicles_id int [ref: - vehicles.id]
+    cargo_capacity double [not null]
+    roll_cage bool [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table PrivateCars {
-    VehiclesID int [ref: - Vehicles.ID]
-    Isofix bool
-    CreatedAt datetime
-    UpdatedAt datetime
+Table private_cars {
+    vehicles_id int [ref: - vehicles.id]
+    isofix bool [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table Auctions
+Table auctions
 {
-    ID int [pk, increment]
-    Seller int [ref: > Users.ID]
-    VehiclesID int [ref: - Vehicles.ID]
-    MinimumPrice double
-    CreatedAt datetime
-    UpdatedAt datetime
+    id int [pk, increment]
+    seller int [ref: > users.id]
+    vehicles_id int [ref: - vehicles.id]
+    minimum_price double [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table bids {
+    id int [pk, increment]
+    bidder_id int [ref: > users.id]
+    auction_id int [ref: > auctions.id]
+    amount double [not null]
+    created_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
