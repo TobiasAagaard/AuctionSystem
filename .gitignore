@@ -40,10 +40,12 @@ ScaffoldingReadMe.txt
 # dotenv environment variables file
 .env
 
+# DB Diagram files
+*.dbdiagram
+
 # Local PostgreSQL data
 db-data/*/
 !db-data/init-db
-.dbdiagram
 
 # Others
 ~$*
