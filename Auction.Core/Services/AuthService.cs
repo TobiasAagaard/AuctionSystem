@@ -18,7 +18,7 @@ public class AuthService
         ValidatePassword(password);
 
 
-        if (_userRepository.GetAllUsers().Any(u => u.Username == username))
+        if (_userRepository.GetAllUsers().Any(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)))
         {
             throw new InvalidOperationException($"Username '{username}' is already taken.");
         }
@@ -29,7 +29,7 @@ public class AuthService
             throw new InvalidOperationException("Failed to register user.");
         }
 
-        var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Username == username)
+        var user = _userRepository.GetAllUsers().FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase))
                    ?? throw new InvalidOperationException("Failed to retrieve the newly registered user.");
 
         return user;
@@ -37,7 +37,7 @@ public class AuthService
 
     public User Authenticate(string username, string password)
     {
-        var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Username == username);
+        var user = _userRepository.GetAllUsers().FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
         if (user == null || !PasswordHasher.Verify(password, user.PasswordHash))
         {
             throw new InvalidOperationException("Invalid username or password.");
