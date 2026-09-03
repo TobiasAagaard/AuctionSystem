@@ -2,7 +2,7 @@
 
 public class BusinessCustomer : User
 {
-    public BusinessCustomer(int id, string username, string passwordHash, int postalCode, decimal credit, string cvr)
+    public BusinessCustomer(int id, string username, string passwordHash, string postalCode, decimal credit, string cvr)
         : base(id, username, passwordHash, postalCode)
     {
         Credit = credit;

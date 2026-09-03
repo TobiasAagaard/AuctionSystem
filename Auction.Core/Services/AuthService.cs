@@ -11,7 +11,7 @@ public class AuthService
     private readonly Dictionary<string, User> _usersByUsername = new(StringComparer.OrdinalIgnoreCase);
     private int _nextId = 1;
 
-    public User Register(string username, string password, int postalCode)
+    public User Register(string username, string password, string postalCode)
     {
         ValidateUsername(username);
         ValidatePassword(password);
