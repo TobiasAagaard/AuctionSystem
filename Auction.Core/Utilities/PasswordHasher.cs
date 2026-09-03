@@ -4,9 +4,9 @@ namespace Auction_Core.Utilities;
 
 public static class PasswordHasher
 {
-    private const int SaltSize = 16;        // 128-bit salt
-    private const int KeySize = 32;         // 256-bit hash
-    private const int Iterations = 100_000;
+    private static readonly int SaltSize = 16;        // 128-bit salt
+    private static readonly int KeySize = 32;         // 256-bit hash
+    private static readonly int Iterations = 100_000;
     private static readonly HashAlgorithmName Algorithm = HashAlgorithmName.SHA256;
     private const char Delimiter = ':';
 
