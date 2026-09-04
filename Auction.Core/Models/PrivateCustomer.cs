@@ -2,7 +2,7 @@
 
 public class PrivateCustomer : User
 {
-    public PrivateCustomer(int id, string username, string passwordHash, int postalCode, string cpr)
+    public PrivateCustomer(int id, string username, string passwordHash, string postalCode, string cpr)
         : base(id, username, passwordHash, postalCode)
     {
         CPR = cpr;

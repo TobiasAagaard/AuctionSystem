@@ -3,7 +3,7 @@
 public class User : ISeller, IBuyer
 {
 
-    public User(int id, string username, string passwordHash, int postalCode)
+    public User(int id, string username, string passwordHash, string postalCode)
     {
         ID = id;
         Username = username;
@@ -14,8 +14,8 @@ public class User : ISeller, IBuyer
     public int ID { get; }
     public string Username { get; set; }
     public string PasswordHash { get; private set; }
-    public int PostalCode { get; set; }
-    public decimal Balance { get; set; }
+    public string PostalCode { get; set; }
+    public decimal Balance { get; set; } = 0;
 
     public void ReceiveNotificationOfBid(Auction auction, decimal bid)
     {

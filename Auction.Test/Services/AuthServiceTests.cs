@@ -11,10 +11,10 @@ public class AuthServiceTests
     {
         var service = new AuthService();
 
-        User user = service.Register("alice", "Password1", 2200);
+        User user = service.Register("alice", "Password1", "2200");
 
         Assert.Equal("alice", user.Username);
-        Assert.Equal(2200, user.PostalCode);
+        Assert.Equal("2200", user.PostalCode);
         Assert.NotEqual("Password1", user.PasswordHash);
         Assert.True(PasswordHasher.Verify("Password1", user.PasswordHash));
     }
@@ -24,8 +24,8 @@ public class AuthServiceTests
     {
         var service = new AuthService();
 
-        User first = service.Register("alice", "Password1", 2200);
-        User second = service.Register("bob", "Password1", 2200);
+        User first = service.Register("alice", "Password1", "2200");
+        User second = service.Register("bob", "Password1", "2200");
 
         Assert.Equal(first.ID + 1, second.ID);
     }
@@ -34,9 +34,9 @@ public class AuthServiceTests
     public void Register_ThrowsWhenUsernameAlreadyTaken()
     {
         var service = new AuthService();
-        service.Register("alice", "Password1", 2200);
+        service.Register("alice", "Password1", "2200");
 
-        Assert.Throws<InvalidOperationException>(() => service.Register("ALICE", "Password2", 3000));
+        Assert.Throws<InvalidOperationException>(() => service.Register("ALICE", "Password2", "3000"));
     }
 
     [Theory]
@@ -47,7 +47,7 @@ public class AuthServiceTests
     {
         var service = new AuthService();
 
-        Assert.Throws<ArgumentException>(() => service.Register(username, "Password1", 2200));
+        Assert.Throws<ArgumentException>(() => service.Register(username, "Password1", "2200"));
     }
 
     [Theory]
@@ -60,14 +60,14 @@ public class AuthServiceTests
     {
         var service = new AuthService();
 
-        Assert.Throws<ArgumentException>(() => service.Register("alice", password, 2200));
+        Assert.Throws<ArgumentException>(() => service.Register("alice", password, "2200"));
     }
 
     [Fact]
     public void Authenticate_ReturnsUserForValidCredentials()
     {
         var service = new AuthService();
-        User registered = service.Register("alice", "Password1", 2200);
+        User registered = service.Register("alice", "Password1", "2200");
 
         User authenticated = service.Authenticate("alice", "Password1");
 
@@ -78,7 +78,7 @@ public class AuthServiceTests
     public void Authenticate_IsCaseInsensitiveForUsername()
     {
         var service = new AuthService();
-        service.Register("alice", "Password1", 2200);
+        service.Register("alice", "Password1", "2200");
 
         User authenticated = service.Authenticate("ALICE", "Password1");
 
@@ -97,7 +97,7 @@ public class AuthServiceTests
     public void Authenticate_ThrowsForWrongPassword()
     {
         var service = new AuthService();
-        service.Register("alice", "Password1", 2200);
+        service.Register("alice", "Password1", "2200");
 
         Assert.Throws<InvalidOperationException>(() => service.Authenticate("alice", "WrongPassword1"));
     }
@@ -106,7 +106,7 @@ public class AuthServiceTests
     public void RegisterThenAuthenticate_RoundTripsSuccessfully()
     {
         var service = new AuthService();
-        service.Register("regression-user", "Password1", 2200);
+        service.Register("regression-user", "Password1", "2200");
 
         User user = service.Authenticate("regression-user", "Password1");
 
