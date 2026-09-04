@@ -23,23 +23,6 @@ CREATE TABLE private_customers (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE auctions (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    seller_id INT NOT NULL REFERENCES users(id),
-    vehicle_id INT NOT NULL REFERENCES vehicles(id),
-    minimum_price DECIMAL(18, 2) NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE bids (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    auction_id INT NOT NULL REFERENCES auctions(id),
-    bidder_id INT NOT NULL REFERENCES users(id),
-    amount DECIMAL(18, 2) NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TYPE LicenceType AS ENUM ('A','B','C','D','BE','CE','DE');
 
 CREATE TYPE FuelType AS ENUM ('Diesel','Petrol','Electric','Hydrogen');
@@ -107,4 +90,21 @@ CREATE TABLE private_cars (
     isofix BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE auctions (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    seller_id INT NOT NULL REFERENCES users(id),
+    vehicle_id INT NOT NULL REFERENCES vehicles(id),
+    minimum_price DECIMAL(18, 2) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE bids (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    auction_id INT NOT NULL REFERENCES auctions(id),
+    bidder_id INT NOT NULL REFERENCES users(id),
+    amount DECIMAL(18, 2) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
