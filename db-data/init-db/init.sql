@@ -68,7 +68,7 @@ CREATE TABLE buses (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE cars (
+CREATE TABLE personal_cars (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     seat_count INT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
@@ -77,16 +77,16 @@ CREATE TABLE cars (
     vehicle_id INT NOT NULL REFERENCES vehicles(id)
 );
 
-CREATE TABLE business_cars (
-    car_id INT PRIMARY KEY REFERENCES cars(id),
+CREATE TABLE business_personal_cars (
+    car_id INT PRIMARY KEY REFERENCES personal_cars(id),
     cargo_capacity DOUBLE PRECISION NOT NULL,
     roll_cage BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE private_cars (
-    car_id INT PRIMARY KEY REFERENCES cars(id),
+CREATE TABLE private_personal_cars (
+    car_id INT PRIMARY KEY REFERENCES personal_cars(id),
     isofix BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
