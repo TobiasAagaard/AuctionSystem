@@ -83,7 +83,7 @@ Table buses {
     updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table cars {
+Table personal_cars {
     id int [pk, increment]
     vehicles_id int [ref: - vehicles.id]
     seat_count int [not null]
@@ -91,16 +91,16 @@ Table cars {
     updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table business_cars {
-    car_id int [ref: - cars.id]
+Table business_personal_cars {
+    car_id int [ref: - personal_cars.id]
     cargo_capacity double [not null]
     roll_cage bool [not null]
     created_at timestamptz [default: `CURRENT_TIMESTAMP`]
     updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
-Table private_cars {
-    car_id int [ref: - cars.id]
+Table private_personal_cars {
+    car_id int [ref: - personal_cars.id]
     isofix bool [not null]
     created_at timestamptz [default: `CURRENT_TIMESTAMP`]
     updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
