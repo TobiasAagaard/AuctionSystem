@@ -10,8 +10,6 @@ public class AuthService
     private const int MinPasswordLength = 8;
     private readonly UserRepository _userRepository = new();
 
-    private int _nextId = 1;
-
     public User Register(string username, string password, string postalCode)
     {
         ValidateUsername(username);
