@@ -49,3 +49,5 @@ services:
       # of `/var/lib/postgresql/data/`, automatically the change will appear in `db-data`.
       # You don't need to create the `db-data` folder. Docker Compose will do it for you.
       - ./db-data/:/var/lib/postgresql/
+      # Scripts placed here are executed by the entrypoint only when the data directory is empty.
+      - ./db-data/init-db/:/docker-entrypoint-initdb.d/
