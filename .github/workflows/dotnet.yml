@@ -28,10 +28,10 @@ jobs:
       run: docker compose up -d
     - name: Wait for Database
       run: |
-        until docker compose exec database pg_isready -U username; do
+        until docker compose exec -T database pg_isready -U username; do
           sleep 1
         done
-      timeout: 60s
+      timeout-minutes: 1
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Stop Database
