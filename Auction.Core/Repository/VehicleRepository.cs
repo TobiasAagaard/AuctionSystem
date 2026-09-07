@@ -55,9 +55,19 @@ public class VehicleRepository : IVehicleRepository
         return await reader.ReadAsync() ? MapVehicle(reader) : null;
     }
 
-    public Task<IEnumerable<Vehicle>> GetAllVehiclesByIdAsync(int id)
+    public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync()
     {
-        throw new NotImplementedException();
+        await using var connection = await _database.GetConnection();
+        await using var command = new NpgsqlCommand(SelectVehicleSql, connection);
+        await using var reader = await command.ExecuteReaderAsync();
+
+        var vehicles = new List<Vehicle>();
+        while (await reader.ReadAsync())
+        {
+            vehicles.Add(MapVehicle(reader));
+        }
+
+        return vehicles;
     }
 
     public Task AddVehicleAsync(Vehicle vehicle)
