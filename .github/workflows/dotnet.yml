@@ -24,5 +24,15 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Start Database
+      run: docker compose up -d
+    - name: Wait for Database
+      run: |
+        until docker compose exec -T database pg_isready -U username; do
+          sleep 1
+        done
+      timeout-minutes: 1
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Stop Database
+      run: docker compose down -v
