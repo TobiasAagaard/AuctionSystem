@@ -15,7 +15,7 @@ public class VehicleRepository : IVehicleRepository
     }
 
     private const string SelectVehicleSql = """
-        SELECT  v.id, v.name, v.release_year, v.base_price, v.tow_bar, v.engine_size,
+        SELECT  v.id, v.name, v.release_year, v.registration_number, v.base_price, v.tow_bar, v.engine_size,
                 v.kilometers, v.km_per_liter, v.fuel_type,
 
                 hv.weight, hv.height, hv.length,
@@ -133,8 +133,7 @@ public class VehicleRepository : IVehicleRepository
             Id: reader.GetInt32(reader.GetOrdinal("id")),
             Name: reader.GetString(reader.GetOrdinal("name")),
             Kilometers: Convert.ToDouble(reader.GetValue(reader.GetOrdinal("kilometers"))),
-            // The vehicles table has no registration number column yet.
-            RegistrationNumber: string.Empty,
+            RegistrationNumber: reader.GetString(reader.GetOrdinal("registration_number")),
             Year: reader.GetInt32(reader.GetOrdinal("release_year")),
             BasePrice: Convert.ToDouble(reader.GetValue(reader.GetOrdinal("base_price"))),
             TowBar: reader.GetBoolean(reader.GetOrdinal("tow_bar")),

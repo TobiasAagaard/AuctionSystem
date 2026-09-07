@@ -32,6 +32,7 @@ CREATE TABLE vehicles (
     name VARCHAR(255) NOT NULL,
     kilometers DOUBLE PRECISION NOT NULL,
     release_year INT NOT NULL,
+    registration_number VARCHAR(10) UNIQUE NOT NULL,
     base_price DECIMAL(18, 2) NOT NULL,
     tow_bar BOOLEAN NOT NULL,
     engine_size DOUBLE PRECISION NOT NULL,
