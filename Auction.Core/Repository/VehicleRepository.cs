@@ -14,8 +14,8 @@ public class VehicleRepository : IVehicleRepository
 
     internal const string SelectVehicleSql = """
         SELECT  v.id, v.name, v.release_year, v.base_price, v.tow_bar, v.engine_type,
-                v.kilometers, v.km_per_liter, v.licence_type, v.fuel_type, hv.weight, hv.height,
-                hv.length, st.cargo_capacity, b.seat_count, b.bed_count, b.toilet
+                v.kilometers, v.km_per_liter, v.licence_type, v.fuel_type,hv.id, hv.weight, hv.height,
+                hv.length, st.cargo_capacity, b.seat_count, b.bed_count, b.toilet, c.id.
     """;
     public async Task AddVehicleAsync(Vehicle vehicle)
     {
