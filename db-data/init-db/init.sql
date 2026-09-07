@@ -106,5 +106,5 @@ CREATE TABLE bids (
     auction_id INT NOT NULL REFERENCES auctions(id),
     bidder_id INT NOT NULL REFERENCES users(id),
     amount DECIMAL(18, 2) NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
