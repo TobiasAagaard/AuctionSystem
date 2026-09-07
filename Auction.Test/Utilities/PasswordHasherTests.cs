@@ -1,6 +1,6 @@
 using Auction_Core.Utilities;
 
-namespace Auction.Test.Utilities;
+namespace Auction_Test.Utilities;
 
 public class PasswordHasherTests
 {

@@ -1,4 +1,4 @@
-namespace Auction.Test;
+namespace Auction_Test;
 
 public class UnitTest1
 {
