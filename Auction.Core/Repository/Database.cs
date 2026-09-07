@@ -21,7 +21,7 @@ public partial class Database
     /// </summary>
     private NpgsqlConnection GetConnection()
     {
-        string connectionString = _config.GetConnectionString("AuctionDb")!;
+        string connectionString = _config.GetConnectionString("AuctionDb") ?? "Host=localhost;Username=username;Password=password;Database=default_database";
 
         NpgsqlConnection connection = new NpgsqlConnection(connectionString);
         connection.Open();
