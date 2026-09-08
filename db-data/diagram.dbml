@@ -55,7 +55,7 @@ Table vehicles
     licence_type LicenceType [not null]
     fuel_type FuelType [not null]
     created_at timestamptz [default: `CURRENT_TIMESTAMP`]
-    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]-
+    updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
 
 Table heavy_vehicles {
