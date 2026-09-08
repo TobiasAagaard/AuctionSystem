@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\Auction.Core\appsettings.Local.json" Link="appsettings.Local.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Auction.Core\appsettings.Local.json" Link="appsettings.Local.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\Auction.Core\appsettings.Local.json')" />
   </ItemGroup>
 
   <ItemGroup>

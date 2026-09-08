@@ -75,10 +75,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        // Act
         Vehicle? result = await _vehicleRepository.GetVehicleByIdAsync(_vehicleId);
 
-        // Assert
         Assert.NotNull(result);
         PrivatePersonalCar car = Assert.IsType<PrivatePersonalCar>(result);
 
