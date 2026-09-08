@@ -69,7 +69,7 @@ public class VehicleRepository : IVehicleRepository
 
         return vehicles;
     }
-    public async Task AddVehicleAsync(Vehicle vehicle)
+    public Task AddVehicleAsync(Vehicle vehicle)
     {
         throw new NotImplementedException();
     }
@@ -84,7 +84,7 @@ public class VehicleRepository : IVehicleRepository
         throw new NotImplementedException();
     }
     
-    // Struct representing a row from the vehicles table with shared columns
+
     private readonly record struct VehicleRow(
         int Id,
         string Name,
