@@ -13,7 +13,7 @@ public class AuctionRepository : IAuctionRepository
 
     public async Task<bool> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice, NotificationDelegate? notificationFunction)
     {
-        using NpgsqlConnection connection = Database.GetConnection();
+        using NpgsqlConnection connection = await Database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = @"INSERT INTO auctions (seller_id, vehicle_id, minimum_price)
@@ -34,7 +34,7 @@ public class AuctionRepository : IAuctionRepository
     public async Task<IEnumerable<Auction>> GetAllAuctionsAsync()
     {
         IEnumerable<Auction> auctions = new List<Auction>();
-        using NpgsqlConnection connection = Database.GetConnection();
+        using NpgsqlConnection connection = await Database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, created_at, updated_at FROM auctions";
@@ -48,7 +48,7 @@ public class AuctionRepository : IAuctionRepository
 
     public async Task<Auction> GetAuctionByIdAsync(int auctionId)
     {
-        using NpgsqlConnection connection = Database.GetConnection();
+        using NpgsqlConnection connection = await Database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, created_at, updated_at FROM auctions WHERE id = @id";
@@ -67,7 +67,7 @@ public class AuctionRepository : IAuctionRepository
 
     public async Task<bool> RemoveAuctionAsync(int auctionId)
     {
-        using NpgsqlConnection connection = Database.GetConnection();
+        using NpgsqlConnection connection = await Database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = "DELETE FROM auctions WHERE id = @id";
@@ -80,7 +80,7 @@ public class AuctionRepository : IAuctionRepository
 
     public async Task<bool> UpdateAuctionAsync(Auction auction)
     {
-        using NpgsqlConnection connection = Database.GetConnection();
+        using NpgsqlConnection connection = await Database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = @"UPDATE auctions 
