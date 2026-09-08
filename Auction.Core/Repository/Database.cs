@@ -11,18 +11,23 @@ public partial class Database
     /// </summary>
     private static readonly IConfiguration _config = new ConfigurationBuilder()
         .SetBasePath(AppContext.BaseDirectory)
-        .AddJsonFile("appsettings.Local.json", optional: false, reloadOnChange: false)
+        .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false)
         .Build();
 
-    /// <summary>
-    /// Opens and returns a new NpgsqlConnection using the "AuctionDb" connection
-    /// string read from appsettings.Local.json (ConnectionStrings section). Caller
-    /// owns the connection and is responsible for disposing it (typically via 'using').
-    /// </summary>
-    /// 
+    private readonly string? _connectionString;
+
+    public Database(string? connectionString = null)
+    {
+        _connectionString = connectionString;
+    }
+
     public async Task<NpgsqlConnection> GetConnection()
     {
-        string connectionString = _config.GetConnectionString("AuctionDb")!;
+        string connectionString = _connectionString
+            ?? _config.GetConnectionString("AuctionDb")
+            ?? throw new InvalidOperationException(
+                "No database connection string was configured. Add ConnectionStrings:AuctionDb " +
+                "to appsettings.Local.json or pass a connection string to Database.");
 
         NpgsqlConnection connection = new NpgsqlConnection(connectionString);
 

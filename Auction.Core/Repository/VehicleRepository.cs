@@ -16,7 +16,7 @@ public class VehicleRepository : IVehicleRepository
 
     private const string SelectVehicleSql = """
         SELECT  v.id, v.name, v.release_year, v.registration_number, v.base_price, v.tow_bar, v.engine_size,
-                v.kilometers, v.km_per_liter, v.fuel_type,
+                v.kilometers, v.km_per_liter, v.fuel_type, v.licence_type,
 
                 hv.weight, hv.height, hv.length,
 
@@ -69,10 +69,9 @@ public class VehicleRepository : IVehicleRepository
 
         return vehicles;
     }
-
-    public Task AddVehicleAsync(Vehicle vehicle)
+    public async Task AddVehicleAsync(Vehicle vehicle)
     {
-        throw new NotImplementedException();
+        
     }
 
     public Task UpdateVehicleAsync(Vehicle vehicle)
@@ -84,9 +83,8 @@ public class VehicleRepository : IVehicleRepository
     {
         throw new NotImplementedException();
     }
-
-
-
+    
+    // Struct representing a row from the vehicles table with shared columns
     private readonly record struct VehicleRow(
         int Id,
         string Name,
@@ -97,7 +95,8 @@ public class VehicleRepository : IVehicleRepository
         bool TowBar,
         double EngineSize,
         double KmPerLiter,
-        FuelType FuelType);
+        FuelType FuelType,
+        LicenseType LicenseType);
 
     private static Vehicle MapVehicle(DbDataReader reader)
     {
@@ -138,10 +137,9 @@ public class VehicleRepository : IVehicleRepository
             BasePrice: Convert.ToDouble(reader.GetValue(reader.GetOrdinal("base_price"))),
             TowBar: reader.GetBoolean(reader.GetOrdinal("tow_bar")),
             EngineSize: Convert.ToDouble(reader.GetValue(reader.GetOrdinal("engine_size"))),
-            KmPerLiter: reader.IsDBNull(reader.GetOrdinal("km_per_liter"))
-                ? 0
-                : Convert.ToDouble(reader.GetValue(reader.GetOrdinal("km_per_liter"))),
-            FuelType: Enum.Parse<FuelType>(reader.GetString(reader.GetOrdinal("fuel_type")), true));
+            KmPerLiter: reader.IsDBNull(reader.GetOrdinal("km_per_liter")) ? 0 : Convert.ToDouble(reader.GetValue(reader.GetOrdinal("km_per_liter"))),
+            FuelType: Enum.Parse<FuelType>(reader.GetString(reader.GetOrdinal("fuel_type")), true),
+            LicenseType: Enum.Parse<LicenseType>(reader.GetString(reader.GetOrdinal("licence_type")), true));
     }
 
     private static SemiTruck MapSemiTruck(DbDataReader reader, VehicleRow row)
