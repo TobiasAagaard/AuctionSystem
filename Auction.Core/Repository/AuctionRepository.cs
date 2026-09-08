@@ -110,9 +110,6 @@ public class AuctionRepository : IAuctionRepository
         var seller = await _userRepository.GetUserByIdAsync(reader.GetInt32(1));
         var vehicle = await _vehicleRepository.GetVehicleByIdAsync(reader.GetInt32(2));
 
-        if (vehicle is null)
-            throw new InvalidOperationException($"Vehicle with id {reader.GetInt32(2)} was not found for auction {reader.GetInt32(0)}.");
-
         return new Auction
         (
             reader.GetInt32(0),
