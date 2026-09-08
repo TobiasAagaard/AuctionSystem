@@ -2,7 +2,7 @@ using Auction_Core.Models;
 using Auction_Core.Services;
 using Auction_Core.Utilities;
 
-namespace Auction.Test.Services;
+namespace Auction_Test.Services;
 
 public class AuthServiceTests
 {

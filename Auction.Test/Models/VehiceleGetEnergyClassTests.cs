@@ -1,7 +1,7 @@
 using Auction_Core.Enums;
 using Auction_Core.Models;
 
-namespace Auction.Test.Models;
+namespace Auction_Test.Models;
 
 public class VehicleGetEnergyClassTests
 {
