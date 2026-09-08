@@ -11,7 +11,7 @@ public partial class Database
     /// </summary>
     private static readonly IConfiguration _config = new ConfigurationBuilder()
         .SetBasePath(AppContext.BaseDirectory)
-        .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false)
+        .AddJsonFile("appsettings.Local.json", optional: false, reloadOnChange: false)
         .Build();
 
 
