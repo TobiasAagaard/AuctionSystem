@@ -11,7 +11,7 @@ public class AuctionRepository : IAuctionRepository
     private Database Database = new Database();
     private UserRepository UserRepository = new UserRepository();
 
-    public async Task<bool> AddAuctionAsync(Vehicle vehicle, User seller, decimal minimumPrice, NotificationDelegate? notificationFunction)
+    public async Task<bool> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice, NotificationDelegate? notificationFunction)
     {
         using NpgsqlConnection connection = Database.GetConnection();
 
@@ -26,7 +26,7 @@ public class AuctionRepository : IAuctionRepository
         return true;
     }
 
-    public async Task<bool> AddAuctionAsync(Vehicle vehicle, User seller, decimal minimumPrice)
+    public async Task<bool> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice)
     {
         return await AddAuctionAsync(vehicle, seller, minimumPrice, null);
     }

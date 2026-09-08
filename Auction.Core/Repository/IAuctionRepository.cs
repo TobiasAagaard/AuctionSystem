@@ -7,8 +7,8 @@ public interface IAuctionRepository
 {
     Task<Auction> GetAuctionByIdAsync(int auctionId);
     Task<IEnumerable<Auction>> GetAllAuctionsAsync();
-    Task<bool> AddAuctionAsync(Vehicle vehicle, User seller, decimal minimumPrice);
-    Task<bool> AddAuctionAsync(Vehicle vehicle, User seller, decimal minimumPrice, NotificationDelegate notificationFunction);
+    Task<bool> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice);
+    Task<bool> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice, NotificationDelegate notificationFunction);
     Task<bool> RemoveAuctionAsync(int auctionId);
     Task<bool> UpdateAuctionAsync(Auction auction);
 }
