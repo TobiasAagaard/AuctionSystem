@@ -3,7 +3,7 @@ using Auction_Core.Models;
 using Auction_Core.Repository;
 using Npgsql;
 
-namespace Auction.Test.Repository;
+namespace Auction_Test.Repository;
 public class VehicleRepositoryTests : IAsyncLifetime
 {
     private readonly Database _database = new();
