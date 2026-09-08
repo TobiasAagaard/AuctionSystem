@@ -19,7 +19,7 @@ public partial class Database
     /// string read from appsettings.Local.json (ConnectionStrings section). Caller
     /// owns the connection and is responsible for disposing it (typically via 'using').
     /// </summary>
-    private NpgsqlConnection GetConnection()
+    public NpgsqlConnection GetConnection()
     {
         string connectionString = _config.GetConnectionString("AuctionDb") ?? "Host=localhost;Username=username;Password=password;Database=default_database";
 
