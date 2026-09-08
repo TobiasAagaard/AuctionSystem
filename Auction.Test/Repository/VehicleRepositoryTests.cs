@@ -96,13 +96,11 @@ public class VehicleRepositoryTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetVehicleByIdAsync_ReturnsNullWhenVehicleDoesNotExist()
+    public async Task GetVehicleByIdAsync_ThrowsKeyNotFoundExceptionWhenVehicleDoesNotExist()
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        Vehicle? result = await _vehicleRepository.GetVehicleByIdAsync(-1);
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _vehicleRepository.GetVehicleByIdAsync(-1));
     }
 
     private async Task<int> InsertVehicleAsync(NpgsqlConnection connection)

@@ -44,7 +44,7 @@ public class VehicleRepository : IVehicleRepository
         WHERE v.id = @id
         """;
 
-    public async Task<Vehicle?> GetVehicleByIdAsync(int id)
+    public async Task<Vehicle> GetVehicleByIdAsync(int id)
     {
         await using var connection = await _database.GetConnection();
         await using var command = new NpgsqlCommand(SelectVehicleByIdSql, connection);
@@ -52,7 +52,12 @@ public class VehicleRepository : IVehicleRepository
 
         await using var reader = await command.ExecuteReaderAsync();
 
-        return await reader.ReadAsync() ? MapVehicle(reader) : null;
+        if (!await reader.ReadAsync())
+        {
+            throw new KeyNotFoundException($"Vehicle with ID {id} not found.");
+        }
+
+        return MapVehicle(reader);
     }
 
     public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync()
@@ -67,6 +72,10 @@ public class VehicleRepository : IVehicleRepository
             vehicles.Add(MapVehicle(reader));
         }
 
+        if (vehicles.Count is 0)
+        {
+            throw new KeyNotFoundException("No vehicles found.");
+        }
         return vehicles;
     }
     public Task AddVehicleAsync(Vehicle vehicle)
