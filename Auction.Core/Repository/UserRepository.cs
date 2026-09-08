@@ -61,14 +61,14 @@ public class UserRepository : IUserRepository
         
         using NpgsqlConnection connection = await _database.GetConnection();
 
-        NpgsqlCommand cmd = connection.CreateCommand();
+        using NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = @"INSERT INTO users (username, password_hash, postal_code) VALUES (@username, @password_hash, @postal_code)";
 
         cmd.Parameters.AddWithValue("username", username);
         cmd.Parameters.AddWithValue("password_hash", PasswordHasher.Hash(password));
         cmd.Parameters.AddWithValue("postal_code", postalCode);
-        
-        return true;
+
+        return await cmd.ExecuteNonQueryAsync() == 1;
     }
 
     public bool UpdateUser(User user) {

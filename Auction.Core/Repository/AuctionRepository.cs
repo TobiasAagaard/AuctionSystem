@@ -8,12 +8,20 @@ public delegate void NotificationDelegate(Auction auction, decimal bid);
 
 public class AuctionRepository : IAuctionRepository
 {
-    private Database Database = new Database();
-    private UserRepository UserRepository = new UserRepository();
+    private readonly Database _database;
+    private UserRepository _userRepository;
+    private VehicleRepository _vehicleRepository;
+
+    public AuctionRepository(Database database)
+    {
+        _database = database;
+        _userRepository = new UserRepository(database);
+        _vehicleRepository = new VehicleRepository(database);
+    }
 
     public async Task<bool> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice, NotificationDelegate? notificationFunction)
     {
-        using NpgsqlConnection connection = await Database.GetConnection();
+        using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = @"INSERT INTO auctions (seller_id, vehicle_id, minimum_price)
@@ -34,31 +42,31 @@ public class AuctionRepository : IAuctionRepository
     public async Task<IEnumerable<Auction>> GetAllAuctionsAsync()
     {
         IEnumerable<Auction> auctions = new List<Auction>();
-        using NpgsqlConnection connection = await Database.GetConnection();
+        using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, created_at, updated_at FROM auctions";
 
-        using NpgsqlDataReader reader = cmd.ExecuteReader();
+        using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
         while (reader.Read())
-            auctions = auctions.Append(ReadAuctionFromReader(reader));
+            auctions = auctions.Append(await ReadAuctionFromReader(reader));
 
         return auctions;
     }
 
     public async Task<Auction> GetAuctionByIdAsync(int auctionId)
     {
-        using NpgsqlConnection connection = await Database.GetConnection();
+        using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, created_at, updated_at FROM auctions WHERE id = @id";
 
         cmd.Parameters.AddWithValue("id", auctionId);
 
-        using NpgsqlDataReader reader = cmd.ExecuteReader();
+        using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
         if (reader.Read())
         {
-            return ReadAuctionFromReader(reader);
+            return await ReadAuctionFromReader(reader);
         }
 
         throw new KeyNotFoundException("This auction does not exist.");
@@ -67,20 +75,20 @@ public class AuctionRepository : IAuctionRepository
 
     public async Task<bool> RemoveAuctionAsync(int auctionId)
     {
-        using NpgsqlConnection connection = await Database.GetConnection();
+        using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = "DELETE FROM auctions WHERE id = @id";
 
         cmd.Parameters.AddWithValue("id", auctionId);
 
-        int rowsAffected = cmd.ExecuteNonQuery();
+        int rowsAffected = await cmd.ExecuteNonQueryAsync();
         return rowsAffected > 0;
     }
 
     public async Task<bool> UpdateAuctionAsync(Auction auction)
     {
-        using NpgsqlConnection connection = await Database.GetConnection();
+        using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = @"UPDATE auctions 
@@ -93,35 +101,28 @@ public class AuctionRepository : IAuctionRepository
 
         BindAuctionToCommand(cmd, auction);
 
-        int rowsAffected = cmd.ExecuteNonQuery();
+        int rowsAffected = await cmd.ExecuteNonQueryAsync();
         return rowsAffected > 0;
     }
 
-    private Auction ReadAuctionFromReader(NpgsqlDataReader reader)
+    private async Task<Auction> ReadAuctionFromReader(NpgsqlDataReader reader)
     {
-        // This is a placeholder implementation. In a real application, you would retrieve the vehicle from the database using the vehicle_id.
+        var seller = await _userRepository.GetUserByIdAsync(reader.GetInt32(1));
+        var vehicle = await _vehicleRepository.GetVehicleByIdAsync(reader.GetInt32(2));
+
+        if (vehicle is null)
+            throw new InvalidOperationException($"Vehicle with id {reader.GetInt32(2)} was not found for auction {reader.GetInt32(0)}.");
+
         return new Auction
         (
-            1,
-            UserRepository.GetUserById(reader.GetInt32(1)),
-            new PrivatePersonalCar(1,"Test Car",10000,"AB12345",2020,200000,true,2.0,15.0,FuelType.Petrol,2,true,LicenseType.B),
+            reader.GetInt32(0),
+            seller,
+            vehicle,
             reader.GetDecimal(3),
             reader.GetDateTime(4),
             reader.GetDateTime(5),
             null
         );
-
-        // This can be uncommented and used when the VehicleRepository is implemented to fetch the vehicle from the database.
-        // return new Auction
-        // (
-        //     reader.GetInt32(0),
-        //     UserRepository.GetUserById(reader.GetInt32(1)),
-        //     VehicleRepository.GetVehicleById(reader.GetInt32(2)),
-        //     reader.GetDecimal(3),
-        //     reader.GetDateTime(4),
-        //     reader.GetDateTime(5),
-        //     null
-        // );
     }
     
     private static void BindAuctionToCommand(NpgsqlCommand cmd, Auction auction)

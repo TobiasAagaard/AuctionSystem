@@ -8,34 +8,39 @@ public class AuthService
 {
     private const int MinUsernameLength = 3;
     private const int MinPasswordLength = 8;
-    private readonly UserRepository _userRepository = new();
+    private readonly IUserRepository _userRepository;
 
-    public User Register(string username, string password, string postalCode)
+    public AuthService()
+    {
+        _userRepository = new UserRepository(new Database());
+    }
+
+    public async Task<User> Register(string username, string password, string postalCode)
     {
         ValidateUsername(username);
         ValidatePassword(password);
 
 
-        if (_userRepository.GetAllUsers().Any(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)))
+        if ((await _userRepository.GetAllUsersAsync()).Any(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)))
         {
             throw new InvalidOperationException($"Username '{username}' is already taken.");
         }
 
-        var success = _userRepository.AddUser(username, password, postalCode);
+        var success = await _userRepository.AddUserAsync(username, password, postalCode);
         if (!success)
         {
             throw new InvalidOperationException("Failed to register user.");
         }
 
-        var user = _userRepository.GetAllUsers().FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase))
+        var user = (await _userRepository.GetAllUsersAsync()).FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase))
                    ?? throw new InvalidOperationException("Failed to retrieve the newly registered user.");
 
         return user;
     }
 
-    public User Authenticate(string username, string password)
+    public async Task<User> Authenticate(string username, string password)
     {
-        var user = _userRepository.GetAllUsers().FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
+        var user = (await _userRepository.GetAllUsersAsync()).FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
         if (user == null || !PasswordHasher.Verify(password, user.PasswordHash))
         {
             throw new InvalidOperationException("Invalid username or password.");
