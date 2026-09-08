@@ -12,6 +12,7 @@ public static class CoreServiceCollectionExtensions
         if (services == null) throw new ArgumentNullException(nameof(services));
         
         services.AddSingleton<IAuctionRepository, AuctionRepository>();
+        services.AddSingleton<IVehicleRepository, VehicleRepository>();
 
         services.AddSingleton<IAuctionService, AuctionService>();
 

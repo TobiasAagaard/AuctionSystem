@@ -11,7 +11,7 @@ public partial class Database
     /// </summary>
     private static readonly IConfiguration _config = new ConfigurationBuilder()
         .SetBasePath(AppContext.BaseDirectory)
-        .AddJsonFile("appsettings.Local.json", optional: false, reloadOnChange: false)
+        .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false)
         .Build();
 
     /// <summary>
@@ -23,8 +23,10 @@ public partial class Database
     {
         string connectionString = _config.GetConnectionString("AuctionDb") ?? "Host=localhost;Username=username;Password=password;Database=default_database";
 
+
         NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-        connection.Open();
+
+        await connection.OpenAsync();
         return connection;
     }
 }
