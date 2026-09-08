@@ -71,7 +71,7 @@ public class VehicleRepository : IVehicleRepository
     }
     public async Task AddVehicleAsync(Vehicle vehicle)
     {
-        
+        throw new NotImplementedException();
     }
 
     public Task UpdateVehicleAsync(Vehicle vehicle)
