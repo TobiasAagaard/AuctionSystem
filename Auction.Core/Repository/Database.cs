@@ -14,8 +14,12 @@ public partial class Database
         .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false)
         .Build();
 
-
-    public async Task<NpgsqlConnection> GetConnection()
+    /// <summary>
+    /// Opens and returns a new NpgsqlConnection using the "AuctionDb" connection
+    /// string read from appsettings.Local.json (ConnectionStrings section). Caller
+    /// owns the connection and is responsible for disposing it (typically via 'using').
+    /// </summary>
+    public NpgsqlConnection GetConnection()
     {
         string connectionString = _config.GetConnectionString("AuctionDb") ?? "Host=localhost;Username=username;Password=password;Database=default_database";
 
