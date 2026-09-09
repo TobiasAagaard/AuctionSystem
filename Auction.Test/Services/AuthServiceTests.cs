@@ -1,53 +1,101 @@
 using Auction_Core.Models;
+using Auction_Core.Repository;
 using Auction_Core.Services;
 using Auction_Core.Utilities;
+using Npgsql;
 
 namespace Auction_Test.Services;
 
-public class AuthServiceTests
+
+public class AuthServiceTests : IAsyncLifetime
 {
-    [Fact]
-    public void Register_ReturnsUserWithHashedPassword()
+    private readonly Database _database = new();
+    private readonly AuthService _service = new();
+    private readonly List<string> _createdUsernames = [];
+
+    // xUnit creates one instance per test case, so this keeps usernames unique across tests and runs.
+    private readonly string _suffix = Guid.NewGuid().ToString("N")[..8];
+
+    private string? _skipReason;
+
+    public async ValueTask InitializeAsync()
     {
-        var service = new AuthService();
+        try
+        {
+            await using NpgsqlConnection connection = await _database.GetConnection();
+        }
+        catch (Exception exception) when (exception is NpgsqlException or System.Net.Sockets.SocketException)
+        {
+            _skipReason = $"No test database reachable ({exception.Message}). " +
+                          "Start it with 'docker compose up -d database' or set AUCTION_TEST_DB.";
+        }
+    }
 
-        User user = service.Register("alice", "Password1", "2200");
+    public async ValueTask DisposeAsync()
+    {
+        if (_skipReason is not null || _createdUsernames.Count == 0)
+        {
+            return;
+        }
 
-        Assert.Equal("alice", user.Username);
+        await using NpgsqlConnection connection = await _database.GetConnection();
+        using NpgsqlCommand cmd = connection.CreateCommand();
+        cmd.CommandText = "DELETE FROM users WHERE username = ANY(@usernames)";
+        cmd.Parameters.AddWithValue("usernames", _createdUsernames.ToArray());
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    private string Unique(string name)
+    {
+        string username = $"{name}-{_suffix}";
+        _createdUsernames.Add(username);
+        return username;
+    }
+
+    [Fact]
+    public async Task Register_ReturnsUserWithHashedPassword()
+    {
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
+        string username = Unique("alice");
+
+        User user = await _service.Register(username, "Password1", "2200");
+
+        Assert.Equal(username, user.Username);
         Assert.Equal("2200", user.PostalCode);
         Assert.NotEqual("Password1", user.PasswordHash);
         Assert.True(PasswordHasher.Verify("Password1", user.PasswordHash));
     }
 
     [Fact]
-    public void Register_AssignsIncrementingIds()
+    public async Task Register_AssignsIncrementingIds()
     {
-        var service = new AuthService();
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        User first = service.Register("alice", "Password1", "2200");
-        User second = service.Register("bob", "Password1", "2200");
+        User first = await _service.Register(Unique("alice"), "Password1", "2200");
+        User second = await _service.Register(Unique("bob"), "Password1", "2200");
 
         Assert.Equal(first.ID + 1, second.ID);
     }
 
     [Fact]
-    public void Register_ThrowsWhenUsernameAlreadyTaken()
+    public async Task Register_ThrowsWhenUsernameAlreadyTaken()
     {
-        var service = new AuthService();
-        service.Register("alice", "Password1", "2200");
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
+        string username = Unique("alice");
+        await _service.Register(username, "Password1", "2200");
 
-        Assert.Throws<InvalidOperationException>(() => service.Register("ALICE", "Password2", "3000"));
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.Register(username.ToUpperInvariant(), "Password2", "3000"));
     }
 
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("ab")]
-    public void Register_ThrowsForInvalidUsername(string username)
+    public async Task Register_ThrowsForInvalidUsername(string username)
     {
-        var service = new AuthService();
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        Assert.Throws<ArgumentException>(() => service.Register(username, "Password1", "2200"));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.Register(username, "Password1", "2200"));
     }
 
     [Theory]
@@ -56,60 +104,64 @@ public class AuthServiceTests
     [InlineData("short1")]
     [InlineData("nodigitspassword")]
     [InlineData("12345678")]
-    public void Register_ThrowsForInvalidPassword(string password)
+    public async Task Register_ThrowsForInvalidPassword(string password)
     {
-        var service = new AuthService();
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        Assert.Throws<ArgumentException>(() => service.Register("alice", password, "2200"));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.Register(Unique("alice"), password, "2200"));
     }
 
     [Fact]
-    public void Authenticate_ReturnsUserForValidCredentials()
+    public async Task Authenticate_ReturnsUserForValidCredentials()
     {
-        var service = new AuthService();
-        User registered = service.Register("alice", "Password1", "2200");
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
+        string username = Unique("alice");
+        User registered = await _service.Register(username, "Password1", "2200");
 
-        User authenticated = service.Authenticate("alice", "Password1");
+        User authenticated = await _service.Authenticate(username, "Password1");
 
         Assert.Equal(registered.ID, authenticated.ID);
     }
 
     [Fact]
-    public void Authenticate_IsCaseInsensitiveForUsername()
+    public async Task Authenticate_IsCaseInsensitiveForUsername()
     {
-        var service = new AuthService();
-        service.Register("alice", "Password1", "2200");
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
+        string username = Unique("alice");
+        await _service.Register(username, "Password1", "2200");
 
-        User authenticated = service.Authenticate("ALICE", "Password1");
+        User authenticated = await _service.Authenticate(username.ToUpperInvariant(), "Password1");
 
-        Assert.Equal("alice", authenticated.Username);
+        Assert.Equal(username, authenticated.Username);
     }
 
     [Fact]
-    public void Authenticate_ThrowsForUnknownUsername()
+    public async Task Authenticate_ThrowsForUnknownUsername()
     {
-        var service = new AuthService();
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        Assert.Throws<InvalidOperationException>(() => service.Authenticate("nobody", "Password1"));
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.Authenticate($"nobody-{_suffix}", "Password1"));
     }
 
     [Fact]
-    public void Authenticate_ThrowsForWrongPassword()
+    public async Task Authenticate_ThrowsForWrongPassword()
     {
-        var service = new AuthService();
-        service.Register("alice", "Password1", "2200");
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
+        string username = Unique("alice");
+        await _service.Register(username, "Password1", "2200");
 
-        Assert.Throws<InvalidOperationException>(() => service.Authenticate("alice", "WrongPassword1"));
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.Authenticate(username, "WrongPassword1"));
     }
 
     [Fact]
-    public void RegisterThenAuthenticate_RoundTripsSuccessfully()
+    public async Task RegisterThenAuthenticate_RoundTripsSuccessfully()
     {
-        var service = new AuthService();
-        service.Register("regression-user", "Password1", "2200");
+        Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
+        string username = Unique("regression-user");
+        await _service.Register(username, "Password1", "2200");
 
-        User user = service.Authenticate("regression-user", "Password1");
+        User user = await _service.Authenticate(username, "Password1");
 
-        Assert.Equal("regression-user", user.Username);
+        Assert.Equal(username, user.Username);
     }
 }
