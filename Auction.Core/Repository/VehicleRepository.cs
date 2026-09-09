@@ -60,9 +60,71 @@ public class VehicleRepository : IVehicleRepository
         return MapVehicle(reader);
     }
 
-    public Task AddVehicleAsync(Vehicle vehicle)
+    public async Task AddVehicleAsync(Vehicle vehicle)
     {
-        throw new NotImplementedException();
+        await using var connection = await _database.GetConnection();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using var command = new NpgsqlCommand("""
+            INSERT INTO vehicles (name, release_year, registration_number, base_price, tow_bar, engine_size, kilometers, km_per_liter, fuel_type, licence_type)
+            VALUES (@name, @release_year, @registration_number, @base_price, @tow_bar, @engine_size, @kilometers, @km_per_liter,
+                    CAST(@fuel_type AS FuelType), CAST(@licence_type AS LicenceType))
+            RETURNING id;
+        """, connection, transaction);
+
+        command.Parameters.AddWithValue("@name", vehicle.Name);
+        command.Parameters.AddWithValue("@release_year", vehicle.Year);
+        command.Parameters.AddWithValue("@registration_number", vehicle.RegistrationNumber);
+        command.Parameters.AddWithValue("@base_price", (decimal)vehicle.BasePrice);
+        command.Parameters.AddWithValue("@tow_bar", vehicle.TowBar);
+        command.Parameters.AddWithValue("@engine_size", vehicle.EngineSize);
+        command.Parameters.AddWithValue("@kilometers", vehicle.Kilometers);
+        command.Parameters.AddWithValue("@km_per_liter", vehicle.KmPerLiter);
+        command.Parameters.AddWithValue("@fuel_type", vehicle.FuelType.ToString());
+        command.Parameters.AddWithValue("@licence_type", vehicle.LicenseType.ToString());
+
+        int vehicleId = Convert.ToInt32(await command.ExecuteScalarAsync());
+
+            if (vehicle is SemiTruck semiTruck)
+            {
+                int semiTruckId = await InsertHeavyVehicleAsync(connection, transaction, vehicleId, semiTruck);
+                await ExecuteAsync(connection, transaction,
+                    "INSERT INTO semi_trucks (heavy_vehicle_id, cargo_capacity) VALUES (@id, @cargo_capacity)",
+                    ("@id", semiTruckId), ("@cargo_capacity", semiTruck.MaxLoad));
+            }
+            if (vehicle is Bus bus)
+            {
+                int busId = await InsertHeavyVehicleAsync(connection, transaction, vehicleId, bus);
+                await ExecuteAsync(connection, transaction,
+                    "INSERT INTO buses (heavy_vehicle_id, seat_count, bed_count, toilet) VALUES (@id, @seat_count, @bed_count, @toilet)",
+                    ("@id", busId), ("@seat_count", bus.Seats), ("@bed_count", bus.SleepingPlaces), ("@toilet", bus.HasToilet));
+            }
+            if (vehicle is BusinessPersonalCar businessCar)
+            {
+                int businessCarId = await InsertPersonalCarAsync(connection, transaction, vehicleId, businessCar);
+                await ExecuteAsync(connection, transaction,
+                    "INSERT INTO business_personal_cars (car_id, cargo_capacity, roll_cage) VALUES (@id, @cargo_capacity, @roll_cage)",
+                    ("@id", businessCarId), ("@cargo_capacity", businessCar.CargoCapacity), ("@roll_cage", businessCar.RollCage));
+            }
+            if (vehicle is PrivatePersonalCar privateCar)
+            {
+                int privateCarId = await InsertPersonalCarAsync(connection, transaction, vehicleId, privateCar);
+                await ExecuteAsync(connection, transaction,
+                    "INSERT INTO private_personal_cars (car_id, isofix) VALUES (@id, @isofix)",
+                    ("@id", privateCarId), ("@isofix", privateCar.Isofix));
+            }
+
+
+            if (vehicle is null)
+            {
+                throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
+            }
+
+            if (vehicle is not SemiTruck and not Bus and not BusinessPersonalCar and not PrivatePersonalCar)
+            {
+                throw new ArgumentException($"Unsupported vehicle type: {vehicle.GetType().Name}", nameof(vehicle));
+            }
+
+        await transaction.CommitAsync();
     }
 
     public Task UpdateVehicleAsync(Vehicle vehicle)
@@ -174,5 +236,47 @@ public class VehicleRepository : IVehicleRepository
             row.TowBar, row.EngineSize, row.KmPerLiter, row.FuelType,
             seatCount: reader.GetInt32(reader.GetOrdinal("car_seat_count")),
             isofix: reader.GetBoolean(reader.GetOrdinal("isofix")));
+    }
+
+
+    private static async Task<int> InsertHeavyVehicleAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, int vehicleId, HeavyVehicle vehicle)
+    {
+        const string sql = """
+            INSERT INTO heavy_vehicles (vehicle_id, weight, height, length)
+            VALUES (@vehicle_id, @weight, @height, @length)
+            RETURNING id
+            """;
+
+        await using var command = new NpgsqlCommand(sql, connection, transaction);
+        command.Parameters.AddWithValue("@vehicle_id", vehicleId);
+        command.Parameters.AddWithValue("@weight", vehicle.Weight);
+        command.Parameters.AddWithValue("@height", vehicle.Height);
+        command.Parameters.AddWithValue("@length", vehicle.Length);
+        return Convert.ToInt32(await command.ExecuteScalarAsync());
+    }
+
+    private static async Task<int> InsertPersonalCarAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, int vehicleId, PersonalCar car)
+    {
+        const string sql = """
+            INSERT INTO personal_cars (seat_count, vehicle_id)
+            VALUES (@seat_count, @vehicle_id)
+            RETURNING id
+            """;
+
+        await using var command = new NpgsqlCommand(sql, connection, transaction);
+        command.Parameters.AddWithValue("@seat_count", car.SeatCount);
+        command.Parameters.AddWithValue("@vehicle_id", vehicleId);
+        return Convert.ToInt32(await command.ExecuteScalarAsync());
+    }
+
+    private static async Task ExecuteAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, string sql, params (string Name, object Value)[] parameters)
+    {
+        await using var command = new NpgsqlCommand(sql, connection, transaction);
+        foreach ((string name, object value) in parameters)
+        {
+            command.Parameters.AddWithValue(name, value);
+        }
+
+        await command.ExecuteNonQueryAsync();
     }
 }
