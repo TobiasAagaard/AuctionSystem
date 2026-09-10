@@ -60,7 +60,7 @@ public class VehicleRepository : IVehicleRepository
             LEFT JOIN business_personal_cars bpc ON pc.id = bpc.car_id
             LEFT JOIN private_personal_cars ppc ON pc.id = ppc.car_id
             WHERE v.id = @id;
-            """);
+            """, connection);
         command.CommandType = System.Data.CommandType.Text;
         command.Parameters.AddWithValue("@id", id);
 
@@ -140,7 +140,7 @@ public class VehicleRepository : IVehicleRepository
         {
             throw new InvalidOperationException($"Unsupported vehicle type: {vehicle.GetType().Name}");
         }
-        
+
         AddSharedParameters(command, vehicle);
         AddSubTypeParameters(command, vehicle);
 
@@ -226,6 +226,7 @@ public class VehicleRepository : IVehicleRepository
         double EngineSize,
         double KmPerLiter,
         FuelType FuelType);
+
 
     private static Vehicle MapVehicle(DbDataReader reader)
     {
