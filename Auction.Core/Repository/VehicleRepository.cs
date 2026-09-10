@@ -143,7 +143,6 @@ public class VehicleRepository : IVehicleRepository
 
         AddSharedParameters(command, vehicle);
         AddSubTypeParameters(command, vehicle);
-
             object id = await command.ExecuteScalarAsync() ?? throw new InvalidOperationException($"Inserting vehicle '{vehicle.Name}' did not return a generated id.");
             vehicle.Id = Convert.ToInt32(id);
         
@@ -190,8 +189,7 @@ public class VehicleRepository : IVehicleRepository
         }
         else
         {
-            throw new ArgumentException(
-                $"Unsupported vehicle type: {vehicle.GetType().Name}.", nameof(vehicle));
+            throw new ArgumentException($"Unsupported vehicle type: {vehicle.GetType().Name}.", nameof(vehicle));
         }
 
 
