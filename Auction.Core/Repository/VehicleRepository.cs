@@ -77,7 +77,10 @@ public class VehicleRepository : IVehicleRepository
 
     public async Task AddVehicleAsync(Vehicle vehicle)
     {
-        ArgumentNullException.ThrowIfNull(vehicle);
+        if (vehicle is null)
+        {
+            throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
+        }
 
         await using var connection = await _database.GetConnection();
         await using var command = new NpgsqlCommand
@@ -92,7 +95,33 @@ public class VehicleRepository : IVehicleRepository
         vehicle.Id = Convert.ToInt32(id);
     }
 
-    private static string BuildSubTypeInsert(NpgsqlCommand command, Vehicle vehicle)
+
+    public async Task UpdateVehicleAsync(Vehicle vehicle)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task DeleteVehicleAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+    
+
+    private readonly record struct VehicleRow(
+        int Id,
+        string Name,
+        double Kilometers,
+        string RegistrationNumber,
+        int Year,
+        double BasePrice,
+        bool TowBar,
+        double EngineSize,
+        double KmPerLiter,
+        FuelType FuelType);
+
+
+
+     private static string BuildSubTypeInsert(NpgsqlCommand command, Vehicle vehicle)
     {
         if (vehicle is SemiTruck semiTruck)
         {
@@ -159,54 +188,6 @@ public class VehicleRepository : IVehicleRepository
 
         throw new InvalidOperationException($"Unsupported vehicle type: {vehicle.GetType().Name}");
     }
-
-    private static void AddSharedParameters(NpgsqlCommand command, Vehicle vehicle)
-    {
-        command.Parameters.AddWithValue("@name", vehicle.Name);
-        command.Parameters.AddWithValue("@kilometers", vehicle.Kilometers);
-        command.Parameters.AddWithValue("@release_year", vehicle.Year);
-        command.Parameters.AddWithValue("@registration_number", vehicle.RegistrationNumber);
-        command.Parameters.AddWithValue("@base_price", (decimal)vehicle.BasePrice);
-        command.Parameters.AddWithValue("@tow_bar", vehicle.TowBar);
-        command.Parameters.AddWithValue("@engine_size", vehicle.EngineSize);
-        command.Parameters.AddWithValue("@km_per_liter", vehicle.KmPerLiter);
-
-        command.Parameters.AddWithValue("@fuel_type", vehicle.FuelType.ToString());
-    }
-
-    private static void AddHeavyVehicleParameters(NpgsqlCommand command, HeavyVehicle vehicle)
-    {
-        command.Parameters.AddWithValue("@weight", vehicle.Weight);
-        command.Parameters.AddWithValue("@height", vehicle.Height);
-        command.Parameters.AddWithValue("@length", vehicle.Length);
-    }
-
-    public Task UpdateVehicleAsync(Vehicle vehicle)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task DeleteVehicleAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-    
-
-    private readonly record struct VehicleRow(
-        int Id,
-        string Name,
-        double Kilometers,
-        string RegistrationNumber,
-        int Year,
-        double BasePrice,
-        bool TowBar,
-        double EngineSize,
-        double KmPerLiter,
-        FuelType FuelType);
-
-
-
-
     private static Vehicle MapVehicle(DbDataReader reader)
     {
         VehicleRow row = ReadSharedColumns(reader);
@@ -248,6 +229,27 @@ public class VehicleRepository : IVehicleRepository
             EngineSize: reader.ReadDouble("engine_size"),
             KmPerLiter: reader.HasValue("km_per_liter") ? reader.ReadDouble("km_per_liter") : 0,
             FuelType: Enum.Parse<FuelType>(reader.GetString(reader.GetOrdinal("fuel_type")), true));
+    }
+
+    private static void AddSharedParameters(NpgsqlCommand command, Vehicle vehicle)
+    {
+        command.Parameters.AddWithValue("@name", vehicle.Name);
+        command.Parameters.AddWithValue("@kilometers", vehicle.Kilometers);
+        command.Parameters.AddWithValue("@release_year", vehicle.Year);
+        command.Parameters.AddWithValue("@registration_number", vehicle.RegistrationNumber);
+        command.Parameters.AddWithValue("@base_price", (decimal)vehicle.BasePrice);
+        command.Parameters.AddWithValue("@tow_bar", vehicle.TowBar);
+        command.Parameters.AddWithValue("@engine_size", vehicle.EngineSize);
+        command.Parameters.AddWithValue("@km_per_liter", vehicle.KmPerLiter);
+
+        command.Parameters.AddWithValue("@fuel_type", vehicle.FuelType.ToString());
+    }
+
+    private static void AddHeavyVehicleParameters(NpgsqlCommand command, HeavyVehicle vehicle)
+    {
+        command.Parameters.AddWithValue("@weight", vehicle.Weight);
+        command.Parameters.AddWithValue("@height", vehicle.Height);
+        command.Parameters.AddWithValue("@length", vehicle.Length);
     }
 
     private static SemiTruck MapSemiTruck(DbDataReader reader, VehicleRow row)
