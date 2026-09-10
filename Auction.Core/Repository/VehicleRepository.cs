@@ -99,7 +99,7 @@ public class VehicleRepository : IVehicleRepository
                 SELECT id FROM new_vehicle
             """;
         }
-        if (vehicle is Bus)
+        else if (vehicle is Bus)
         {
             command.CommandText = $"""
                 {InsertVehicleCte},
@@ -111,7 +111,7 @@ public class VehicleRepository : IVehicleRepository
                 SELECT id FROM new_vehicle
             """;
         }
-        if (vehicle is BusinessPersonalCar)
+        else if (vehicle is BusinessPersonalCar)
         {
             command.CommandText = $"""
                 {InsertVehicleCte},
@@ -124,7 +124,7 @@ public class VehicleRepository : IVehicleRepository
             """;
         }
 
-        if (vehicle is PrivatePersonalCar)
+        else if (vehicle is PrivatePersonalCar)
         {
             command.CommandText = $"""
                 {InsertVehicleCte},
@@ -136,6 +136,11 @@ public class VehicleRepository : IVehicleRepository
                 SELECT id FROM new_vehicle
             """;
         }
+        else
+        {
+            throw new InvalidOperationException($"Unsupported vehicle type: {vehicle.GetType().Name}");
+        }
+        
         AddSharedParameters(command, vehicle);
         AddSubTypeParameters(command, vehicle);
 
