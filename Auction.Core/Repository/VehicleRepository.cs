@@ -14,40 +14,54 @@ public class VehicleRepository : IVehicleRepository
         _database = database;
     }
 
-    private const string SelectVehicleSql = """
-        SELECT  v.id, v.name, v.release_year, v.registration_number, v.base_price, v.tow_bar, v.engine_size,
-                v.kilometers, v.km_per_liter, v.fuel_type, v.licence_type,
-
-                hv.weight, hv.height, hv.length,
-
-                st.cargo_capacity AS truck_cargo_capacity,
-
-                b.seat_count AS bus_seat_count, b.bed_count, b.toilet,
-
-                pc.seat_count AS car_seat_count,
-
-                bpc.cargo_capacity AS business_cargo_capacity, bpc.roll_cage,
-
-                ppc.isofix
-
-        FROM vehicles v
-        LEFT JOIN heavy_vehicles hv ON v.id = hv.vehicle_id
-        LEFT JOIN semi_trucks st ON hv.id = st.heavy_vehicle_id
-        LEFT JOIN buses b ON hv.id = b.heavy_vehicle_id
-        LEFT JOIN personal_cars pc ON v.id = pc.vehicle_id
-        LEFT JOIN business_personal_cars bpc ON pc.id = bpc.car_id
-        LEFT JOIN private_personal_cars ppc ON pc.id = ppc.car_id
+        private const string InsertVehicleCte = """
+        WITH new_vehicle AS (
+            INSERT INTO vehicles (name, kilometers, release_year, registration_number, base_price,
+                                  tow_bar, engine_size, km_per_liter, fuel_type)
+            VALUES (@name, @kilometers, @release_year, @registration_number, @base_price,
+                    @tow_bar, @engine_size, @km_per_liter, @fuel_type::FuelType)
+            RETURNING id
+        )
         """;
 
-    private const string SelectVehicleByIdSql = $"""
-        {SelectVehicleSql}
-        WHERE v.id = @id
+    private const string InsertHeavyVehicleCte = """
+        new_heavy_vehicle AS (
+            INSERT INTO heavy_vehicles (vehicle_id, weight, height, length)
+            VALUES ((SELECT id FROM new_vehicle), @weight, @height, @length)
+            RETURNING id
+        )
+        """;
+
+    private const string InsertPersonalCarCte = """
+        new_personal_car AS (
+            INSERT INTO personal_cars (vehicle_id, seat_count)
+            VALUES ((SELECT id FROM new_vehicle), @seat_count)
+            RETURNING id
+        )
         """;
 
     public async Task<Vehicle> GetVehicleByIdAsync(int id)
     {
         await using var connection = await _database.GetConnection();
-        await using var command = new NpgsqlCommand(SelectVehicleByIdSql, connection);
+        await using var command = new NpgsqlCommand("""
+             SELECT  v.id, v.name, v.release_year, v.registration_number, v.base_price, v.tow_bar, v.engine_size,
+                v.kilometers, v.km_per_liter, v.fuel_type,
+                hv.weight, hv.height, hv.length,
+                st.cargo_capacity AS truck_cargo_capacity,
+                b.seat_count AS bus_seat_count, b.bed_count, b.toilet,
+                pc.seat_count AS car_seat_count,
+                bpc.cargo_capacity AS business_cargo_capacity, bpc.roll_cage,
+                ppc.isofix
+            FROM vehicles v
+            LEFT JOIN heavy_vehicles hv ON v.id = hv.vehicle_id
+            LEFT JOIN semi_trucks st ON hv.id = st.heavy_vehicle_id
+            LEFT JOIN buses b ON hv.id = b.heavy_vehicle_id
+            LEFT JOIN personal_cars pc ON v.id = pc.vehicle_id
+            LEFT JOIN business_personal_cars bpc ON pc.id = bpc.car_id
+            LEFT JOIN private_personal_cars ppc ON pc.id = ppc.car_id
+            WHERE v.id = @id;
+            """);
+        command.CommandType = System.Data.CommandType.Text;
         command.Parameters.AddWithValue("@id", id);
 
         await using var reader = await command.ExecuteReaderAsync();
@@ -62,69 +76,127 @@ public class VehicleRepository : IVehicleRepository
 
     public async Task AddVehicleAsync(Vehicle vehicle)
     {
-        await using var connection = await _database.GetConnection();
-        await using var transaction = await connection.BeginTransactionAsync();
-        await using var command = new NpgsqlCommand("""
-            INSERT INTO vehicles (name, release_year, registration_number, base_price, tow_bar, engine_size, kilometers, km_per_liter, fuel_type, licence_type)
-            VALUES (@name, @release_year, @registration_number, @base_price, @tow_bar, @engine_size, @kilometers, @km_per_liter,
-                    CAST(@fuel_type AS FuelType), CAST(@licence_type AS LicenceType))
-            RETURNING id;
-        """, connection, transaction);
+        if (vehicle == null)
+        {
+            throw new ArgumentNullException(nameof(vehicle));
+        }
 
+        await using var connection = await _database.GetConnection();
+        await using var command = new NpgsqlCommand
+        {
+            Connection = connection
+        };
+
+        if (vehicle is SemiTruck)
+        {
+            command.CommandText = $"""
+                {InsertVehicleCte},
+                {InsertHeavyVehicleCte},
+                new_semi_truck AS (
+                INSERT INTO semi_trucks (heavy_vehicle_id, cargo_capacity)
+                VALUES ((SELECT id FROM new_heavy_vehicle), @cargo_capacity)
+                )
+                SELECT id FROM new_vehicle
+            """;
+        }
+        if (vehicle is Bus)
+        {
+            command.CommandText = $"""
+                {InsertVehicleCte},
+                {InsertHeavyVehicleCte},
+                new_bus AS (
+                    INSERT INTO buses (heavy_vehicle_id, seat_count, bed_count, toilet)
+                    VALUES ((SELECT id FROM new_heavy_vehicle), @seat_count, @bed_count, @toilet)
+                ) 
+                SELECT id FROM new_vehicle
+            """;
+        }
+        if (vehicle is BusinessPersonalCar)
+        {
+            command.CommandText = $"""
+                {InsertVehicleCte},
+                {InsertPersonalCarCte},
+                new_business_personal_car AS (
+                    INSERT INTO business_personal_cars (car_id, cargo_capacity, roll_cage)
+                    VALUES ((SELECT id FROM new_personal_car), @cargo_capacity, @roll_cage)
+                )
+                SELECT id FROM new_vehicle
+            """;
+        }
+
+        if (vehicle is PrivatePersonalCar)
+        {
+            command.CommandText = $"""
+                {InsertVehicleCte},
+                {InsertPersonalCarCte},
+                new_private_personal_car AS (
+                    INSERT INTO private_personal_cars(car_id, isofix)
+                    VALUES ((SELECT id FROM new_personal_car), @isofix)
+                )
+                SELECT id FROM new_vehicle
+            """;
+        }
+        AddSharedParameters(command, vehicle);
+        AddSubTypeParameters(command, vehicle);
+
+            object id = await command.ExecuteScalarAsync() ?? throw new InvalidOperationException($"Inserting vehicle '{vehicle.Name}' did not return a generated id.");
+            vehicle.Id = Convert.ToInt32(id);
+        
+    }
+
+    private static void AddSharedParameters(NpgsqlCommand command, Vehicle vehicle)
+    {
         command.Parameters.AddWithValue("@name", vehicle.Name);
+        command.Parameters.AddWithValue("@kilometers", vehicle.Kilometers);
         command.Parameters.AddWithValue("@release_year", vehicle.Year);
         command.Parameters.AddWithValue("@registration_number", vehicle.RegistrationNumber);
         command.Parameters.AddWithValue("@base_price", (decimal)vehicle.BasePrice);
         command.Parameters.AddWithValue("@tow_bar", vehicle.TowBar);
         command.Parameters.AddWithValue("@engine_size", vehicle.EngineSize);
-        command.Parameters.AddWithValue("@kilometers", vehicle.Kilometers);
         command.Parameters.AddWithValue("@km_per_liter", vehicle.KmPerLiter);
+
         command.Parameters.AddWithValue("@fuel_type", vehicle.FuelType.ToString());
-        command.Parameters.AddWithValue("@licence_type", vehicle.LicenseType.ToString());
+    }
 
-        int vehicleId = Convert.ToInt32(await command.ExecuteScalarAsync());
+    private static void AddSubTypeParameters(NpgsqlCommand command, Vehicle vehicle)
+    {
+        if (vehicle is SemiTruck semiTruck)
+        {
+            AddHeavyVehicleParameters(command, semiTruck);
+            command.Parameters.AddWithValue("@cargo_capacity", semiTruck.MaxLoad);
+        }
+        if (vehicle is Bus bus)
+        {
+            AddHeavyVehicleParameters(command, bus);
+            command.Parameters.AddWithValue("@seat_count", bus.Seats);
+            command.Parameters.AddWithValue("@bed_count", bus.SleepingPlaces);
+            command.Parameters.AddWithValue("@toilet", bus.HasToilet);
+        }
+        if (vehicle is BusinessPersonalCar businessPersonalCar)
+        {
+            command.Parameters.AddWithValue("@seat_count", businessPersonalCar.SeatCount);
+            command.Parameters.AddWithValue("@cargo_capacity", businessPersonalCar.CargoCapacity);
+            command.Parameters.AddWithValue("@roll_cage", businessPersonalCar.RollCage);
+        }
+        if (vehicle is PrivatePersonalCar privatePersonalCar)
+        {
+            command.Parameters.AddWithValue("@seat_count", privatePersonalCar.SeatCount);
+            command.Parameters.AddWithValue("@isofix", privatePersonalCar.Isofix);
+        }
+        if (!(vehicle is SemiTruck) && !(vehicle is Bus) && !(vehicle is BusinessPersonalCar) && !(vehicle is PrivatePersonalCar))
+        {
+            throw new ArgumentException(
+                $"Unsupported vehicle type: {vehicle.GetType().Name}.", nameof(vehicle));
+        }
 
-            if (vehicle is SemiTruck semiTruck)
-            {
-                int semiTruckId = await InsertHeavyVehicleAsync(connection, transaction, vehicleId, semiTruck);
-                await ExecuteAsync(connection, transaction,
-                    "INSERT INTO semi_trucks (heavy_vehicle_id, cargo_capacity) VALUES (@id, @cargo_capacity)",
-                    ("@id", semiTruckId), ("@cargo_capacity", semiTruck.MaxLoad));
-            }
-            if (vehicle is Bus bus)
-            {
-                int busId = await InsertHeavyVehicleAsync(connection, transaction, vehicleId, bus);
-                await ExecuteAsync(connection, transaction,
-                    "INSERT INTO buses (heavy_vehicle_id, seat_count, bed_count, toilet) VALUES (@id, @seat_count, @bed_count, @toilet)",
-                    ("@id", busId), ("@seat_count", bus.Seats), ("@bed_count", bus.SleepingPlaces), ("@toilet", bus.HasToilet));
-            }
-            if (vehicle is BusinessPersonalCar businessCar)
-            {
-                int businessCarId = await InsertPersonalCarAsync(connection, transaction, vehicleId, businessCar);
-                await ExecuteAsync(connection, transaction,
-                    "INSERT INTO business_personal_cars (car_id, cargo_capacity, roll_cage) VALUES (@id, @cargo_capacity, @roll_cage)",
-                    ("@id", businessCarId), ("@cargo_capacity", businessCar.CargoCapacity), ("@roll_cage", businessCar.RollCage));
-            }
-            if (vehicle is PrivatePersonalCar privateCar)
-            {
-                int privateCarId = await InsertPersonalCarAsync(connection, transaction, vehicleId, privateCar);
-                await ExecuteAsync(connection, transaction,
-                    "INSERT INTO private_personal_cars (car_id, isofix) VALUES (@id, @isofix)",
-                    ("@id", privateCarId), ("@isofix", privateCar.Isofix));
-            }
 
+    }
 
-            if (vehicle is null)
-            {
-                throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
-            }
-
-            if (vehicle is not SemiTruck and not Bus and not BusinessPersonalCar and not PrivatePersonalCar)
-            {
-                throw new ArgumentException($"Unsupported vehicle type: {vehicle.GetType().Name}", nameof(vehicle));
-            }
-
-        await transaction.CommitAsync();
+    private static void AddHeavyVehicleParameters(NpgsqlCommand command, HeavyVehicle vehicle)
+    {
+        command.Parameters.AddWithValue("@weight", vehicle.Weight);
+        command.Parameters.AddWithValue("@height", vehicle.Height);
+        command.Parameters.AddWithValue("@length", vehicle.Length);
     }
 
     public Task UpdateVehicleAsync(Vehicle vehicle)
@@ -148,8 +220,7 @@ public class VehicleRepository : IVehicleRepository
         bool TowBar,
         double EngineSize,
         double KmPerLiter,
-        FuelType FuelType,
-        LicenseType LicenseType);
+        FuelType FuelType);
 
     private static Vehicle MapVehicle(DbDataReader reader)
     {
@@ -191,8 +262,7 @@ public class VehicleRepository : IVehicleRepository
             TowBar: reader.GetBoolean(reader.GetOrdinal("tow_bar")),
             EngineSize: Convert.ToDouble(reader.GetValue(reader.GetOrdinal("engine_size"))),
             KmPerLiter: reader.IsDBNull(reader.GetOrdinal("km_per_liter")) ? 0 : Convert.ToDouble(reader.GetValue(reader.GetOrdinal("km_per_liter"))),
-            FuelType: Enum.Parse<FuelType>(reader.GetString(reader.GetOrdinal("fuel_type")), true),
-            LicenseType: Enum.Parse<LicenseType>(reader.GetString(reader.GetOrdinal("licence_type")), true));
+            FuelType: Enum.Parse<FuelType>(reader.GetString(reader.GetOrdinal("fuel_type")), true));
     }
 
     private static SemiTruck MapSemiTruck(DbDataReader reader, VehicleRow row)
@@ -238,45 +308,4 @@ public class VehicleRepository : IVehicleRepository
             isofix: reader.GetBoolean(reader.GetOrdinal("isofix")));
     }
 
-
-    private static async Task<int> InsertHeavyVehicleAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, int vehicleId, HeavyVehicle vehicle)
-    {
-        const string sql = """
-            INSERT INTO heavy_vehicles (vehicle_id, weight, height, length)
-            VALUES (@vehicle_id, @weight, @height, @length)
-            RETURNING id
-            """;
-
-        await using var command = new NpgsqlCommand(sql, connection, transaction);
-        command.Parameters.AddWithValue("@vehicle_id", vehicleId);
-        command.Parameters.AddWithValue("@weight", vehicle.Weight);
-        command.Parameters.AddWithValue("@height", vehicle.Height);
-        command.Parameters.AddWithValue("@length", vehicle.Length);
-        return Convert.ToInt32(await command.ExecuteScalarAsync());
-    }
-
-    private static async Task<int> InsertPersonalCarAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, int vehicleId, PersonalCar car)
-    {
-        const string sql = """
-            INSERT INTO personal_cars (seat_count, vehicle_id)
-            VALUES (@seat_count, @vehicle_id)
-            RETURNING id
-            """;
-
-        await using var command = new NpgsqlCommand(sql, connection, transaction);
-        command.Parameters.AddWithValue("@seat_count", car.SeatCount);
-        command.Parameters.AddWithValue("@vehicle_id", vehicleId);
-        return Convert.ToInt32(await command.ExecuteScalarAsync());
-    }
-
-    private static async Task ExecuteAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, string sql, params (string Name, object Value)[] parameters)
-    {
-        await using var command = new NpgsqlCommand(sql, connection, transaction);
-        foreach ((string name, object value) in parameters)
-        {
-            command.Parameters.AddWithValue(name, value);
-        }
-
-        await command.ExecuteNonQueryAsync();
-    }
 }
