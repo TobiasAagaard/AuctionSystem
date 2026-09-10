@@ -165,25 +165,25 @@ public class VehicleRepository : IVehicleRepository
             AddHeavyVehicleParameters(command, semiTruck);
             command.Parameters.AddWithValue("@cargo_capacity", semiTruck.MaxLoad);
         }
-        if (vehicle is Bus bus)
+        else if (vehicle is Bus bus)
         {
             AddHeavyVehicleParameters(command, bus);
             command.Parameters.AddWithValue("@seat_count", bus.Seats);
             command.Parameters.AddWithValue("@bed_count", bus.SleepingPlaces);
             command.Parameters.AddWithValue("@toilet", bus.HasToilet);
         }
-        if (vehicle is BusinessPersonalCar businessPersonalCar)
+        else if (vehicle is BusinessPersonalCar businessPersonalCar)
         {
             command.Parameters.AddWithValue("@seat_count", businessPersonalCar.SeatCount);
             command.Parameters.AddWithValue("@cargo_capacity", businessPersonalCar.CargoCapacity);
             command.Parameters.AddWithValue("@roll_cage", businessPersonalCar.RollCage);
         }
-        if (vehicle is PrivatePersonalCar privatePersonalCar)
+        else if (vehicle is PrivatePersonalCar privatePersonalCar)
         {
             command.Parameters.AddWithValue("@seat_count", privatePersonalCar.SeatCount);
             command.Parameters.AddWithValue("@isofix", privatePersonalCar.Isofix);
         }
-        if (!(vehicle is SemiTruck) && !(vehicle is Bus) && !(vehicle is BusinessPersonalCar) && !(vehicle is PrivatePersonalCar))
+        else
         {
             throw new ArgumentException(
                 $"Unsupported vehicle type: {vehicle.GetType().Name}.", nameof(vehicle));
