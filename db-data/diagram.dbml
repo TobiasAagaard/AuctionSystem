@@ -113,6 +113,7 @@ Table auctions
     seller int [ref: > users.id]
     vehicles_id int [ref: - vehicles.id]
     minimum_price double [not null]
+    end_time timestamptz [not null]
     created_at timestamptz [default: `CURRENT_TIMESTAMP`]
     updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 }
