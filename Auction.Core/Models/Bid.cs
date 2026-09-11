@@ -2,7 +2,7 @@ namespace Auction_Core.Models;
 
 public class Bid
 {
-    public Bid(int id, IBuyer buyer, Auction auction, decimal amount, DateTime createdAt)
+    public Bid(int id, IBuyer buyer, IAuction auction, decimal amount, DateTime createdAt)
     {
         Id = id;
         Buyer = buyer;
@@ -11,7 +11,7 @@ public class Bid
         CreatedAt = createdAt;
     }
     public int Id { get; set; }
-    public Auction Auction { get; set; }
+    public IAuction Auction { get; set; }
     public IBuyer Buyer { get; set; }
     public decimal Amount { get; set; }
     public DateTime CreatedAt { get; set; }

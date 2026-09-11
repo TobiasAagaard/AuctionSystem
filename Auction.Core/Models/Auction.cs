@@ -2,14 +2,14 @@ using Auction_Core.Repository;
 
 namespace Auction_Core.Models;
 
-public class Auction
+public class Auction : IAuction
 {
-    public Auction(int id, ISeller seller, Vehicle vehicle, decimal minimumPrice, DateTime endTime)
+    public Auction(int id, ISeller seller, IVehicle vehicle, decimal minimumPrice, DateTime endTime)
         : this(id, seller, vehicle, minimumPrice, endTime, DateTime.Now, DateTime.Now, null)
     {
     }
 
-    public Auction(int id, ISeller seller, Vehicle vehicle, decimal minimumPrice, DateTime endTime, DateTime createdAt, DateTime updatedAt, NotificationDelegate? notificationFunction)
+    public Auction(int id, ISeller seller, IVehicle vehicle, decimal minimumPrice, DateTime endTime, DateTime createdAt, DateTime updatedAt, NotificationDelegate? notificationFunction)
     {
         Id = id;
         Vehicle = vehicle;
@@ -22,7 +22,7 @@ public class Auction
     }
 
     public int Id { get; set; }
-    public Vehicle Vehicle { get; set; }
+    public IVehicle Vehicle { get; set; }
     public ISeller Seller { get; set; }
     public decimal MinimumPrice { get; set; }
     public DateTime EndTime { get; set; }
