@@ -54,7 +54,11 @@ public class UserRepository : IUserRepository
         await using NpgsqlConnection connection = await _database.GetConnection();
 
         await using NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = @"SELECT id, username, password_hash, postal_code, balance FROM get_user_by_username(@username)";
+        cmd.CommandText = @"
+            SELECT u.id, u.username, u.password_hash, u.postal_code, u.balance, bc.cvr, bc.credit, pc.cpr
+            FROM get_user_by_username(@username) u
+            LEFT JOIN business_customers bc ON u.id = bc.user_id
+            LEFT JOIN private_customers pc ON u.id = pc.user_id";
 
         cmd.Parameters.AddWithValue("username", username);
 
@@ -88,7 +92,11 @@ public class UserRepository : IUserRepository
         await using NpgsqlConnection connection = await _database.GetConnection();
 
         await using NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = @"SELECT id, username, password_hash, postal_code, balance FROM register_user(@username, @password_hash, @postal_code)";
+        cmd.CommandText = @"
+            SELECT u.id, u.username, u.password_hash, u.postal_code, u.balance, bc.cvr, bc.credit, pc.cpr
+            FROM register_user(@username, @password_hash, @postal_code) u
+            LEFT JOIN business_customers bc ON u.id = bc.user_id
+            LEFT JOIN private_customers pc ON u.id = pc.user_id";
 
         cmd.Parameters.AddWithValue("username", username);
         cmd.Parameters.AddWithValue("password_hash", PasswordHasher.Hash(password));
@@ -215,4 +223,5 @@ public class UserRepository : IUserRepository
             PostalCode: reader.GetString(reader.GetOrdinal("postal_code")),
             Balance: reader.IsDBNull(reader.GetOrdinal("balance")) ? 0 : reader.GetDecimal(reader.GetOrdinal("balance")));
     }
+
 }
