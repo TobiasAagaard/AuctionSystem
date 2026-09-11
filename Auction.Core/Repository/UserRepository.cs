@@ -37,6 +37,24 @@ public class UserRepository : IUserRepository
         throw new InvalidOperationException($"User with ID {id} not found.");
     }
 
+    public async Task<User> GetUserByUsernameAsync(string username)
+    {
+        await using NpgsqlConnection connection = await _database.GetConnection();
+
+        await using NpgsqlCommand cmd = connection.CreateCommand();
+        cmd.CommandText = @"SELECT id, username, password_hash, postal_code, balance FROM get_user_by_username(@username)";
+
+        cmd.Parameters.AddWithValue("username", username);
+
+        await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+        {
+            throw new InvalidOperationException($"User with username '{username}' not found.");
+        }
+
+        return MapUser(reader);
+    }
+
     public async Task<IEnumerable<User>> GetAllUsersAsync() {
 
         using NpgsqlConnection connection = await _database.GetConnection();
