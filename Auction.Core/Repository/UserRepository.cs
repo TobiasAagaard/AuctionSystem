@@ -4,6 +4,8 @@ using Npgsql;
 
 namespace Auction_Core.Repository;
 
+public sealed class UsernameAlreadyExistsException(string username, Exception? inner = null) : Exception($"Username '{username}' is already taken.", inner);
+
 public class UserRepository : IUserRepository 
 {
     private readonly Database _database;
