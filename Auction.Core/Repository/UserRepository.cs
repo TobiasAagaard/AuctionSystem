@@ -77,19 +77,40 @@ public class UserRepository : IUserRepository
         return users;
     }
 
-    public async Task<bool> AddUserAsync(string username, string password, string postalCode) {
+    public async Task<User> AddUserAsync(string username, string password, string postalCode) {
         
-        using NpgsqlConnection connection = await _database.GetConnection();
+        await using NpgsqlConnection connection = await _database.GetConnection();
 
-        using NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = @"INSERT INTO users (username, password_hash, postal_code) VALUES (@username, @password_hash, @postal_code)";
+        await using NpgsqlCommand cmd = connection.CreateCommand();
+        cmd.CommandText = @"SELECT id, username, password_hash, postal_code, balance FROM register_user(@username, @password_hash, @postal_code)";
 
         cmd.Parameters.AddWithValue("username", username);
         cmd.Parameters.AddWithValue("password_hash", PasswordHasher.Hash(password));
         cmd.Parameters.AddWithValue("postal_code", postalCode);
 
-        return await cmd.ExecuteNonQueryAsync() == 1;
+        try
+        {
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            if (!await reader.ReadAsync()) throw new InvalidOperationException("Failed to read the newly added user.");
+
+            return MapUser(reader);
+        }
+        catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            throw new UsernameAlreadyExistsException(username, ex);
+        }
     }
+
+    private static User MapUser(NpgsqlDataReader reader) =>
+        new(
+            reader.GetInt32(reader.GetOrdinal("id")),
+            reader.GetString(reader.GetOrdinal("username")),
+            reader.GetString(reader.GetOrdinal("password_hash")),
+            reader.GetString(reader.GetOrdinal("postal_code"))
+        )
+        {
+            Balance = reader.GetDecimal(reader.GetOrdinal("balance"))
+        };
 
     public bool UpdateUser(User user) {
         throw new NotImplementedException();
