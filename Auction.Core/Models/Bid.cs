@@ -1,6 +1,6 @@
 namespace Auction_Core.Models;
 
-public class Bid
+public class Bid : IBid
 {
     public Bid(int id, IBuyer buyer, IAuction auction, decimal amount, DateTime createdAt)
     {
