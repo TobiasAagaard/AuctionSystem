@@ -10,7 +10,7 @@ namespace Auction_Test.Services;
 public class AuthServiceTests : IAsyncLifetime
 {
     private readonly Database _database = new();
-    private readonly AuthService _service = new();
+    private readonly AuthService _service = new(new UserRepository(new Database()));
     private readonly List<string> _createdUsernames = [];
 
     // xUnit creates one instance per test case, so this keeps usernames unique across tests and runs.
@@ -58,7 +58,7 @@ public class AuthServiceTests : IAsyncLifetime
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
         string username = Unique("alice");
 
-        User user = await _service.Register(username, "Password1", "2200");
+        User user = await _service.RegisterAsync(username, "Password1", "2200");
 
         Assert.Equal(username, user.Username);
         Assert.Equal("2200", user.PostalCode);
@@ -71,8 +71,8 @@ public class AuthServiceTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        User first = await _service.Register(Unique("alice"), "Password1", "2200");
-        User second = await _service.Register(Unique("bob"), "Password1", "2200");
+        User first = await _service.RegisterAsync(Unique("alice"), "Password1", "2200");
+        User second = await _service.RegisterAsync(Unique("bob"), "Password1", "2200");
 
         Assert.Equal(first.ID + 1, second.ID);
     }
@@ -82,9 +82,9 @@ public class AuthServiceTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
         string username = Unique("alice");
-        await _service.Register(username, "Password1", "2200");
+        await _service.RegisterAsync(username, "Password1", "2200");
 
-        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.Register(username.ToUpperInvariant(), "Password2", "3000"));
+        await Assert.ThrowsAsync<UsernameAlreadyExistsException>(async () => await _service.RegisterAsync(username.ToUpperInvariant(), "Password2", "3000"));
     }
 
     [Theory]
@@ -95,7 +95,7 @@ public class AuthServiceTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.Register(username, "Password1", "2200"));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.RegisterAsync(username, "Password1", "2200"));
     }
 
     [Theory]
@@ -108,7 +108,7 @@ public class AuthServiceTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.Register(Unique("alice"), password, "2200"));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.RegisterAsync(Unique("alice"), password, "2200"));
     }
 
     [Fact]
@@ -116,9 +116,9 @@ public class AuthServiceTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
         string username = Unique("alice");
-        User registered = await _service.Register(username, "Password1", "2200");
+        User registered = await _service.RegisterAsync(username, "Password1", "2200");
 
-        User authenticated = await _service.Authenticate(username, "Password1");
+        User authenticated = await _service.AuthenticateAsync(username, "Password1");
 
         Assert.Equal(registered.ID, authenticated.ID);
     }
@@ -128,9 +128,9 @@ public class AuthServiceTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
         string username = Unique("alice");
-        await _service.Register(username, "Password1", "2200");
+        await _service.RegisterAsync(username, "Password1", "2200");
 
-        User authenticated = await _service.Authenticate(username.ToUpperInvariant(), "Password1");
+        User authenticated = await _service.AuthenticateAsync(username.ToUpperInvariant(), "Password1");
 
         Assert.Equal(username, authenticated.Username);
     }
@@ -140,7 +140,7 @@ public class AuthServiceTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.Authenticate($"nobody-{_suffix}", "Password1"));
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.AuthenticateAsync($"nobody-{_suffix}", "Password1"));
     }
 
     [Fact]
@@ -148,9 +148,9 @@ public class AuthServiceTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
         string username = Unique("alice");
-        await _service.Register(username, "Password1", "2200");
+        await _service.RegisterAsync(username, "Password1", "2200");
 
-        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.Authenticate(username, "WrongPassword1"));
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.AuthenticateAsync(username, "WrongPassword1"));
     }
 
     [Fact]
@@ -158,10 +158,26 @@ public class AuthServiceTests : IAsyncLifetime
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
         string username = Unique("regression-user");
-        await _service.Register(username, "Password1", "2200");
+        await _service.RegisterAsync(username, "Password1", "2200");
 
-        User user = await _service.Authenticate(username, "Password1");
+        User user = await _service.AuthenticateAsync(username, "Password1");
 
         Assert.Equal(username, user.Username);
+    }
+
+    [Fact]
+    public async Task Register_OnlyOneSucceedsUnderConcurrency()
+    {
+        string username = Unique("racer");
+
+        var attempts = Enumerable.Range(0, 8)
+            .Select(_ => Task.Run(() => _service.RegisterAsync(username, "Password1", "2200")));
+
+        var results = await Task.WhenAll(attempts.Select(async t =>
+        {
+            try { await t; return true; } catch (UsernameAlreadyExistsException) { return false; }
+        }));
+
+        Assert.Equal(1, results.Count(succeeded => succeeded));
     }
 }
