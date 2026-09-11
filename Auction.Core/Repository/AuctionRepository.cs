@@ -3,7 +3,7 @@ using Npgsql;
 
 namespace Auction_Core.Repository;
 
-public delegate void NotificationDelegate(Auction auction, decimal bid);
+public delegate void NotificationDelegate(IAuction auction, decimal bid);
 
 public class AuctionRepository : IAuctionRepository
 {
@@ -95,7 +95,7 @@ public class AuctionRepository : IAuctionRepository
         return rowsAffected > 0;
     }
 
-    public async Task<bool> UpdateAuctionAsync(Auction auction)
+    public async Task<bool> UpdateAuctionAsync(IAuction auction)
     {
         using NpgsqlConnection connection = await _database.GetConnection();
 
@@ -171,7 +171,7 @@ public class AuctionRepository : IAuctionRepository
     private async Task<Auction> ReadAuctionFromReader(NpgsqlDataReader reader)
     {
         var seller = await _userRepository.GetUserByIdAsync(reader.GetInt32(1));
-        var vehicle = await _vehicleRepository.GetVehicleByIdAsync(reader.GetInt32(2));
+        Vehicle vehicle = await _vehicleRepository.GetVehicleByIdAsync(reader.GetInt32(2));
 
         return new Auction
         (
@@ -186,7 +186,7 @@ public class AuctionRepository : IAuctionRepository
         );
     }
     
-    private static void BindAuctionToCommand(NpgsqlCommand cmd, Auction auction)
+    private static void BindAuctionToCommand(NpgsqlCommand cmd, IAuction auction)
     {
         cmd.Parameters.AddWithValue("id", auction.Id);
         cmd.Parameters.AddWithValue("seller_id", auction.Seller.ID);

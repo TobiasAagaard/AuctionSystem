@@ -2,7 +2,7 @@ using Auction_Core.Enums;
 
 namespace Auction_Core.Models;
 
-public abstract class Vehicle
+public abstract class Vehicle : IVehicle
 {
     protected Vehicle(int id, string name, double kilometers, string registrationNumber, int year, double basePrice, bool towBar, LicenseType licenseType, double engineSize, double kmPerLiter, FuelType fuelType)
     {
