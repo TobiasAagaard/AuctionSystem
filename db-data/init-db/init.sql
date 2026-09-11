@@ -100,6 +100,7 @@ CREATE TABLE auctions (
     seller_id INT NOT NULL REFERENCES users(id),
     vehicle_id INT NOT NULL REFERENCES vehicles(id),
     minimum_price DECIMAL(18, 2) NOT NULL,
+    end_time TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
