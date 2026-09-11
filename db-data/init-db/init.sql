@@ -8,6 +8,9 @@ CREATE TABLE users (
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE UNIQUE INDEX users_username_lower_idx ON users (lower(username));
+
+
 CREATE TABLE business_customers (
     user_id INT PRIMARY KEY REFERENCES users(id),
     cvr VARCHAR(20) NOT NULL,
@@ -108,3 +111,53 @@ CREATE TABLE bids (
     amount DECIMAL(18, 2) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
+
+
+-- D3: user management is exposed to the application as database functions,
+-- so the application never composes its own DML against the users table.
+
+CREATE FUNCTION register_user(p_username VARCHAR, p_password_hash VARCHAR, p_postal_code VARCHAR)
+RETURNS SETOF users
+LANGUAGE sql
+AS $$
+    INSERT INTO users (username, password_hash, postal_code)
+    VALUES (p_username, p_password_hash, p_postal_code)
+    RETURNING *;
+$$;
+
+CREATE FUNCTION get_user_by_username(p_username VARCHAR)
+RETURNS SETOF users
+LANGUAGE sql
+STABLE
+AS $$
+    SELECT * FROM users WHERE lower(username) = lower(p_username);
+$$;
+
+
+-- D3: the application connects as a least-privileged role that owns nothing
+-- and therefore cannot DROP, ALTER or otherwise change the schema.
+
+CREATE ROLE auction_app LOGIN PASSWORD 'auction_app_dev_password';
+
+GRANT USAGE ON SCHEMA public TO auction_app;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON
+    users,
+    business_customers,
+    private_customers,
+    vehicles,
+    heavy_vehicles,
+    semi_trucks,
+    buses,
+    personal_cars,
+    business_personal_cars,
+    private_personal_cars,
+    auctions,
+    bids
+TO auction_app;
+
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO auction_app;
+
+GRANT EXECUTE ON FUNCTION register_user(VARCHAR, VARCHAR, VARCHAR) TO auction_app;
+GRANT EXECUTE ON FUNCTION get_user_by_username(VARCHAR) TO auction_app;
+

@@ -5,6 +5,8 @@ using Npgsql;
 
 namespace Auction_Core.Repository;
 
+public sealed class UsernameAlreadyExistsException(string username, Exception? inner = null) : Exception($"Username '{username}' is already taken.", inner);
+
 public class UserRepository : IUserRepository 
 {
     private readonly Database _database;
@@ -47,6 +49,28 @@ public class UserRepository : IUserRepository
         return MapUser(reader);
     }
 
+    public async Task<User> GetUserByUsernameAsync(string username)
+    {
+        await using NpgsqlConnection connection = await _database.GetConnection();
+
+        await using NpgsqlCommand cmd = connection.CreateCommand();
+        cmd.CommandText = @"
+            SELECT u.id, u.username, u.password_hash, u.postal_code, u.balance, bc.cvr, bc.credit, pc.cpr
+            FROM get_user_by_username(@username) u
+            LEFT JOIN business_customers bc ON u.id = bc.user_id
+            LEFT JOIN private_customers pc ON u.id = pc.user_id";
+
+        cmd.Parameters.AddWithValue("username", username);
+
+        await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+        {
+            throw new InvalidOperationException($"User with username '{username}' not found.");
+        }
+
+        return MapUser(reader);
+    }
+
     public async Task<IEnumerable<User>> GetAllUsersAsync() {
 
         await using NpgsqlConnection connection = await _database.GetConnection();
@@ -63,18 +87,32 @@ public class UserRepository : IUserRepository
         return users;
     }
 
-    public async Task<bool> AddUserAsync(string username, string password, string postalCode) {
+    public async Task<User> AddUserAsync(string username, string password, string postalCode) {
         
-        using NpgsqlConnection connection = await _database.GetConnection();
+        await using NpgsqlConnection connection = await _database.GetConnection();
 
-        using NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = @"INSERT INTO users (username, password_hash, postal_code) VALUES (@username, @password_hash, @postal_code)";
+        await using NpgsqlCommand cmd = connection.CreateCommand();
+        cmd.CommandText = @"
+            SELECT u.id, u.username, u.password_hash, u.postal_code, u.balance, bc.cvr, bc.credit, pc.cpr
+            FROM register_user(@username, @password_hash, @postal_code) u
+            LEFT JOIN business_customers bc ON u.id = bc.user_id
+            LEFT JOIN private_customers pc ON u.id = pc.user_id";
 
         cmd.Parameters.AddWithValue("username", username);
         cmd.Parameters.AddWithValue("password_hash", PasswordHasher.Hash(password));
         cmd.Parameters.AddWithValue("postal_code", postalCode);
 
-        return await cmd.ExecuteNonQueryAsync() == 1;
+        try
+        {
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            if (!await reader.ReadAsync()) throw new InvalidOperationException("Failed to read the newly added user.");
+
+            return MapUser(reader);
+        }
+        catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            throw new UsernameAlreadyExistsException(username, ex);
+        }
     }
 
     public async Task<PrivateCustomer> AddPrivateCustomerAsync(string username, string password, string postalCode, string cpr)
@@ -185,4 +223,5 @@ public class UserRepository : IUserRepository
             PostalCode: reader.GetString(reader.GetOrdinal("postal_code")),
             Balance: reader.IsDBNull(reader.GetOrdinal("balance")) ? 0 : reader.GetDecimal(reader.GetOrdinal("balance")));
     }
+
 }
