@@ -10,10 +10,14 @@ public static class CoreServiceCollectionExtensions
     public static IServiceCollection AddCore(this IServiceCollection services)
     {
         if (services == null) throw new ArgumentNullException(nameof(services));
+
+        services.AddSingleton<Database>();
         
         services.AddSingleton<IAuctionRepository, AuctionRepository>();
         services.AddSingleton<IVehicleRepository, VehicleRepository>();
+        services.AddSingleton<IUserRepository, UserRepository>();
 
+        services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IAuctionService, AuctionService>();
 
         return services;
