@@ -103,7 +103,21 @@ public class VehicleRepository : IVehicleRepository
 
     public async Task DeleteVehicleAsync(int id)
     {
-        throw new NotImplementedException();
+        await using var connection = await _database.GetConnection();
+        await using var command = new NpgsqlCommand
+        {
+            Connection = connection,
+            CommandText = "DELETE FROM vehicles WHERE id = @id"
+        };
+        command.Parameters.AddWithValue("@id", id);
+
+        await command.ExecuteNonQueryAsync();
+        int affectedRows = await command.ExecuteNonQueryAsync();
+        
+        if (affectedRows == 0)
+        {
+            throw new KeyNotFoundException($"Vehicle with ID {id} not found");
+        }
     }
     
 
