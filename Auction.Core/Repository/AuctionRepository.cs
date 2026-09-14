@@ -20,7 +20,7 @@ public class AuctionRepository : IAuctionRepository
 
     // Auction-related methods
 
-    public async Task<int> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime, NotificationDelegate? notificationFunction)
+    public async Task<int> AddAuctionAsync(IVehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime, NotificationDelegate? notificationFunction)
     {
         using NpgsqlConnection connection = await _database.GetConnection();
 
@@ -43,14 +43,14 @@ public class AuctionRepository : IAuctionRepository
         return 0;
     }
 
-    public async Task<int> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime)
+    public async Task<int> AddAuctionAsync(IVehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime)
     {
         return await AddAuctionAsync(vehicle, seller, minimumPrice, endTime, null);
     }
 
-    public async Task<IEnumerable<Auction>> GetAllAuctionsAsync()
+    public async Task<IEnumerable<IAuction>> GetAllAuctionsAsync()
     {
-        IEnumerable<Auction> auctions = new List<Auction>();
+        IEnumerable<IAuction> auctions = new List<IAuction>();
         using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
@@ -63,7 +63,7 @@ public class AuctionRepository : IAuctionRepository
         return auctions;
     }
 
-    public async Task<Auction> GetAuctionByIdAsync(int auctionId)
+    public async Task<IAuction> GetAuctionByIdAsync(int auctionId)
     {
         using NpgsqlConnection connection = await _database.GetConnection();
 
@@ -131,9 +131,9 @@ public class AuctionRepository : IAuctionRepository
         return rowsAffected > 0;
     }
 
-    public async Task<IEnumerable<Bid>> GetBidsByAuctionIdAsync(int auctionId)
+    public async Task<IEnumerable<IBid>> GetBidsByAuctionIdAsync(int auctionId)
     {
-        var bids = new List<Bid>();
+        var bids = new List<IBid>();
 
         using var connection = await _database.GetConnection();
         NpgsqlCommand cmd = connection.CreateCommand();
@@ -149,7 +149,7 @@ public class AuctionRepository : IAuctionRepository
         return bids;
     }
 
-    public async Task<Bid?> GetHighestBidByAuctionIdAsync(int auctionId)
+    public async Task<IBid?> GetHighestBidByAuctionIdAsync(int auctionId)
     {
         using var connection = await _database.GetConnection();
         NpgsqlCommand cmd = connection.CreateCommand();
@@ -168,10 +168,10 @@ public class AuctionRepository : IAuctionRepository
 
     // Helper methods to read Auction and Bid from the database
 
-    private async Task<Auction> ReadAuctionFromReader(NpgsqlDataReader reader)
+    private async Task<IAuction> ReadAuctionFromReader(NpgsqlDataReader reader)
     {
-        var seller = await _userRepository.GetUserByIdAsync(reader.GetInt32(1));
-        Vehicle vehicle = await _vehicleRepository.GetVehicleByIdAsync(reader.GetInt32(2));
+        ISeller seller = await _userRepository.GetUserByIdAsync(reader.GetInt32(1));
+        IVehicle vehicle = await _vehicleRepository.GetVehicleByIdAsync(reader.GetInt32(2));
 
         return new Auction
         (
@@ -196,7 +196,7 @@ public class AuctionRepository : IAuctionRepository
         cmd.Parameters.AddWithValue("updated_at", auction.UpdatedAt);
     }
 
-    private async Task<Bid> ReadBidFromReader(NpgsqlDataReader reader)
+    private async Task<IBid> ReadBidFromReader(NpgsqlDataReader reader)
     {
         var bidder = await _userRepository.GetUserByIdAsync(reader.GetInt32(1));
         var auction = await GetAuctionByIdAsync(reader.GetInt32(2));
