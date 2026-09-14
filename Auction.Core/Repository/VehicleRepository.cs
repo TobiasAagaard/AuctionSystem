@@ -89,7 +89,7 @@ public class VehicleRepository : IVehicleRepository
         };
 
         AddSharedParameters(command, vehicle);
-        command.CommandText = BuildSubTypeInsert(command, vehicle);
+        BuildSubTypeInsert(command, vehicle);
 
         object id = await command.ExecuteScalarAsync() ?? throw new InvalidOperationException($"Inserting vehicle '{vehicle.Name}' did not return a generated id.");
         vehicle.Id = Convert.ToInt32(id);
@@ -123,13 +123,13 @@ public class VehicleRepository : IVehicleRepository
 
 
 
-     private static string BuildSubTypeInsert(NpgsqlCommand command, Vehicle vehicle)
+     private static void BuildSubTypeInsert(NpgsqlCommand command, Vehicle vehicle)
     {
         if (vehicle is SemiTruck semiTruck)
         {
             AddHeavyVehicleParameters(command, semiTruck);
             command.Parameters.AddWithValue("@cargo_capacity", semiTruck.MaxLoad);
-            return $"""
+            command.CommandText =  $"""
                 {InsertVehicle},
                 {InsertHeavyVehicle},
                 new_semi_truck AS (
@@ -146,7 +146,7 @@ public class VehicleRepository : IVehicleRepository
             command.Parameters.AddWithValue("@seat_count", bus.Seats);
             command.Parameters.AddWithValue("@bed_count", bus.SleepingPlaces);
             command.Parameters.AddWithValue("@toilet", bus.HasToilet);
-            return $"""
+            command.CommandText =  $"""
                 {InsertVehicle},
                 {InsertHeavyVehicle},
                 new_bus AS (
@@ -162,7 +162,7 @@ public class VehicleRepository : IVehicleRepository
             command.Parameters.AddWithValue("@seat_count", businessPersonalCar.SeatCount);
             command.Parameters.AddWithValue("@cargo_capacity", businessPersonalCar.CargoCapacity);
             command.Parameters.AddWithValue("@roll_cage", businessPersonalCar.RollCage);
-            return $"""
+            command.CommandText =  $"""
                 {InsertVehicle},
                 {InsertPersonalCar},
                 new_business_personal_car AS (
@@ -177,7 +177,7 @@ public class VehicleRepository : IVehicleRepository
         {
             command.Parameters.AddWithValue("@seat_count", privatePersonalCar.SeatCount);
             command.Parameters.AddWithValue("@isofix", privatePersonalCar.Isofix);
-            return $"""
+            command.CommandText =  $"""
                 {InsertVehicle},
                 {InsertPersonalCar},
                 new_private_personal_car AS (
