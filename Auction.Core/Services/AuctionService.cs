@@ -12,7 +12,7 @@ public class AuctionService : IAuctionService
         _auctionRepository = auctionRepository ?? throw new ArgumentNullException(nameof(auctionRepository), "Auction repository cannot be null.");
     }
 
-    public async Task<int> SetForSale(Vehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime)
+    public async Task<int> SetForSale(IVehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime)
     {
         if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
         if (vehicle == null) throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
@@ -22,7 +22,7 @@ public class AuctionService : IAuctionService
         return await SetForSale(vehicle, seller, minimumPrice, endTime, seller.ReceiveNotificationOfBid);
     }
 
-    public async Task<int> SetForSale(Vehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime, NotificationDelegate notificationFunction)
+    public async Task<int> SetForSale(IVehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime, NotificationDelegate? notificationFunction)
     {
         if (vehicle == null) throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
         if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
