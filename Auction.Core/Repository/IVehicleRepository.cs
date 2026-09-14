@@ -5,7 +5,7 @@ namespace Auction_Core.Repository;
 public interface IVehicleRepository
 {
    Task<Vehicle> GetVehicleByIdAsync(int id);
-   Task AddVehicleAsync(Vehicle vehicle);
+   Task<int> AddVehicleAsync(Vehicle vehicle);
    Task UpdateVehicleAsync(Vehicle vehicle);
    Task DeleteVehicleAsync(int id);
 }

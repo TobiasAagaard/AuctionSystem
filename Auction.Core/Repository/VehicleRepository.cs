@@ -75,7 +75,7 @@ public class VehicleRepository : IVehicleRepository
         return MapVehicle(reader);
     }
 
-    public async Task AddVehicleAsync(Vehicle vehicle)
+    public async Task<int> AddVehicleAsync(Vehicle vehicle)
     {
         if (vehicle is null)
         {
@@ -93,6 +93,8 @@ public class VehicleRepository : IVehicleRepository
 
         object id = await command.ExecuteScalarAsync() ?? throw new InvalidOperationException($"Inserting vehicle '{vehicle.Name}' did not return a generated id.");
         vehicle.Id = Convert.ToInt32(id);
+        
+        return vehicle.Id;
     }
 
 
