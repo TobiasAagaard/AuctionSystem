@@ -111,9 +111,7 @@ public class VehicleRepository : IVehicleRepository
         };
         command.Parameters.AddWithValue("@id", id);
 
-        await command.ExecuteNonQueryAsync();
         int affectedRows = await command.ExecuteNonQueryAsync();
-        
         if (affectedRows == 0)
         {
             throw new KeyNotFoundException($"Vehicle with ID {id} not found");
