@@ -107,9 +107,11 @@ public class VehicleRepository : IVehicleRepository
         await using var command = new NpgsqlCommand
         {
             Connection = connection,
-            CommandText = "DELETE FROM vehicles WHERE id = @id"
         };
+        
         command.Parameters.AddWithValue("@id", id);
+        command.CommandText = "DELETE FROM vehicles WHERE id = @id";
+
 
         int affectedRows = await command.ExecuteNonQueryAsync();
         if (affectedRows == 0)
