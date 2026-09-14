@@ -26,17 +26,20 @@ public class AuctionRepository : IAuctionRepository
 
         NpgsqlCommand cmd = connection.CreateCommand();
         cmd.CommandText = @"INSERT INTO auctions (seller_id, vehicle_id, minimum_price, end_time)
-                            VALUES (@seller_id, @vehicle_id, @minimum_price, @end_time)";
+                            VALUES (@seller_id, @vehicle_id, @minimum_price, @end_time)
+                            RETURNING id";
         
         cmd.Parameters.AddWithValue("seller_id", seller.ID);
         cmd.Parameters.AddWithValue("vehicle_id", vehicle.Id);
         cmd.Parameters.AddWithValue("minimum_price", minimumPrice);
         cmd.Parameters.AddWithValue("end_time", endTime);
         
+        // Execute the command and retrieve the generated auction ID
         object? result = await cmd.ExecuteScalarAsync();
 
         if (result != null && result != DBNull.Value)
         {
+            // Typecast the result to int and return it
             return (int)result;
         }
         
