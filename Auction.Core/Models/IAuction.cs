@@ -1,3 +1,5 @@
+using Auction_Core.Repository;
+
 namespace Auction_Core.Models;
 
 public interface IAuction
@@ -9,4 +11,5 @@ public interface IAuction
     DateTime EndTime { get; }
     DateTime CreatedAt { get; }
     DateTime UpdatedAt { get; }
+    NotificationDelegate? NotificationFunction { get; }
 }
