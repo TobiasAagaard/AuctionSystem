@@ -75,7 +75,7 @@ public class VehicleRepository : IVehicleRepository
         return MapVehicle(reader);
     }
 
-    public async Task AddVehicleAsync(Vehicle vehicle)
+    public async Task<int> AddVehicleAsync(Vehicle vehicle)
     {
         if (vehicle is null)
         {
@@ -83,16 +83,15 @@ public class VehicleRepository : IVehicleRepository
         }
 
         await using var connection = await _database.GetConnection();
-        await using var command = new NpgsqlCommand
-        {
-            Connection = connection
-        };
-
+        await using var command = new NpgsqlCommand{ Connection = connection };
         AddSharedParameters(command, vehicle);
-        command.CommandText = BuildSubTypeInsert(command, vehicle);
+        BuildSubTypeInsert(command, vehicle);
 
         object id = await command.ExecuteScalarAsync() ?? throw new InvalidOperationException($"Inserting vehicle '{vehicle.Name}' did not return a generated id.");
+
         vehicle.Id = Convert.ToInt32(id);
+        
+        return vehicle.Id;
     }
 
 
@@ -121,13 +120,11 @@ public class VehicleRepository : IVehicleRepository
 
 
 
-     private static string BuildSubTypeInsert(NpgsqlCommand command, Vehicle vehicle)
+     private static void BuildSubTypeInsert(NpgsqlCommand command, Vehicle vehicle)
     {
         if (vehicle is SemiTruck semiTruck)
         {
-            AddHeavyVehicleParameters(command, semiTruck);
-            command.Parameters.AddWithValue("@cargo_capacity", semiTruck.MaxLoad);
-            return $"""
+            command.CommandText =  $"""
                 {InsertVehicle},
                 {InsertHeavyVehicle},
                 new_semi_truck AS (
@@ -136,15 +133,16 @@ public class VehicleRepository : IVehicleRepository
                 )
                 SELECT id FROM new_vehicle
                 """;
+
+            AddHeavyVehicleParameters(command, semiTruck);
+            command.Parameters.AddWithValue("@cargo_capacity", semiTruck.MaxLoad);
+
+            return;
         }
 
         if (vehicle is Bus bus)
         {
-            AddHeavyVehicleParameters(command, bus);
-            command.Parameters.AddWithValue("@seat_count", bus.Seats);
-            command.Parameters.AddWithValue("@bed_count", bus.SleepingPlaces);
-            command.Parameters.AddWithValue("@toilet", bus.HasToilet);
-            return $"""
+            command.CommandText =  $"""
                 {InsertVehicle},
                 {InsertHeavyVehicle},
                 new_bus AS (
@@ -153,14 +151,18 @@ public class VehicleRepository : IVehicleRepository
                 )
                 SELECT id FROM new_vehicle
                 """;
+
+            AddHeavyVehicleParameters(command, bus);
+            command.Parameters.AddWithValue("@seat_count", bus.Seats);
+            command.Parameters.AddWithValue("@bed_count", bus.SleepingPlaces);
+            command.Parameters.AddWithValue("@toilet", bus.HasToilet);
+            
+            return;
         }
 
         if (vehicle is BusinessPersonalCar businessPersonalCar)
         {
-            command.Parameters.AddWithValue("@seat_count", businessPersonalCar.SeatCount);
-            command.Parameters.AddWithValue("@cargo_capacity", businessPersonalCar.CargoCapacity);
-            command.Parameters.AddWithValue("@roll_cage", businessPersonalCar.RollCage);
-            return $"""
+            command.CommandText =  $"""
                 {InsertVehicle},
                 {InsertPersonalCar},
                 new_business_personal_car AS (
@@ -169,13 +171,18 @@ public class VehicleRepository : IVehicleRepository
                 )
                 SELECT id FROM new_vehicle
                 """;
+            
+            command.Parameters.AddWithValue("@seat_count", businessPersonalCar.SeatCount);
+            command.Parameters.AddWithValue("@cargo_capacity", businessPersonalCar.CargoCapacity);
+            command.Parameters.AddWithValue("@roll_cage", businessPersonalCar.RollCage);
+
+            return;
         }
 
         if (vehicle is PrivatePersonalCar privatePersonalCar)
         {
-            command.Parameters.AddWithValue("@seat_count", privatePersonalCar.SeatCount);
-            command.Parameters.AddWithValue("@isofix", privatePersonalCar.Isofix);
-            return $"""
+
+            command.CommandText =  $"""
                 {InsertVehicle},
                 {InsertPersonalCar},
                 new_private_personal_car AS (
@@ -184,9 +191,13 @@ public class VehicleRepository : IVehicleRepository
                 )
                 SELECT id FROM new_vehicle
                 """;
+            command.Parameters.AddWithValue("@seat_count", privatePersonalCar.SeatCount);
+            command.Parameters.AddWithValue("@isofix", privatePersonalCar.Isofix);
+
+            return;
         }
 
-        throw new InvalidOperationException($"Unsupported vehicle type: {vehicle.GetType().Name}");
+        throw new InvalidOperationException($"Vehicle type {vehicle.GetType().Name} is not supported.");
     }
     private static Vehicle MapVehicle(DbDataReader reader)
     {
