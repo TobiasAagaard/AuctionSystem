@@ -43,27 +43,29 @@ CREATE TABLE vehicles (
     fuel_type FuelType NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+
 );
 
 CREATE TABLE heavy_vehicles (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    vehicle_id INT REFERENCES vehicles(id),
+    vehicle_id INT REFERENCES vehicles(id) ON DELETE CASCADE,
     weight DOUBLE PRECISION NOT NULL,
     height DOUBLE PRECISION NOT NULL,
     length DOUBLE PRECISION NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+
 );
 
 CREATE TABLE semi_trucks (
-    heavy_vehicle_id INT PRIMARY KEY REFERENCES heavy_vehicles(id),
+    heavy_vehicle_id INT PRIMARY KEY REFERENCES heavy_vehicles(id) ON DELETE CASCADE,
     cargo_capacity DOUBLE PRECISION NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE buses (
-    heavy_vehicle_id INT PRIMARY KEY REFERENCES heavy_vehicles(id),
+    heavy_vehicle_id INT PRIMARY KEY REFERENCES heavy_vehicles(id) ON DELETE CASCADE,
     seat_count INT NOT NULL,
     bed_count INT NOT NULL,
     toilet BOOLEAN NOT NULL,
@@ -77,11 +79,11 @@ CREATE TABLE personal_cars (
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
-    vehicle_id INT NOT NULL REFERENCES vehicles(id)
+    vehicle_id INT NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE
 );
 
 CREATE TABLE business_personal_cars (
-    car_id INT PRIMARY KEY REFERENCES personal_cars(id),
+    car_id INT PRIMARY KEY REFERENCES personal_cars(id) ON DELETE CASCADE,
     cargo_capacity DOUBLE PRECISION NOT NULL,
     roll_cage BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
@@ -89,7 +91,7 @@ CREATE TABLE business_personal_cars (
 );
 
 CREATE TABLE private_personal_cars (
-    car_id INT PRIMARY KEY REFERENCES personal_cars(id),
+    car_id INT PRIMARY KEY REFERENCES personal_cars(id) ON DELETE CASCADE,
     isofix BOOLEAN NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP

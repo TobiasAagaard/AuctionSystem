@@ -102,6 +102,19 @@ public class VehicleRepositoryTests : IAsyncLifetime
         await Assert.ThrowsAsync<ArgumentNullException>(async () => await _vehicleRepository.AddVehicleAsync(null!));
     }
 
+    [Fact]
+    public async Task DeleteVehicleAsync_RemovesVehicleFromDatabase()
+    {
+
+        SkipWhenNoDatabase();
+        await _vehicleRepository.AddVehicleAsync(_vehicle);
+
+        await _vehicleRepository.DeleteVehicleAsync(_vehicle.Id);
+
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _vehicleRepository.GetVehicleByIdAsync(_vehicle.Id));
+
+    }
+
     private void SkipWhenNoDatabase()
     {
         Assert.SkipWhen(_skipReason is not null, _skipReason ?? string.Empty);
