@@ -17,7 +17,7 @@ public class User : ISeller, IBuyer
     public string PostalCode { get; set; }
     public decimal Balance { get; set; } = 0;
 
-    public void ReceiveNotificationOfBid(Auction auction, decimal bid)
+    public void ReceiveNotificationOfBid(IAuction auction, decimal bid)
     {
         throw new System.NotImplementedException();
     }
