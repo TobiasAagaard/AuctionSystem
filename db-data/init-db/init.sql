@@ -163,3 +163,84 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO auction_app;
 GRANT EXECUTE ON FUNCTION register_user(VARCHAR, VARCHAR, VARCHAR) TO auction_app;
 GRANT EXECUTE ON FUNCTION get_user_by_username(VARCHAR) TO auction_app;
 
+
+
+CREATE OR REPLACE FUNCTION add_vehicle(
+    p_name VARCHAR(255),
+    p_kilometers double precision,
+    p_release_year int,
+    p_registration_number VARCHAR(20),
+    p_base_price DECIMAL(18,2),
+    p_tow_bar boolean,
+    p_engine_size double precision,
+    p_km_per_liter double precision,
+    p_fuel_type FuelType
+)
+RETURNS INT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    new_vehicle_id INT;
+BEGIN
+    INSERT INTO vehicles (
+        name, kilometers, release_year, registration_number, base_price,
+        tow_bar, engine_size, km_per_liter, fuel_type
+    )
+    VALUES (
+        p_name, p_kilometers, p_release_year, p_registration_number,
+        p_base_price, p_tow_bar, p_engine_size, p_km_per_liter, p_fuel_type
+    )
+    RETURNING id INTO new_vehicle_id;
+
+    RETURN new_vehicle_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION add_semi_truck(
+    -- Vehicle parameters
+    p_name VARCHAR(255),
+    p_kilometers double precision,
+    p_release_year int,
+    p_registration_number VARCHAR(20),
+    p_base_price DECIMAL(18,2),
+    p_tow_bar boolean,
+    p_engine_size double precision,
+    p_km_per_liter double precision,
+    p_fuel_type FuelType,
+
+    -- Heavy vehicle parameters
+    p_weight double precision,
+    p_height double precision,
+    p_length double precision,
+
+    -- Semi truck parameters
+    p_cargo_capacity double precision
+)
+RETURNS TABLE (
+    vehicle_id INT,
+    heavy_vehicle_id INT,
+    semi_truck_id INT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_now timestamptz := now();
+BEGIN
+    vehicle_id := add_vehicle(
+        p_name, p_kilometers, p_release_year, p_registration_number,
+        p_base_price, p_tow_bar, p_engine_size, p_km_per_liter, p_fuel_type
+    );
+
+    INSERT INTO heavy_vehicles (vehicle_id, weight, height, length, created_at, updated_at)
+    VALUES (vehicle_id, p_weight, p_height, p_length, v_now, v_now)
+    RETURNING id INTO heavy_vehicle_id;
+
+    INSERT INTO semi_trucks (heavy_vehicle_id, cargo_capacity, created_at, updated_at)
+    VALUES (heavy_vehicle_id, p_cargo_capacity, v_now, v_now);
+
+    semi_truck_id := heavy_vehicle_id;
+
+    RETURN QUERY
+    SELECT vehicle_id, heavy_vehicle_id, semi_truck_id;
+END;
+$$;
