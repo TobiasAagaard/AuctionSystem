@@ -14,9 +14,23 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainViewModel />
     </Design.DataContext>
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="Login"  VerticalAlignment="Center" Padding="2 15"/>
+        <TextBox PlaceholderText="Username" Width="200" Margin="0 0 0 20"/>
 
-    <TextBox Text="{Binding Greeting}"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center" />
+        <TextBox PlaceholderText="Password" Width="200" PasswordChar="*" />
+        <StackPanel>
+            <TextBlock Text="Not registered?"/>
+            <TextBlock Text="Create user" />
+        </StackPanel>
+        <Button
+            Content="Login"
+            Background="#5db85d" 
+            Foreground="#eee" 
+            Width="75"
+            Margin="0 10 0 0"
+            HorizontalContentAlignment="Center"
+            HorizontalAlignment="Right"/> 
+    </StackPanel>
 
 </Window>
