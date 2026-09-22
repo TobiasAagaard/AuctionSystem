@@ -7,7 +7,7 @@ namespace Auction.Avalonia.ViewModels;
 public partial class CreateUserViewModel : ViewModelBase
 {
     public Action? BackRequested { get; set; }
-    public Action? CreateUserRequested { get; set; }
+    public Action? CreateUserRequest { get; set; }
 
     [ObservableProperty]
     public partial string Username { get; set; } = string.Empty;
@@ -28,6 +28,6 @@ public partial class CreateUserViewModel : ViewModelBase
     [RelayCommand]
     private void CreateUser() 
     {
-        CreateUserRequested?.Invoke();
+        CreateUserRequest?.Invoke();
     }
 }
