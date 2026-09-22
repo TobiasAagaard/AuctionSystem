@@ -22,7 +22,7 @@ public class AuctionService : IAuctionService
         return await SetForSale(vehicle, seller, minimumPrice, endTime, seller.ReceiveNotificationOfBid);
     }
 
-    public async Task<int> SetForSale(IVehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime, NotificationDelegate? notificationFunction)
+    public async Task<int> SetForSale(IVehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime, NotificationDelegate notificationFunction)
     {
         if (vehicle == null) throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
         if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
@@ -41,6 +41,7 @@ public class AuctionService : IAuctionService
 
         var auction = await _auctionRepository.GetAuctionByIdAsync(auctionId);
         if (auction == null) return false;
+        if (DateTime.UtcNow >= auction.EndTime) return false;
 
         var highestBid = await _auctionRepository.GetHighestBidByAuctionIdAsync(auctionId);
         if (highestBid == null) return false;
@@ -62,7 +63,7 @@ public class AuctionService : IAuctionService
         
 
         var auction = await _auctionRepository.GetAuctionByIdAsync(auctionId) ?? throw new KeyNotFoundException($"Auction with ID {auctionId} not found.");
-        if (!ReferenceEquals(auction.Seller, seller)) return false;
+        if (auction.Seller.ID != seller.ID) return false;
         if (DateTime.UtcNow >= auction.EndTime)
         {
             return false;
@@ -77,8 +78,6 @@ public class AuctionService : IAuctionService
         highestBid.Buyer.Balance -= highestBid.Amount;
         seller.Balance += highestBid.Amount;
 
-        await _auctionRepository.RemoveAuctionAsync(auction.Id);
-
-        return true;
+        return await _auctionRepository.RemoveAuctionAsync(auction.Id);
     }
 }

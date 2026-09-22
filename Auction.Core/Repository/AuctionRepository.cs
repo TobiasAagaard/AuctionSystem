@@ -140,7 +140,7 @@ public class AuctionRepository : IAuctionRepository
 
         using var connection = await _database.GetConnection();
         NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = "SELECT id, buyer_id, auction_id, amount, created_at FROM bids WHERE auction_id = @auctionId";
+        cmd.CommandText = "SELECT id, bidder_id, auction_id, amount, created_at FROM bids WHERE auction_id = @auctionId";
         cmd.Parameters.AddWithValue("@auctionId", auctionId);
 
         using var reader = await cmd.ExecuteReaderAsync();
@@ -156,7 +156,7 @@ public class AuctionRepository : IAuctionRepository
     {
         using var connection = await _database.GetConnection();
         NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = "SELECT id, buyer_id, auction_id, amount, created_at FROM bids WHERE auction_id = @auctionId ORDER BY amount DESC LIMIT 1";
+        cmd.CommandText = "SELECT id, bidder_id, auction_id, amount, created_at FROM bids WHERE auction_id = @auctionId ORDER BY amount DESC LIMIT 1";
         cmd.Parameters.AddWithValue("@auctionId", auctionId);
 
         using var reader = await cmd.ExecuteReaderAsync();
