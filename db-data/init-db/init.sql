@@ -105,7 +105,7 @@ CREATE TABLE auctions (
 
 CREATE TABLE bids (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    auction_id INT NOT NULL REFERENCES auctions(id),
+    auction_id INT NOT NULL REFERENCES auctions(id) ON DELETE CASCADE,
     bidder_id INT NOT NULL REFERENCES users(id),
     amount DECIMAL(18, 2) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
