@@ -9,44 +9,8 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="Auction.Avalonia">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainViewModel />
-    </Design.DataContext>
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
-
-        <TextBlock
-            Text="Login"  
-            VerticalAlignment="Center" 
-            Padding="0 0 0 20" 
-            FontSize="30" 
-            FontWeight="300"/>
-            
-        <TextBox PlaceholderText="Username" Width="250" Margin="0 0 0 20"/>
-
-        <TextBox PlaceholderText="Password" Width="250" PasswordChar="*" />
-
-        <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
-            <TextBlock Text="Not registered?" />
-            <TextBlock 
-                Text="Create user" 
-                Margin="30 0 0 0" 
-                Foreground="Blue" 
-                TextDecorations="Underline" 
-                Cursor="Hand"/>
-
-        </StackPanel>
-        <Button
-            Content="Login"
-            Background="#5db85d" 
-            Foreground="#eee" 
-            Width="75"
-            Margin="0 10 0 0"
-            HorizontalContentAlignment="Center"
-            HorizontalAlignment="Right"
-            Cursor="Hand"
-            /> 
-    </StackPanel>
+    <!-- The ViewLocator (see App.axaml) turns whatever view model is in CurrentPage
+         into its matching view, so swapping CurrentPage swaps the page shown here. -->
+    <ContentControl Content="{Binding CurrentPage}"/>
 
 </Window>
