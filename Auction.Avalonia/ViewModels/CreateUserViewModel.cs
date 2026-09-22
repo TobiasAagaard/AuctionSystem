@@ -15,6 +15,10 @@ public partial class CreateUserViewModel : ViewModelBase
     [ObservableProperty]
     public partial string Password { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial string PasswordAgain {get; set; } = string.Empty;
+
+
     [RelayCommand]
     private void GoBackToLogin()
     {

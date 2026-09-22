@@ -29,12 +29,14 @@
             PlaceholderText="Password" 
             Text="{Binding Password}" 
             Width="250" 
-            Margin="0 0 0 5"/>
+            Margin="0 0 0 5"
+            PasswordChar="*"/>
         <TextBox 
             PlaceholderText="Password again" 
-            Text="{Binding Password}" 
+            Text="{Binding PasswordAgain}"
             Width="250" 
-            Margin="0 0 0 5"/>
+            Margin="0 0 0 5"
+            PasswordChar="*"/>
 
         <StackPanel Orientation="Horizontal" Spacing="30">
             <RadioButton
@@ -49,14 +51,20 @@
             <Button 
             Content="Cancel" 
             Command="{Binding GoBackToLoginCommand}" 
-            Width="100" 
+            BorderBrush="Black"
+            Background="White"
+            Foreground="Black"
+            Width="100"
             HorizontalContentAlignment="Center"
             Cursor="Hand"/>
             
             <Button 
             Content="Create User" 
             Command="{Binding CreateUserCommand}"
-            Width="100" 
+            BorderBrush="Black"
+            Background="#5db85d"
+            Foreground="White"
+            Width="100"
             HorizontalContentAlignment="Center"
             Cursor="Hand"/>
         </StackPanel>
