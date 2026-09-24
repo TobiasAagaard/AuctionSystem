@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Auction.Avalonia.Views.UserProfileWindow"
+        Title="UserProfileWindow">
+  <DockPanel VerticalAlignment="Stretch">
+
+      <Border Padding="20" DockPanel.Dock="Top">
+        
+        <StackPanel Spacing="20" VerticalAlignment="Stretch" Orientation="Vertical">
+          <TextBlock Text="Your profile" FontSize="20" FontWeight="Medium"></TextBlock>
+          <StackPanel Spacing="80">
+            <StackPanel Spacing="8">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Username:" FontSize="14"></TextBlock>
+                <TextBlock Text="KonradSommer" FontSize="14"></TextBlock>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Password:" FontSize="14"></TextBlock>
+                <TextBlock Text="Change Password" FontSize="14"></TextBlock>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Balance:" FontSize="14"></TextBlock>
+                <TextBlock Text="0,-" FontSize="14"></TextBlock>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Your auctions:" FontSize="14"></TextBlock>
+                <TextBlock Text="2" FontSize="14"></TextBlock>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Auctions won:" FontSize="14"></TextBlock>
+                <TextBlock Text="1" FontSize="14"></TextBlock>
+              </StackPanel>
+            </StackPanel>
+          </StackPanel>
+          
+        </StackPanel>
+      </Border>
+    <Border Padding="20" DockPanel.Dock="Bottom">
+      <Button Content="Back"></Button>
+    </Border>
+  </DockPanel>
+</Window>
