@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace Auction.Avalonia.ViewModels;
 
 /// <summary>
-/// The shell view model. It holds whichever page is currently shown in MainWindow
+/// The Core view model. It holds whichever page is currently shown in MainWindow
 /// and handles switching between pages.
 /// </summary>
 public partial class MainViewModel : ViewModelBase
