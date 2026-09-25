@@ -24,7 +24,7 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         services.AddCore();
-        
+
         services.AddTransient<MainViewModel>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<CreateUserViewModel>();
