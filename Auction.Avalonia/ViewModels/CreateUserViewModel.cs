@@ -64,6 +64,7 @@ public partial class CreateUserViewModel : ViewModelBase
             CreateUserRequest?.Invoke();
 
             Notification.Show("User created successfully", ToastViewModel.NotificationType.Success);
+            GoBackToLogin();
         } 
         catch (Exception ex)
         {
@@ -82,25 +83,25 @@ public partial class CreateUserViewModel : ViewModelBase
             string.IsNullOrWhiteSpace(PasswordAgain) ||
             string.IsNullOrWhiteSpace(PostalCode))
         {
-                Notification.Show("All fields are required", ToastViewModel.NotificationType.Error);
+            Notification.Show("All fields are required", ToastViewModel.NotificationType.Error);
             return false;
         }
 
         if (Password != PasswordAgain)
         {
-                Notification.Show("Passwords do not match", ToastViewModel.NotificationType.Error);
+            Notification.Show("Passwords do not match", ToastViewModel.NotificationType.Error);
             return false;
         }
 
-            if (Password.Length < 8)
+        if (Password.Length < 8)
         {
-                Notification.Show("Password must be at least 8 characters long", ToastViewModel.NotificationType.Error);
+            Notification.Show("Password must be at least 8 characters long", ToastViewModel.NotificationType.Error);
             return false;
         }
 
         if (PostalCode.Length != 4 || !PostalCode.All(char.IsDigit))
         {
-                Notification.Show("Postal code must be a valid four-digit number", ToastViewModel.NotificationType.Error);
+            Notification.Show("Postal code must be a valid four-digit number", ToastViewModel.NotificationType.Error);
             return false;
         }
 

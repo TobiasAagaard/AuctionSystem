@@ -15,6 +15,7 @@ public partial class ToastViewModel : ObservableObject
         this.Type = type;
     }
 
+    // Accent used for the side stripe/dot only; the card itself stays a translucent neutral color.
     public string AccentBrush => Type switch
     {
         NotificationType.Info => "#3B82F6",

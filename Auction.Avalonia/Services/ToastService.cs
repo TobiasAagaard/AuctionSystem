@@ -11,7 +11,7 @@ namespace Auction.Avalonia.Services
     {
         public ObservableCollection<ToastViewModel> Notifications { get; } = new();
 
-        public void Show(string message, ToastViewModel.NotificationType type = ToastViewModel.NotificationType.Info, int duration = 10000)
+        public void Show(string message, ToastViewModel.NotificationType type = ToastViewModel.NotificationType.Info, int duration = 3000)
         {
             var notification = new ToastViewModel(message, type);
             Notifications.Add(notification);
