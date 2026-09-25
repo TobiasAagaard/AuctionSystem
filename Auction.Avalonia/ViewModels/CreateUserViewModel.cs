@@ -5,7 +5,7 @@ using Auction.Avalonia.Services;
 using Auction_Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
+using System.Linq;
 
 namespace Auction.Avalonia.ViewModels;
 
@@ -47,9 +47,8 @@ public partial class CreateUserViewModel : ViewModelBase
     [RelayCommand]
     private async Task CreateUserAsync()
     {
-        if (Password != PasswordAgain)
+        if (!ValidateInput())
         {
-            Notification.Show("Passwords do not match" , ToastViewModel.NotificationType.Error);
             return;
         }
 
@@ -73,7 +72,38 @@ public partial class CreateUserViewModel : ViewModelBase
         finally
         {
             IsCreatingUser = false;
-            GoBackToLogin();
         }
+    }
+
+    private bool ValidateInput()
+    {
+        if (string.IsNullOrWhiteSpace(Username) ||
+            string.IsNullOrWhiteSpace(Password) ||
+            string.IsNullOrWhiteSpace(PasswordAgain) ||
+            string.IsNullOrWhiteSpace(PostalCode))
+        {
+                Notification.Show("All fields are required", ToastViewModel.NotificationType.Error);
+            return false;
+        }
+
+        if (Password != PasswordAgain)
+        {
+                Notification.Show("Passwords do not match", ToastViewModel.NotificationType.Error);
+            return false;
+        }
+
+            if (Password.Length < 8)
+        {
+                Notification.Show("Password must be at least 8 characters long", ToastViewModel.NotificationType.Error);
+            return false;
+        }
+
+        if (PostalCode.Length != 4 || !PostalCode.All(char.IsDigit))
+        {
+                Notification.Show("Postal code must be a valid four-digit number", ToastViewModel.NotificationType.Error);
+            return false;
+        }
+
+        return true;
     }
 }
