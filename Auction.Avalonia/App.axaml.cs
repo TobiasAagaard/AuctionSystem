@@ -24,7 +24,7 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         services.AddCore();
-        
+
         services.AddTransient<MainViewModel>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<CreateUserViewModel>();
@@ -35,7 +35,6 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Dispose the service provider when the application exits
             desktop.Exit += (_, _) => serviceProvider.Dispose();
             var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
 

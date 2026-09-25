@@ -18,11 +18,11 @@
         <!-- Keep the notification list last so it renders above the page. -->
         <ItemsControl ItemsSource="{Binding Notifications.Notifications}"
                       HorizontalAlignment="Right"
-                      VerticalAlignment="Top"
+                      VerticalAlignment="Bottom"
                       Margin="16"
                       MaxWidth="360">
             <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="vm:NotificationViewModel">
+                <DataTemplate x:DataType="vm:ToastViewModel">
                     <Border Background="#E61E1E2E"
                             CornerRadius="10"
                             Padding="16,14"
@@ -46,7 +46,7 @@
                                     Background="Transparent"
                                     Foreground="#9CA3AF"
                                     Padding="4,0"
-                                    VerticalAlignment="Top"
+                                    VerticalAlignment="Center"
                                     Cursor="Hand"
                                     Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).Notifications.DismissCommand}"
                                     CommandParameter="{Binding}" />
