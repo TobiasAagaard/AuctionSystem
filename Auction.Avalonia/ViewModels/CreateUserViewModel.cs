@@ -72,6 +72,7 @@ public partial class CreateUserViewModel : ViewModelBase
         }
         finally
         {
+            
             IsCreatingUser = false;
         }
     }
