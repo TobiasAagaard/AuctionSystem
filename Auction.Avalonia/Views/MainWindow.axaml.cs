@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Auction.Avalonia.ViewModels;
 
 namespace Auction.Avalonia.Views;
 
