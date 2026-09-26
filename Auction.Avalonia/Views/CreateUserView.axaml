@@ -52,11 +52,6 @@
                 GroupName="UserRole"/>
         </StackPanel>
 
-        <TextBlock
-            Text="{Binding ErrorMessage}"
-            Foreground="Red"
-            IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Width="250"/>
-
         <StackPanel Orientation="Horizontal" Margin="0 10 0 0" Spacing="40">
             <Button 
             Content="Cancel" 

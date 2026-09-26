@@ -1,11 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using Auction_Core.Models;
+using Auction.Avalonia.Services;
 using Auction_Core.Services;
-using Auction_Core.Repository;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Npgsql;
 using System.Linq;
 
 namespace Auction.Avalonia.ViewModels;
@@ -13,6 +12,8 @@ namespace Auction.Avalonia.ViewModels;
 public partial class CreateUserViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
+
+    public ToastService Notification { get; }
 
     public Action? BackRequested { get; set; }
     public Action? CreateUserRequest { get; set; }
@@ -29,14 +30,12 @@ public partial class CreateUserViewModel : ViewModelBase
     public partial string PostalCode { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial string ErrorMessage { get; set; } = string.Empty;
-
-    [ObservableProperty]
     public partial bool IsCreatingUser { get; set; } = false;
 
-    public CreateUserViewModel(IAuthService authService)
+    public CreateUserViewModel(IAuthService authService, ToastService notification)
     {
         this._authService = authService;
+        this.Notification = notification;
     }
 
     [RelayCommand]
@@ -48,8 +47,6 @@ public partial class CreateUserViewModel : ViewModelBase
     [RelayCommand]
     private async Task CreateUserAsync()
     {
-        ErrorMessage = string.Empty;
-
         if (!ValidateInput())
         {
             return;
@@ -65,19 +62,18 @@ public partial class CreateUserViewModel : ViewModelBase
             PostalCode = string.Empty;
 
             CreateUserRequest?.Invoke();
+
+            Notification.Show("User created successfully", ToastViewModel.NotificationType.Success);
+            GoBackToLogin();
         } 
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message;
+            Notification.Show(ex.Message, ToastViewModel.NotificationType.Error);
         }
         finally
         {
             
             IsCreatingUser = false;
-            if (string.IsNullOrEmpty(ErrorMessage))
-            {
-                GoBackToLogin();
-            }
         }
     }
 
@@ -88,25 +84,25 @@ public partial class CreateUserViewModel : ViewModelBase
             string.IsNullOrWhiteSpace(PasswordAgain) ||
             string.IsNullOrWhiteSpace(PostalCode))
         {
-            ErrorMessage = "All fields are required";
+            Notification.Show("All fields are required", ToastViewModel.NotificationType.Error);
             return false;
         }
 
         if (Password != PasswordAgain)
         {
-            ErrorMessage = "Passwords do not match";
+            Notification.Show("Passwords do not match", ToastViewModel.NotificationType.Error);
             return false;
         }
 
-        if (Password.Length < 9)
+        if (Password.Length < 8)
         {
-            ErrorMessage = "Password must be longer than 8 characters";
+            Notification.Show("Password must be at least 8 characters long", ToastViewModel.NotificationType.Error);
             return false;
         }
 
         if (PostalCode.Length != 4 || !PostalCode.All(char.IsDigit))
         {
-            ErrorMessage = "Postal code must be a valid four-digit number";
+            Notification.Show("Postal code must be a valid four-digit number", ToastViewModel.NotificationType.Error);
             return false;
         }
 

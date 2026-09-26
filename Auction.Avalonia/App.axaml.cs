@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Auction.Avalonia.Services;
 using Auction.Avalonia.ViewModels;
 using Auction.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,13 +28,13 @@ public partial class App : Application
         services.AddTransient<MainViewModel>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<CreateUserViewModel>();
+        services.AddSingleton<ToastService>();
 
         var serviceProvider = services.BuildServiceProvider();
         Services = serviceProvider;
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Dispose the service provider when the application exits
             desktop.Exit += (_, _) => serviceProvider.Dispose();
             var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
 
