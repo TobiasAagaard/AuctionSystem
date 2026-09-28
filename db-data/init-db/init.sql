@@ -244,3 +244,72 @@ BEGIN
     SELECT vehicle_id, heavy_vehicle_id, semi_truck_id;
 END;
 $$;
+
+
+CREATE OR REPLACE FUNCTION add_bus(
+    -- Vehicle parameters
+    p_name VARCHAR(255),
+    p_kilometers double precision,
+    p_release_year int,
+    p_registration_number VARCHAR(20),
+    p_base_price DECIMAL(18, 2),
+    p_tow_bar boolean,
+    p_engine_size double precision,
+    p_km_per_liter double precision,
+    p_fuel_type FuelType,
+
+    -- Heavy vehicle parameters
+    p_weight double precision,
+    p_height double precision,
+    p_length double precision,
+
+    -- Bus parameters
+    p_seat_count INT,
+    p_bed_count INT,
+    p_toilet BOOLEAN
+)
+RETURNS TABLE (
+    vehicle_id INT,
+    heavy_vehicle_id INT,
+    bus_id INT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_now timestamptz := now();
+BEGIN
+    vehicle_id := add_vehicle(
+        p_name, p_kilometers, p_release_year, p_registration_number,
+        p_base_price, p_tow_bar, p_engine_size, p_km_per_liter, p_fuel_type
+    );
+
+    INSERT INTO heavy_vehicles (vehicle_id, weight, height, length, created_at, updated_at)
+    VALUES (vehicle_id, p_weight, p_height, p_length, v_now, v_now)
+    RETURNING id INTO heavy_vehicle_id;
+
+    INSERT INTO buses (heavy_vehicle_id, seat_count, bed_count, toilet , created_at, updated_at)
+    VALUES (heavy_vehicle_id, p_seat_count, p_bed_count, p_toilet, v_now, v_now);
+
+    bus_id := heavy_vehicle_id;
+
+    RETURN QUERY
+    SELECT vehicle_id, heavy_vehicle_id, bus_id;
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION add_private_personal_cars(
+    -- Vehicle parameters
+    p_name VARCHAR(255),
+    p_kilometers double precision,
+    p_release_year int,
+    p_registration_number VARCHAR(20),
+    p_base_price DECIMAL(18, 2),
+    p_tow_bar boolean,
+    p_engine_size double precision,
+    p_km_per_liter double precision,
+    p_fuel_type FuelType,
+
+    -- Personal cars parameters
+    p_seat_count INT,
+
