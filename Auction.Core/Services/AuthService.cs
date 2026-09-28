@@ -23,6 +23,28 @@ public class AuthService : IAuthService
         return await _userRepository.AddUserAsync(username, password, postalCode);
     }
 
+    public Task<PrivateCustomer> RegisterPrivateUserAsync(string username, string password, string postalCode, string cpr)
+    {
+        ValidateUsername(username);
+        ValidatePassword(password);
+        ValidatePostalCode(postalCode);
+        ValidateCpr(cpr);
+
+        return _userRepository.AddPrivateCustomerAsync(username, password, postalCode, cpr);
+    }
+
+    public Task<BusinessCustomer> RegisterBusinessUserAsync(string username, string password, string postalCode, string cvr, decimal credit)
+    {
+        ValidateUsername(username);
+        ValidatePassword(password);
+        ValidatePostalCode(postalCode);
+        ValidateCvr(cvr);
+        
+        return _userRepository.AddBusinessCustomerAsync(username, password, postalCode, cvr, credit);
+    }
+
+    
+
     public async Task<User> AuthenticateAsync(string username, string password)
     {
 
@@ -37,7 +59,7 @@ public class AuthService : IAuthService
         }
         if (!PasswordHasher.Verify(password, user.PasswordHash))
         {
-            throw new InvalidOperationException("Invalid username or password.");
+            throw new InvalidOperationException("Invalid username or password");
         }
 
         return user;
@@ -47,11 +69,11 @@ public class AuthService : IAuthService
     {
         if (string.IsNullOrWhiteSpace(username))
         {
-            throw new ArgumentException("Username is required.", nameof(username));
+            throw new ArgumentException("Username is required", nameof(username));
         }
         if (username.Length < MinUsernameLength)
         {
-            throw new ArgumentException($"Username must be at least {MinUsernameLength} characters.", nameof(username));
+            throw new ArgumentException($"Username must be at least {MinUsernameLength} characters", nameof(username));
         }
     }
 
@@ -59,15 +81,62 @@ public class AuthService : IAuthService
     {
         if (string.IsNullOrWhiteSpace(password))
         {
-            throw new ArgumentException("Password is required.", nameof(password));
+            throw new ArgumentException("Password is required", nameof(password));
         }
         if (password.Length < MinPasswordLength)
         {
-            throw new ArgumentException($"Password must be at least {MinPasswordLength} characters.", nameof(password));
+            throw new ArgumentException($"Password must be at least {MinPasswordLength} characters", nameof(password));
         }
         if (!password.Any(char.IsDigit) || !password.Any(char.IsLetter))
         {
-            throw new ArgumentException("Password must contain both letters and digits.", nameof(password));
+            throw new ArgumentException("Password must contain both letters and digits", nameof(password));
         }
     }
+
+    private static void ValidatePostalCode(string postalCode)
+    {
+        if (string.IsNullOrWhiteSpace(postalCode))
+        {
+            throw new ArgumentException("Postal code is required", nameof(postalCode));
+        }
+        if (postalCode.Length != 4)
+        {
+            throw new ArgumentException("Postal code must be 4 digits", nameof(postalCode));
+        }
+
+        if (!postalCode.All(char.IsDigit))
+        {
+            throw new ArgumentException("Postal code must contain only digits", nameof(postalCode));
+        }
+    }
+
+    private static void ValidateCpr(string cpr)
+    {
+        string digits = cpr.Replace("-", "");
+        if (string.IsNullOrWhiteSpace(cpr))
+        {
+            throw new ArgumentException("CPR is required");
+        }
+
+        if (digits.Length != 10 || !digits.All(char.IsDigit))
+        {
+            throw new ArgumentException("CPR must be 10 digits (DDMMYY-XXXX)");
+        }
+    }
+
+    private static void ValidateCvr(string cvr)
+    {
+        if (string.IsNullOrWhiteSpace(cvr))
+        {
+            throw new ArgumentException("CVR is required");
+        }
+
+        if (cvr.Length != 8 || !cvr.All(char.IsDigit))
+        {
+            throw new ArgumentException("CVR must be 8 digits");
+        }
+    }
+
+
+
 }
