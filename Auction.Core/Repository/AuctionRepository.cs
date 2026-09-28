@@ -3,7 +3,7 @@ using Npgsql;
 
 namespace Auction_Core.Repository;
 
-public delegate void NotificationDelegate(IAuction auction, decimal bid);
+public delegate void NotificationDelegate (IAuction auction, decimal bid);
 
 public class AuctionRepository : IAuctionRepository
 {
@@ -124,9 +124,9 @@ public class AuctionRepository : IAuctionRepository
     {
         using var connection = await _database.GetConnection();
         NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = "INSERT INTO bids (buyer_id, auction_id, amount) VALUES (@buyerId, @auctionId, @amount)";
+        cmd.CommandText = "INSERT INTO bids (bidder_id, auction_id, amount) VALUES (@bidderId, @auctionId, @amount)";
 
-        cmd.Parameters.AddWithValue("@buyerId", buyer.ID);
+        cmd.Parameters.AddWithValue("@bidderId", buyer.ID);
         cmd.Parameters.AddWithValue("@auctionId", auctionId);
         cmd.Parameters.AddWithValue("@amount", bidAmount);
 
@@ -168,6 +168,8 @@ public class AuctionRepository : IAuctionRepository
         return null; // Or throw an exception
         throw new KeyNotFoundException("No bids found for this auction.");
     }
+
+    
 
     // Helper methods to read Auction and Bid from the database
 
