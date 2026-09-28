@@ -37,6 +37,8 @@
         
         <Button
             Content="Login"
+            Command="{Binding LoginCommand}"
+            IsEnabled="{Binding !IsLoggedIn}"
             Background="#5db85d"
             Foreground="#eee"
             Width="100"
