@@ -31,7 +31,10 @@ public partial class MainViewModel : ViewModelBase
         CurrentPage = _loginViewModel;
 
         // Subscribe to the login successful event to update the current user
-        _loginViewModel.LoginSuccessful = user => CurrentUser = user;
+        _loginViewModel.LoginSuccessful = user =>
+        {
+            CurrentUser = user;
+        };
     }
 
     private void ShowLogin() => CurrentPage = _loginViewModel;
