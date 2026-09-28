@@ -15,14 +15,6 @@ public class AuthService : IAuthService
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
-    public async Task<User> RegisterAsync(string username, string password, string postalCode)
-    {
-        ValidateUsername(username);
-        ValidatePassword(password);
-
-        return await _userRepository.AddUserAsync(username, password, postalCode);
-    }
-
     public Task<PrivateCustomer> RegisterPrivateUserAsync(string username, string password, string postalCode, string cpr)
     {
         ValidateUsername(username);
@@ -120,12 +112,12 @@ public class AuthService : IAuthService
         string digits = cpr.Replace("-", "");
         if (string.IsNullOrWhiteSpace(cpr))
         {
-            throw new ArgumentException("CPR is required");
+            throw new ArgumentException("CPR is required", nameof(cpr));
         }
 
         if (digits.Length != 10 || !digits.All(char.IsDigit))
         {
-            throw new ArgumentException("CPR must be 10 digits (DDMMYY-XXXX)");
+            throw new ArgumentException("CPR must be 10 digits (DDMMYY-XXXX)", nameof(cpr));
         }
     }
 
@@ -133,12 +125,12 @@ public class AuthService : IAuthService
     {
         if (string.IsNullOrWhiteSpace(cvr))
         {
-            throw new ArgumentException("CVR is required");
+            throw new ArgumentException("CVR is required", nameof(cvr));
         }
 
         if (cvr.Length != 8 || !cvr.All(char.IsDigit))
         {
-            throw new ArgumentException("CVR must be 8 digits");
+            throw new ArgumentException("CVR must be 8 digits", nameof(cvr));
         }
     }
 
