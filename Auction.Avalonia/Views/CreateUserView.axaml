@@ -40,16 +40,43 @@
             PlaceholderText="Password again" 
             Text="{Binding PasswordAgain}"
             Width="250" 
-            Margin="0 0 0 5"
             PasswordChar="*"/>
 
-        <StackPanel Orientation="Horizontal" Spacing="30">
-            <RadioButton
-                Content="Corporate"
-                GroupName="UserRole"/>
+        <StackPanel Orientation="Horizontal" Spacing="30" Margin="0 5 0 5">
             <RadioButton
                 Content="Private"
-                GroupName="UserRole"/>
+                GroupName="UserRole"
+                IsChecked="{Binding IsPrivateUser}" />
+             <RadioButton
+                Content="Corporate"
+                GroupName="UserRole"
+                IsChecked="{Binding !IsPrivateUser}" />
+
+        </StackPanel>
+
+        <StackPanel IsVisible="{Binding IsPrivateUser}">
+            <TextBox
+                PlaceholderText="CPR (DDMMYY-XXXX)"
+                Text="{Binding Cpr}"
+                Width="250"
+            />
+        </StackPanel>
+
+        <StackPanel IsVisible="{Binding !IsPrivateUser}" Spacing="5" Margin="0 0 0 5"> 
+            <TextBox
+                PlaceholderText="CVR (XXXXXX)"
+                Text="{Binding Cvr}"
+                Width="250"    
+            />
+
+            <NumericUpDown
+                PlaceholderText="Credit"
+                Value="{Binding Credit}"
+                Minimum="0"
+                Maximum="25000"
+                Increment="1000"
+                Width="250"
+            />
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Margin="0 10 0 0" Spacing="40">

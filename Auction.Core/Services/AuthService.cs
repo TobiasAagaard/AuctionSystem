@@ -39,7 +39,12 @@ public class AuthService : IAuthService
         ValidatePassword(password);
         ValidatePostalCode(postalCode);
         ValidateCvr(cvr);
-        
+
+        if (credit < 0)
+        {
+            throw new ArgumentException("Credit must be a non-negative value");
+        }
+
         return _userRepository.AddBusinessCustomerAsync(username, password, postalCode, cvr, credit);
     }
 

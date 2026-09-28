@@ -30,6 +30,18 @@ public partial class CreateUserViewModel : ViewModelBase
     public partial string PostalCode { get; set; } = string.Empty;
 
     [ObservableProperty]
+    public partial bool IsPrivateUser { get; set; } = true;
+
+    [ObservableProperty]
+    public partial string Cpr { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string Cvr { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial decimal? Credit { get; set; }
+
+    [ObservableProperty]
     public partial bool IsCreatingUser { get; set; } = false;
 
     public CreateUserViewModel(IAuthService authService, ToastService notification)
@@ -56,10 +68,28 @@ public partial class CreateUserViewModel : ViewModelBase
 
         try
         {
-            User user = await _authService.RegisterAsync(Username, Password, PostalCode);
-            Password = PasswordAgain = string.Empty;
-            Username = string.Empty;
-            PostalCode = string.Empty;
+            if (IsPrivateUser == true)
+            {
+                await _authService.RegisterPrivateUserAsync(Username, Password, PostalCode, Cpr);
+                
+                Username = string.Empty;
+                Password = string.Empty;
+                PasswordAgain = string.Empty;
+                PostalCode = string.Empty;
+                Cpr = string.Empty;
+
+            }
+            else
+            {
+                await _authService.RegisterBusinessUserAsync(Username, Password, PostalCode, Cvr, Credit ?? 0);
+                
+                Username = string.Empty;
+                Password = string.Empty;
+                PasswordAgain = string.Empty;
+                PostalCode = string.Empty;
+                Cvr = string.Empty;
+                Credit = null;
+            }
 
             CreateUserRequest?.Invoke();
 
