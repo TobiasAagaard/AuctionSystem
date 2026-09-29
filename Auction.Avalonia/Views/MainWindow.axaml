@@ -9,14 +9,54 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="Auction.Avalonia">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainViewModel />
-    </Design.DataContext>
+    <!-- The ViewLocator (see App.axaml) turns whatever view model is in CurrentPage
+         into its matching view, so swapping CurrentPage swaps the page shown here. -->
+    <Panel>
+        <!-- Main content fills the window. -->
+        <ContentControl Content="{Binding CurrentPage}" />
 
-    <TextBox Text="{Binding Greeting}"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center" />
+        <!-- Keep the notification list last so it renders above the page. -->
+        <ItemsControl ItemsSource="{Binding Notifications.Notifications}"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom"
+                      Margin="16"
+                      MaxWidth="360">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ToastViewModel">
+                    <Border Background="#E61E1E2E"
+                            CornerRadius="10"
+                            Padding="16,14"
+                            Margin="0,0,0,10"
+                            BorderBrush="{Binding AccentBrush}"
+                            BorderThickness="1"
+                            BoxShadow="0 4 16 0 #40000000">
+                        <Grid ColumnDefinitions="4,*,Auto" ColumnSpacing="12">
+                            <Border Grid.Column="0"
+                                    Background="{Binding AccentBrush}"
+                                    CornerRadius="2" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding Message}"
+                                       TextWrapping="Wrap"
+                                       Foreground="#F1F1F1"
+                                       FontSize="13"
+                                       VerticalAlignment="Center" />
+                            <Button Grid.Column="2"
+                                    Content="×"
+                                    FontSize="16"
+                                    Background="Transparent"
+                                    Foreground="#9CA3AF"
+                                    Padding="4,0"
+                                    VerticalAlignment="Center"
+                                    Cursor="Hand"
+                                    Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).Notifications.DismissCommand}"
+                                    CommandParameter="{Binding}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
 
+        </ItemsControl>
+    </Panel>
+
+    
 </Window>

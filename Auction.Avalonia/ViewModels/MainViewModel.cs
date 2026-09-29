@@ -1,9 +1,43 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Auction_Core.Models;
+using Auction.Avalonia.Services;
 
 namespace Auction.Avalonia.ViewModels;
 
+/// <summary>
+/// The Core view model. It holds whichever page is currently shown in MainWindow
+/// and handles switching between pages.
+/// </summary>
 public partial class MainViewModel : ViewModelBase
 {
+    private readonly LoginViewModel _loginViewModel;
+    private readonly CreateUserViewModel _createUserViewModel;
+
+    public User? CurrentUser { get; private set; }
+    public ToastService Notifications { get; }
+
     [ObservableProperty]
-    public partial string Greeting { get; set; } = "Welcome to Avalonia!";
+    public partial ViewModelBase CurrentPage { get; set; }
+
+    public MainViewModel(LoginViewModel loginViewModel, CreateUserViewModel createUserViewModel,ToastService notifications)
+    {
+        _loginViewModel = loginViewModel;
+        _createUserViewModel = createUserViewModel;
+        Notifications = notifications;
+
+        _loginViewModel.CreateUserRequested = ShowCreateUser;
+        _createUserViewModel.BackRequested = ShowLogin;
+
+        CurrentPage = _loginViewModel;
+
+        // Subscribe to the login successful event to update the current user
+        _loginViewModel.LoginSuccessful = user =>
+        {
+            CurrentUser = user;
+        };
+    }
+
+    private void ShowLogin() => CurrentPage = _loginViewModel;
+
+    private void ShowCreateUser() => CurrentPage = _createUserViewModel;
 }
