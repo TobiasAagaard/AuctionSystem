@@ -70,6 +70,7 @@ public partial class CreateUserViewModel : ViewModelBase
         {
             if (IsPrivateUser == true)
             {
+
                 await _authService.RegisterPrivateUserAsync(Username, Password, PostalCode, Cpr);
                 
                 Username = string.Empty;

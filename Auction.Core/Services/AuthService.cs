@@ -1,6 +1,7 @@
 using Auction_Core.Models;
 using Auction_Core.Utilities;
 using Auction_Core.Repository;
+using System.Text.RegularExpressions;
 
 namespace Auction_Core.Services;
 
@@ -30,7 +31,8 @@ public class AuthService : IAuthService
         ValidatePostalCode(postalCode);
         ValidateCpr(cpr);
 
-        return _userRepository.AddPrivateCustomerAsync(username, password, postalCode, cpr);
+        string normalizedCpr = cpr.Replace("-", "");
+        return _userRepository.AddPrivateCustomerAsync(username, password, postalCode, normalizedCpr);
     }
 
     public Task<BusinessCustomer> RegisterBusinessUserAsync(string username, string password, string postalCode, string cvr, decimal credit)
@@ -115,17 +117,18 @@ public class AuthService : IAuthService
         }
     }
 
-    private static void ValidateCpr(string cpr)
+    private static void ValidateCpr(string? cpr)
     {
-        string digits = cpr.Replace("-", "");
         if (string.IsNullOrWhiteSpace(cpr))
         {
-            throw new ArgumentException("CPR is required");
+            throw new ArgumentException("CPR is required", nameof(cpr));
         }
 
-        if (digits.Length != 10 || !digits.All(char.IsDigit))
+        if (!Regex.IsMatch(cpr, @"^\d{6}-\d{4}$"))
         {
-            throw new ArgumentException("CPR must be 10 digits (DDMMYY-XXXX)");
+            throw new ArgumentException(
+                "CPR must use the format DDMMYY-XXXX",
+                nameof(cpr));
         }
     }
 
