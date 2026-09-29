@@ -313,3 +313,85 @@ CREATE OR REPLACE FUNCTION add_private_personal_cars(
     -- Personal cars parameters
     p_seat_count INT,
 
+    -- Private personal cars parameters
+    p_isofix BOOLEAN
+)
+RETURNS TABLE (
+    vehicle_id INT,
+    personal_cars_id INT,
+    private_personal_car_id INT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_now timestamptz := now();
+BEGIN
+    vehicle_id := add_vehicle(
+        p_name, p_kilometers, p_release_year, p_registration_number,
+        p_base_price, p_tow_bar, p_engine_size, p_km_per_liter, p_fuel_type
+    );
+
+    INSERT INTO personal_cars (vehicle_id, seat_count, created_at, updated_at)
+    VALUES (vehicle_id, p_seat_count, v_now, v_now)
+    RETURNING id INTO personal_cars_id;
+
+    INSERT INTO private_personal_cars (car_id, isofix, created_at, updated_at)
+    VALUES (personal_cars_id, p_isofix, v_now, v_now);
+
+    private_personal_car_id := personal_cars_id;
+
+    RETURN QUERY
+    SELECT vehicle_id, personal_cars_id, private_personal_car_id;
+
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION add_business_personal_cars(
+    -- Vehicle parameters
+    p_name VARCHAR(255),
+    p_kilometers double precision,
+    p_release_year int,
+    p_registration_number VARCHAR(20),
+    p_base_price DECIMAL(18, 2),
+    p_tow_bar boolean,
+    p_engine_size double precision,
+    p_km_per_liter double precision,
+    p_fuel_type FuelType,
+
+    -- Personal cars parameters
+    p_seat_count INT,
+
+    -- Business personal cars parameters
+    p_cargo_capacity double precision,
+    p_roll_cage BOOLEAN
+)
+RETURNS TABLE (
+    vehicle_id INT,
+    personal_cars_id INT,
+    business_personal_car_id INT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_now timestamptz := now();
+BEGIN
+    vehicle_id := add_vehicle(
+        p_name, p_kilometers, p_release_year, p_registration_number,
+        p_base_price, p_tow_bar, p_engine_size, p_km_per_liter, p_fuel_type
+    );
+
+    INSERT INTO personal_cars (vehicle_id, seat_count, created_at, updated_at)
+    VALUES (vehicle_id, p_seat_count, v_now, v_now)
+    RETURNING id INTO personal_cars_id;
+
+    INSERT INTO business_personal_cars(car_id, cargo_capacity, roll_cage, created_at, updated_at)
+    VALUES (personal_cars_id, p_cargo_capacity, p_roll_cage, v_now, v_now);
+
+    business_personal_car_id := personal_cars_id;
+
+    RETURN QUERY
+    SELECT vehicle_id, personal_cars_id, business_personal_car_id;
+END;
+$$;
+
+
