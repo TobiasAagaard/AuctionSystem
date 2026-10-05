@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Auction.Avalonia.Views;
 
-public partial class HomeWindow : Window
+public partial class HomeView : Window
 {
-    public HomeWindow()
+    public HomeView()
     {
         InitializeComponent();
     }
