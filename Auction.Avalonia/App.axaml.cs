@@ -6,6 +6,7 @@ using Auction.Avalonia.ViewModels;
 using Auction.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Auction_Core;
+using Auction_Core.Repository;
 using System;
 
 namespace Auction.Avalonia;
@@ -28,7 +29,9 @@ public partial class App : Application
         services.AddTransient<MainViewModel>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<CreateUserViewModel>();
+        services.AddTransient<HomeViewModel>();
         services.AddSingleton<ToastService>();
+        services.AddTransient<AuctionRepository>();
 
         var serviceProvider = services.BuildServiceProvider();
         Services = serviceProvider;
