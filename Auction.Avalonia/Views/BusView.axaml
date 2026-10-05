@@ -1,39 +1,41 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Auction.Avalonia.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="300"
-             x:Class="Auction.Avalonia.Views.BusView">
+             x:Class="Auction.Avalonia.Views.BusView"
+             x:DataType="vm:SetForSaleViewModel">
   <StackPanel Width="250" HorizontalAlignment="Left" Margin="0, 0, 0, 0">
 
     <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 0, 0, 0">
       <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Height"/>
-      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding Height}"/>
     </DockPanel>
     
     <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
       <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Length"/>
-      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding Length}"/>
     </DockPanel>
 
     <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
       <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Weight"/>
-      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding Weight}"/>
     </DockPanel>
 
     <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
       <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Seat count"/>
-      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding SeatCount}"/>
     </DockPanel>
 
     <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
       <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Bed count"/>
-      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+      <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding BedCount}"/>
     </DockPanel>
 
     <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
       <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Toilet"/>
-      <CheckBox/>
+      <CheckBox IsChecked="{Binding Toilet}"/>
     </DockPanel>
     
   </StackPanel>

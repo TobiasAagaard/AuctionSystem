@@ -43,14 +43,6 @@
                                     <CheckBox IsChecked="{Binding TowBar}"/>
                               </DockPanel>
                               <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
-                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="License type"/>
-                                    <ComboBox SelectedItem="{Binding SelectedLicenseType}"
-                                    ItemsSource="{Binding LicenseTypes}"
-                                    PlaceholderText="Select a license type"
-                                    Width="200" 
-                                    SelectedIndex="0"/>
-                              </DockPanel>
-                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
                                     <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Fuel type"/>
                                     <ComboBox SelectedItem="{Binding SelectedFuelType}"
                                     ItemsSource="{Binding FuelTypes}"
@@ -60,11 +52,11 @@
                               </DockPanel>
                               <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 60, 0, 0">
                                     <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Starting bid"/>
-                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding StartingBid}"/>
                               </DockPanel>
                               <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
                                     <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Close auction"/>
-                                    <CalendarDatePicker/>
+                                    <CalendarDatePicker SelectedDate="{Binding CloseAuctionDate}"/>
                               </DockPanel>
                         </StackPanel>
                   </StackPanel>
