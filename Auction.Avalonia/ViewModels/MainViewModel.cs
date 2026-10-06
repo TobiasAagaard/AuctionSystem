@@ -16,6 +16,8 @@ public partial class MainViewModel : ViewModelBase
 
     private readonly HomeViewModel _homeViewModel;
 
+    private readonly UserProfileViewModel _userProfileViewModel;
+
     public User? CurrentUser { get; private set; }
     public ToastService Notifications { get; }
 
@@ -30,7 +32,15 @@ public partial class MainViewModel : ViewModelBase
 
         _loginViewModel.CreateUserRequested = ShowCreateUser;
         _createUserViewModel.BackRequested = ShowLogin;
-        _homeViewModel = new(this, auctionRepo); 
+        _homeViewModel = new(this, auctionRepo)
+        {
+            UserProfileRequested = ShowUserProfile
+        };
+
+        _userProfileViewModel = new(this)
+        {
+            BackRequested = ShowHome
+        };
 
         CurrentPage = _loginViewModel;
 
@@ -38,11 +48,15 @@ public partial class MainViewModel : ViewModelBase
         _loginViewModel.LoginSuccessful = user =>
         {
             CurrentUser = user;
-            CurrentPage = _homeViewModel;
+            ShowHome();
         };
     }
 
     private void ShowLogin() => CurrentPage = _loginViewModel;
 
     private void ShowCreateUser() => CurrentPage = _createUserViewModel;
+
+    private void ShowHome() => CurrentPage = _homeViewModel;
+
+    private void ShowUserProfile() => CurrentPage = _userProfileViewModel;
 }
