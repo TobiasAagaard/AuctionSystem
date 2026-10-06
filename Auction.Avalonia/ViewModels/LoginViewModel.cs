@@ -65,4 +65,11 @@ public partial class LoginViewModel : ViewModelBase
             Notification.Show(ex.Message, ToastViewModel.NotificationType.Error);
         }
     }
+
+    public void Reset()
+    {
+        IsLoggedIn = false;
+        Username = string.Empty;
+        Password = string.Empty;
+    }
 }
