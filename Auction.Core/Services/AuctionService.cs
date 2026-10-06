@@ -6,13 +6,15 @@ namespace Auction_Core.Services;
 public class AuctionService : IAuctionService
 {
     private readonly IAuctionRepository _auctionRepository;
+    private readonly IUserRepository _userRepository;
 
-    public AuctionService(IAuctionRepository auctionRepository)
+    public AuctionService(IAuctionRepository auctionRepository, IUserRepository userRepository)
     {
         _auctionRepository = auctionRepository ?? throw new ArgumentNullException(nameof(auctionRepository), "Auction repository cannot be null.");
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository), "User repository cannot be null.");
     }
 
-    public async Task<int> SetForSale(Vehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime)
+    public async Task<int> SetForSale(Vehicle vehicle, User seller, decimal minimumPrice, DateTime endTime)
     {
         if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
         if (vehicle == null) throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
@@ -22,7 +24,7 @@ public class AuctionService : IAuctionService
         return await SetForSale(vehicle, seller, minimumPrice, endTime, seller.ReceiveNotificationOfBid);
     }
 
-    public async Task<int> SetForSale(Vehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime, NotificationDelegate notificationFunction)
+    public async Task<int> SetForSale(Vehicle vehicle, User seller, decimal minimumPrice, DateTime endTime, NotificationDelegate notificationFunction)
     {
         if (vehicle == null) throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
         if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
@@ -34,7 +36,7 @@ public class AuctionService : IAuctionService
         return await _auctionRepository.AddAuctionAsync(vehicle, seller, minimumPrice, endTime, notificationFunction);
     }
 
-    public async Task<bool> ReceiveBid(IBuyer buyer, int auctionId, decimal bidAmount)
+    public async Task<bool> ReceiveBid(User buyer, int auctionId, decimal bidAmount)
     {
         if (buyer == null) throw new ArgumentNullException(nameof(buyer), "Buyer cannot be null.");
         if (bidAmount < 0) throw new ArgumentOutOfRangeException(nameof(bidAmount), "Bid cannot be negative.");
@@ -44,8 +46,7 @@ public class AuctionService : IAuctionService
         if (DateTime.UtcNow >= auction.EndTime) return false;
 
         var highestBid = await _auctionRepository.GetHighestBidByAuctionIdAsync(auctionId);
-        if (highestBid == null) return false;
-        if (bidAmount <= highestBid.Amount) return false;
+        if (highestBid != null && bidAmount <= highestBid.Amount) return false;
         if (buyer.Balance < bidAmount) return false;
 
         if (bidAmount >= auction.MinimumPrice)
@@ -56,28 +57,31 @@ public class AuctionService : IAuctionService
         return await _auctionRepository.AddBidAsync(auctionId, buyer, bidAmount);
     }
 
-    public async Task<bool> AcceptBid(ISeller seller, int auctionId)
+    public async Task<bool> AcceptBid(User seller, int auctionId)
     {
         if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
 
-        
-
         var auction = await _auctionRepository.GetAuctionByIdAsync(auctionId) ?? throw new KeyNotFoundException($"Auction with ID {auctionId} not found.");
-        if (auction.Seller.ID != seller.ID) return false;
-        if (DateTime.UtcNow >= auction.EndTime)
-        {
-            return false;
-        }
+        if (auction.User.ID != seller.ID) return false;
 
         var highestBid = await _auctionRepository.GetHighestBidByAuctionIdAsync(auctionId);
         if (highestBid == null) return false;
         if (highestBid.Amount < auction.MinimumPrice) return false;
 
-        if (highestBid.Buyer.Balance < highestBid.Amount) return false;
+        if (highestBid.User.Balance < highestBid.Amount) return false;
 
-        highestBid.Buyer.Balance -= highestBid.Amount;
+        highestBid.User.Balance -= highestBid.Amount;
         seller.Balance += highestBid.Amount;
 
-        return await _auctionRepository.RemoveAuctionAsync(auction.Id);
+        // Update user balances in the database.
+        await _userRepository.UpdateUserAsync(highestBid.User);
+        await _userRepository.UpdateUserAsync(seller);
+
+        // Mark the auction as sold and update its status in the database.
+        auction.IsSold = true;
+        auction.UpdatedAt = DateTime.UtcNow;
+        await _auctionRepository.UpdateAuctionAsync(auction);
+        
+        return true;
     }
 }

@@ -20,7 +20,7 @@ public class AuctionRepository : IAuctionRepository
 
     // Auction-related methods
 
-    public async Task<int> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime, NotificationDelegate? notificationFunction)
+    public async Task<int> AddAuctionAsync(Vehicle vehicle, User seller, decimal minimumPrice, DateTime endTime, NotificationDelegate? notificationFunction)
     {
         using NpgsqlConnection connection = await _database.GetConnection();
 
@@ -46,7 +46,7 @@ public class AuctionRepository : IAuctionRepository
         return 0;
     }
 
-    public async Task<int> AddAuctionAsync(Vehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime)
+    public async Task<int> AddAuctionAsync(Vehicle vehicle, User seller, decimal minimumPrice, DateTime endTime)
     {
         return await AddAuctionAsync(vehicle, seller, minimumPrice, endTime, null);
     }
@@ -66,7 +66,7 @@ public class AuctionRepository : IAuctionRepository
         return auctions;
     }
 
-    public async Task<Auction> GetAuctionByIdAsync(int auctionId)
+    public async Task<Auction?> GetAuctionByIdAsync(int auctionId)
     {
         using NpgsqlConnection connection = await _database.GetConnection();
 
@@ -81,7 +81,7 @@ public class AuctionRepository : IAuctionRepository
             return await ReadAuctionFromReader(reader);
         }
 
-        throw new KeyNotFoundException("This auction does not exist.");
+        return null;
     }
     
 
@@ -107,6 +107,7 @@ public class AuctionRepository : IAuctionRepository
                             SET seller_id       = @seller_id,
                                 vehicle_id      = @vehicle_id,
                                 minimum_price   = @minimum_price,
+                                is_sold         = @is_sold,
                                 end_time        = @end_time,
                                 created_at      = @created_at,
                                 updated_at      = @updated_at
@@ -120,7 +121,7 @@ public class AuctionRepository : IAuctionRepository
 
     // Bid-related methods
 
-    public async Task<bool> AddBidAsync(int auctionId, IBuyer buyer, decimal bidAmount)
+    public async Task<bool> AddBidAsync(int auctionId, User buyer, decimal bidAmount)
     {
         using var connection = await _database.GetConnection();
         NpgsqlCommand cmd = connection.CreateCommand();
@@ -165,8 +166,7 @@ public class AuctionRepository : IAuctionRepository
             return await ReadBidFromReader(reader);
         }
 
-        return null; // Or throw an exception
-        throw new KeyNotFoundException("No bids found for this auction.");
+        return null;
     }
 
     
@@ -175,7 +175,7 @@ public class AuctionRepository : IAuctionRepository
 
     private async Task<Auction> ReadAuctionFromReader(NpgsqlDataReader reader)
     {
-        ISeller seller = await _userRepository.GetUserByIdAsync(reader.GetInt32(1));
+        User seller = await _userRepository.GetUserByIdAsync(reader.GetInt32(1));
         Vehicle vehicle = await _vehicleRepository.GetVehicleByIdAsync(reader.GetInt32(2));
 
         return new Auction
@@ -184,9 +184,10 @@ public class AuctionRepository : IAuctionRepository
             seller,
             vehicle,
             reader.GetDecimal(3),
-            reader.GetDateTime(4),
+            reader.GetBoolean(4),
             reader.GetDateTime(5),
             reader.GetDateTime(6),
+            reader.GetDateTime(7),
             null
         );
     }
@@ -194,9 +195,11 @@ public class AuctionRepository : IAuctionRepository
     private static void BindAuctionToCommand(NpgsqlCommand cmd, Auction auction)
     {
         cmd.Parameters.AddWithValue("id", auction.Id);
-        cmd.Parameters.AddWithValue("seller_id", auction.Seller.ID);
+        cmd.Parameters.AddWithValue("seller_id", auction.User.ID);
         cmd.Parameters.AddWithValue("vehicle_id", auction.Vehicle.Id);
         cmd.Parameters.AddWithValue("minimum_price", auction.MinimumPrice);
+        cmd.Parameters.AddWithValue("is_sold", auction.IsSold);
+        cmd.Parameters.AddWithValue("end_time", auction.EndTime);
         cmd.Parameters.AddWithValue("created_at", auction.CreatedAt);
         cmd.Parameters.AddWithValue("updated_at", auction.UpdatedAt);
     }
@@ -204,8 +207,8 @@ public class AuctionRepository : IAuctionRepository
     private async Task<Bid> ReadBidFromReader(NpgsqlDataReader reader)
     {
         var bidder = await _userRepository.GetUserByIdAsync(reader.GetInt32(1));
-        var auction = await GetAuctionByIdAsync(reader.GetInt32(2));
-
+        var auction = await GetAuctionByIdAsync(reader.GetInt32(2)) ?? throw new InvalidOperationException($"Auction with ID {reader.GetInt32(2)} not found.");
+        
         return new Bid
         (
             reader.GetInt32(0),

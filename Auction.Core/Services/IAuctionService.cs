@@ -4,7 +4,7 @@ namespace Auction_Core.Services;
 
 public interface IAuctionService
 {
-    Task<int> SetForSale(Vehicle vehicle, ISeller seller, decimal minimumPrice, DateTime endTime);
-    Task<bool> ReceiveBid(IBuyer buyer, int auctionId, decimal bidAmount);
-    Task<bool> AcceptBid(ISeller seller, int auctionId);
+    Task<int> SetForSale(Vehicle vehicle, User seller, decimal minimumPrice, DateTime endTime);
+    Task<bool> ReceiveBid(User buyer, int auctionId, decimal bidAmount);
+    Task<bool> AcceptBid(User seller, int auctionId);
 }
