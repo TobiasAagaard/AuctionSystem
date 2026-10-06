@@ -32,6 +32,7 @@ public partial class App : Application
         services.AddTransient<HomeViewModel>();
         services.AddSingleton<ToastService>();
         services.AddTransient<AuctionRepository>();
+        services.AddTransient<UserProfileViewModel>();
 
         var serviceProvider = services.BuildServiceProvider();
         Services = serviceProvider;
