@@ -168,8 +168,34 @@ public class UserRepository : IUserRepository
         return (int)(await cmd.ExecuteScalarAsync() ?? throw new InvalidOperationException("Failed to insert user."));
     }
 
-    public Task<bool> UpdateUserAsync(User user) {
-        throw new NotImplementedException();
+    public async Task<bool> UpdateUserAsync(User user)
+    {
+        await using NpgsqlConnection connection = await _database.GetConnection();
+        await using NpgsqlTransaction transaction = await connection.BeginTransactionAsync();
+        
+        try
+        {
+            await using NpgsqlCommand cmd = new NpgsqlCommand(
+                """
+                    UPDATE users
+                    SET username = @username,
+                        password_hash = @password_hash,
+                        postal_code = @postal_code
+                    WHERE id = @id
+                """, connection, transaction);
+                cmd.Parameters.AddWithValue("username", user.Username);
+                cmd.Parameters.AddWithValue("password_hash", user.PasswordHash);
+                cmd.Parameters.AddWithValue("postal_code", user.PostalCode);
+                cmd.Parameters.AddWithValue("id", user.ID);
+                await cmd.ExecuteNonQueryAsync();
+                await transaction.CommitAsync();
+                return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public Task<bool> DeleteUserAsync(int id) {
