@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="using:Auction.Avalonia.ViewModels"
+  xmlns:model="using:Auction_Core.Models"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Auction.Avalonia.Views.HomeView"
+  x:DataType="vm:HomeViewModel"
+        >
+    <DockPanel>
+      <Border DockPanel.Dock="Right" Padding="20">
+        <StackPanel Spacing="5">
+          <Button Content="+ Set for sale" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#FF33B733" Foreground="White"></Button>
+          <Button Content="User profile" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
+          <Button Content="Bid history" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
+        </StackPanel>
+      </Border>
+      <ScrollViewer>
+
+      <StackPanel>
+        
+        <TextBlock Text="Your auctions" FontSize="24" Margin="20"/>
+        
+        <Border Padding="40 0">
+          <Border BorderBrush="#ccc" BorderThickness="2" HorizontalAlignment="Stretch">
+            <TableView
+              CanUserResizeColumns="False"
+              ItemsSource="{Binding UserAuctions}"
+            >
+              <TableView.Columns>
+                <TableViewColumn x:DataType="model:Auction" Header="Name" Binding="{Binding Vehicle.Name}" Width="*" HorizontalContentAlignment="Center" />
+                <TableViewColumn x:DataType="model:Auction" Header="Årgang" Binding="{Binding Vehicle.Year}" Width="*" HorizontalContentAlignment="Center" />
+                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice}" Width="*" HorizontalContentAlignment="Center"/>
+              </TableView.Columns>
+            </TableView>
+          </Border>
+        </Border>
+
+
+        <TextBlock Text="Current auctions" FontSize="24" Margin="20"/>
+      
+        <Border Padding="40 0">
+          <Border BorderBrush="#ccc" BorderThickness="1" HorizontalAlignment="Stretch">
+            <TableView
+              CanUserResizeColumns="False"
+              ItemsSource="{Binding Auctions}"
+            >
+              <TableView.Columns>
+                <TableViewColumn x:DataType="model:Auction" Header="Name" Binding="{Binding Vehicle.Name}" Width="*" HorizontalContentAlignment="Center" />
+                <TableViewColumn x:DataType="model:Auction" Header="Årgang" Binding="{Binding Vehicle.Year}" Width="*" HorizontalContentAlignment="Center" />
+                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice}" Width="*" HorizontalContentAlignment="Center"/>
+              </TableView.Columns>
+            </TableView>
+          </Border>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

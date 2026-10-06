@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Auction_Core.Models;
 using Auction.Avalonia.Services;
+using Auction_Core.Repository;
 
 namespace Auction.Avalonia.ViewModels;
 
@@ -13,13 +14,15 @@ public partial class MainViewModel : ViewModelBase
     private readonly LoginViewModel _loginViewModel;
     private readonly CreateUserViewModel _createUserViewModel;
 
+    private readonly HomeViewModel _homeViewModel;
+
     public User? CurrentUser { get; private set; }
     public ToastService Notifications { get; }
 
     [ObservableProperty]
     public partial ViewModelBase CurrentPage { get; set; }
 
-    public MainViewModel(LoginViewModel loginViewModel, CreateUserViewModel createUserViewModel,ToastService notifications)
+    public MainViewModel(LoginViewModel loginViewModel, CreateUserViewModel createUserViewModel, AuctionRepository auctionRepo, ToastService notifications)
     {
         _loginViewModel = loginViewModel;
         _createUserViewModel = createUserViewModel;
@@ -27,6 +30,7 @@ public partial class MainViewModel : ViewModelBase
 
         _loginViewModel.CreateUserRequested = ShowCreateUser;
         _createUserViewModel.BackRequested = ShowLogin;
+        _homeViewModel = new(this, auctionRepo); 
 
         CurrentPage = _loginViewModel;
 
@@ -34,6 +38,7 @@ public partial class MainViewModel : ViewModelBase
         _loginViewModel.LoginSuccessful = user =>
         {
             CurrentUser = user;
+            CurrentPage = _homeViewModel;
         };
     }
 

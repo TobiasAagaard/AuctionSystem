@@ -35,7 +35,12 @@ public partial class LoginViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void GoToCreateUser() => CreateUserRequested?.Invoke();
+    private void GoToCreateUser()
+    {
+        Username = string.Empty;
+        Password = string.Empty;
+        CreateUserRequested?.Invoke();
+    }
 
     [RelayCommand]
     private async Task LoginAsync()
