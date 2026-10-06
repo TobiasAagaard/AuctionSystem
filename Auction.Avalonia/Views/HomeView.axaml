@@ -4,15 +4,21 @@
   xmlns:model="using:Auction_Core.Models"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        
+        xmlns:con="using:Auction.Avalonia.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Auction.Avalonia.Views.HomeView"
   x:DataType="vm:HomeViewModel"
         >
+
+  <UserControl.Resources>
+    <con:CurrencyConverters x:Key="CurrencyConvert"/>
+  </UserControl.Resources>
     <DockPanel>
       <Border DockPanel.Dock="Right" Padding="20">
         <StackPanel Spacing="5">
           <Button Content="+ Set for sale" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#FF33B733" Foreground="White"></Button>
-          <Button Content="User profile" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
+          <Button Content="User profile" Command="{Binding GoToUserProfileCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
           <Button Content="Bid history" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
         </StackPanel>
       </Border>
@@ -31,7 +37,7 @@
               <TableView.Columns>
                 <TableViewColumn x:DataType="model:Auction" Header="Name" Binding="{Binding Vehicle.Name}" Width="*" HorizontalContentAlignment="Center" />
                 <TableViewColumn x:DataType="model:Auction" Header="Årgang" Binding="{Binding Vehicle.Year}" Width="*" HorizontalContentAlignment="Center" />
-                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice}" Width="*" HorizontalContentAlignment="Center"/>
+                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice, Converter={StaticResource CurrencyConvert}}" Width="*" HorizontalContentAlignment="Center"/>
               </TableView.Columns>
             </TableView>
           </Border>
@@ -49,7 +55,7 @@
               <TableView.Columns>
                 <TableViewColumn x:DataType="model:Auction" Header="Name" Binding="{Binding Vehicle.Name}" Width="*" HorizontalContentAlignment="Center" />
                 <TableViewColumn x:DataType="model:Auction" Header="Årgang" Binding="{Binding Vehicle.Year}" Width="*" HorizontalContentAlignment="Center" />
-                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice}" Width="*" HorizontalContentAlignment="Center"/>
+                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice, Converter={StaticResource CurrencyConvert}}" Width="*" HorizontalContentAlignment="Center"/>
               </TableView.Columns>
             </TableView>
           </Border>
