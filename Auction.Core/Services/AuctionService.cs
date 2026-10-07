@@ -32,7 +32,7 @@ public class AuctionService : IAuctionService
         if (notificationFunction == null) throw new ArgumentNullException(nameof(notificationFunction), "Notification function cannot be null.");
         if (endTime < DateTime.UtcNow) throw new ArgumentOutOfRangeException(nameof(endTime), "End time cannot be in the past.");
 
-        
+
         return await _auctionRepository.AddAuctionAsync(vehicle, seller, minimumPrice, endTime, notificationFunction);
     }
 
@@ -54,7 +54,7 @@ public class AuctionService : IAuctionService
             auction.NotificationFunction?.Invoke(auction, bidAmount);
         }
 
-        return await _auctionRepository.AddBidAsync(auctionId, buyer, bidAmount);
+        return await _auctionRepository.AddBidAsync(auctionId, buyer, bidAmount) > 0;
     }
 
     public async Task<bool> AcceptBid(User seller, int auctionId)

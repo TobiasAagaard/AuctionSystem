@@ -11,7 +11,7 @@ public class User : ISeller, IBuyer
         PostalCode = postalCode;
     }
 
-    public int ID { get; }
+    public int ID { get; set; }
     public string Username { get; set; }
     public string PasswordHash { get; private set; }
     public string PostalCode { get; set; }
