@@ -18,6 +18,8 @@ public partial class MainViewModel : ViewModelBase
 
     private readonly UserProfileViewModel _userProfileViewModel;
 
+    private readonly BidHistoryViewModel _bidHistoryViewModel;
+
     public User? CurrentUser { get; private set; }
     public ToastService Notifications { get; }
 
@@ -41,6 +43,10 @@ public partial class MainViewModel : ViewModelBase
         {
             BackRequested = ShowHome
         };
+        _bidHistoryViewModel = new(this)
+        {
+            BackRequested = ShowHome
+        };
 
         CurrentPage = _loginViewModel;
 
@@ -59,4 +65,6 @@ public partial class MainViewModel : ViewModelBase
     private void ShowHome() => CurrentPage = _homeViewModel;
 
     private void ShowUserProfile() => CurrentPage = _userProfileViewModel;
+
+    private void ShowBidHistory() => CurrentPage = _bidHistoryViewModel;
 }
