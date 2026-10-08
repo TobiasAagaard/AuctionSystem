@@ -17,6 +17,8 @@ public partial class MainViewModel : ViewModelBase
 
     private readonly HomeViewModel _homeViewModel;
 
+    private SellerOfAuctionViewModel _sellerOfAuctionViewModel;
+
     public User? CurrentUser { get; private set; }
     public ToastService Notifications { get; }
 
@@ -31,7 +33,10 @@ public partial class MainViewModel : ViewModelBase
 
         _loginViewModel.CreateUserRequested = ShowCreateUser;
         _createUserViewModel.BackRequested = ShowLogin;
-        _homeViewModel = new(this, auctionRepo); 
+        _homeViewModel = new(this, auctionRepo)
+        {
+            SellerOfAuctionRequested = ShowSellerOfAuction
+        }; 
 
         CurrentPage = _loginViewModel;
 
@@ -39,7 +44,7 @@ public partial class MainViewModel : ViewModelBase
         _loginViewModel.LoginSuccessful = user =>
         {
             CurrentUser = user;
-            CurrentPage = _homeViewModel;
+            ShowHome();
         };
     }
 
@@ -62,4 +67,15 @@ public partial class MainViewModel : ViewModelBase
     private void ShowLogin() => CurrentPage = _loginViewModel;
 
     private void ShowCreateUser() => CurrentPage = _createUserViewModel;
+
+    private void ShowHome() => CurrentPage = _homeViewModel;
+
+    private void ShowSellerOfAuction(Auction_Core.Models.Auction selectedAuction) {
+        _sellerOfAuctionViewModel = new(this, selectedAuction)
+        {
+            BackRequested = ShowHome
+        };
+
+        CurrentPage = _sellerOfAuctionViewModel;
+    }
 }
