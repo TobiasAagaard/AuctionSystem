@@ -55,7 +55,7 @@ public partial class MainViewModel : ViewModelBase
             CurrentUser = null;
             _loginViewModel.Reset();
             Notifications.Show("Logged out successfully", ToastViewModel.NotificationType.Success);
-            CurrentPage = _loginViewModel;
+            ShowLogin();
         }
     }
 
