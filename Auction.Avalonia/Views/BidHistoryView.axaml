@@ -55,7 +55,7 @@
         </StackPanel>
     </Border>
     <Border Padding="20" DockPanel.Dock="Bottom">
-      <Button Content="Back"></Button>
+      <Button Content="Back" Command="{Binding GoBackToHomeCommand}"></Button>
     </Border>
   </DockPanel>
 </UserControl>
