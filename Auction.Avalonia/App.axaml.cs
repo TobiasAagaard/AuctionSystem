@@ -29,6 +29,7 @@ public partial class App : Application
         services.AddTransient<MainViewModel>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<CreateUserViewModel>();
+        services.AddTransient<SetForSaleViewModel>();
         services.AddTransient<HomeViewModel>();
         services.AddSingleton<ToastService>();
         services.AddTransient<AuctionRepository>();
