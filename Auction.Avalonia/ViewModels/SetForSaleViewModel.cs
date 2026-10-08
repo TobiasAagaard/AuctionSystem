@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using Auction.Avalonia.Views;
 using Auction_Core.Services;
+using Auction_Avalonia.Services;
 using Auction_Core.Repository;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,15 +13,16 @@ namespace Auction.Avalonia.ViewModels;
 
 public partial class SetForSaleViewModel : ViewModelBase
 {
-    public SetForSaleViewModel(IAuctionService auctionService, IVehicleRepository vehicleRepository, MainViewModel mainViewModel)
+    private readonly SessionService _sessionService;
+    
+    public SetForSaleViewModel(IAuctionService auctionService, IVehicleRepository vehicleRepository, SessionService sessionService)
     {
         _auctionService = auctionService ?? throw new ArgumentNullException(nameof(auctionService), "Auction service cannot be null.");
         _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository), "Vehicle repository cannot be null.");
-        _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel), "Main view model cannot be null.");
+        _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService), "Session service cannot be null.");
     }
     private readonly IAuctionService _auctionService;
     private readonly IVehicleRepository _vehicleRepository;
-    private readonly MainViewModel _mainViewModel;
     
     // Vehicle properties
     [ObservableProperty]
@@ -138,7 +140,7 @@ public partial class SetForSaleViewModel : ViewModelBase
                     CargoCapacity
                 );
                 await _vehicleRepository.AddVehicleAsync(businessCar);
-                await _auctionService.SetForSale(businessCar, _mainViewModel.CurrentUser, StartingBid, CloseAuctionDate);
+                await _auctionService.SetForSale(businessCar, _sessionService?.CurrentUser, StartingBid, CloseAuctionDate);
                 break;
             case "Private Personal Car":
                 // Create a Private Personal Car auction
@@ -158,7 +160,7 @@ public partial class SetForSaleViewModel : ViewModelBase
                     Isofix
                 );
                 await _vehicleRepository.AddVehicleAsync(privateCar);
-                await _auctionService.SetForSale(privateCar, _mainViewModel.CurrentUser, StartingBid, CloseAuctionDate);
+                await _auctionService.SetForSale(privateCar, _sessionService?.CurrentUser, StartingBid, CloseAuctionDate);
                 break;
             case "Semi Truck":
                 // Create a Semi Truck auction
@@ -179,7 +181,7 @@ public partial class SetForSaleViewModel : ViewModelBase
                     Length
                 );
                 await _vehicleRepository.AddVehicleAsync(semiTruck);
-                await _auctionService.SetForSale(semiTruck, _mainViewModel.CurrentUser, StartingBid, CloseAuctionDate);
+                await _auctionService.SetForSale(semiTruck, _sessionService?.CurrentUser, StartingBid, CloseAuctionDate);
                 break;
             case "Bus":
                 // Create a Bus auction
@@ -202,7 +204,7 @@ public partial class SetForSaleViewModel : ViewModelBase
                     Toilet
                 );
                 await _vehicleRepository.AddVehicleAsync(bus);
-                await _auctionService.SetForSale(bus, _mainViewModel.CurrentUser, StartingBid, CloseAuctionDate);
+                await _auctionService.SetForSale(bus, _sessionService?.CurrentUser, StartingBid, CloseAuctionDate);
                 break;
             default:
                 throw new InvalidOperationException("Unknown vehicle type selected.");

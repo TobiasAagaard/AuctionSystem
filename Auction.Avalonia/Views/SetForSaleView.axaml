@@ -1,11 +1,10 @@
-<Window xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Auction.Avalonia.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
-        x:Class="Auction.Avalonia.Views.SetForSaleWindow"
-        Title="SetForSaleWindow"
+        x:Class="Auction.Avalonia.Views.SetForSaleView"
         x:DataType="vm:SetForSaleViewModel">
       <StackPanel>
             <StackPanel Orientation="Horizontal">
@@ -81,4 +80,4 @@
                   <Button Content="Create auction" HorizontalAlignment="Right"/>
             </DockPanel>
       </StackPanel>
-</Window>
+</UserControl>
