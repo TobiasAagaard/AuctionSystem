@@ -14,6 +14,8 @@ public partial class HomeViewModel : ViewModelBase
 
     public Action? UserProfileRequested { get; set; }
 
+    public Action? BidHistoryRequested { get; set; }
+
     private AuctionRepository _auctionRepo;
     private MainViewModel _mainViewModel;
 
@@ -25,6 +27,9 @@ public partial class HomeViewModel : ViewModelBase
 
     [RelayCommand]
     private void GoToUserProfile() => UserProfileRequested?.Invoke();
+
+    [RelayCommand]
+    private void GoToBidHistory() => BidHistoryRequested?.Invoke();
 
     public async void RefreshAuctionsAsync()
     {
