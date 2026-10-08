@@ -40,6 +40,9 @@ public partial class HomeView : UserControl
             if (tableView.Name == "yourAuctionsTable")
             {
                 viewModel.GoToSellerOfAuction();
+            } else if (tableView.Name == "currentAuctionsTable")
+            {
+                viewModel.GoToBuyerOfAuction();
             }
         }
     }
