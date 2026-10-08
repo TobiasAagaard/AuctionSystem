@@ -15,6 +15,7 @@ public partial class HomeViewModel : ViewModelBase
     public int SelectedAuctionId { get; set; }
 
     public Action<Auction_Core.Models.Auction>? SellerOfAuctionRequested { get; set; }
+    public Action<Auction_Core.Models.Auction>? BuyerOfAuctionRequested { get; set; }
 
     private AuctionRepository _auctionRepo;
     private MainViewModel _mainViewModel;
@@ -44,10 +45,19 @@ public partial class HomeViewModel : ViewModelBase
 
     public void GoToSellerOfAuction()
     {
-        var selectedAuction = Auctions.FirstOrDefault(a => a.Id == SelectedAuctionId);
+        var selectedAuction = UserAuctions.FirstOrDefault(a => a.Id == SelectedAuctionId);
         if (selectedAuction is not null)
         {
             SellerOfAuctionRequested?.Invoke(selectedAuction);
+        }
+    }
+
+    public void GoToBuyerOfAuction()
+    {
+        var selectedAuction = Auctions.FirstOrDefault(a => a.Id == SelectedAuctionId);
+        if (selectedAuction is not null)
+        {
+            BuyerOfAuctionRequested?.Invoke(selectedAuction);
         }
     }
 }
