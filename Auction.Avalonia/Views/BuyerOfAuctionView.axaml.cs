@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Auction.Avalonia.Views;
 
-public partial class BuyerOfAuctionWindow : Window
+public partial class BuyerOfAuctionView : UserControl
 {
-    public BuyerOfAuctionWindow()
+    public BuyerOfAuctionView()
     {
         InitializeComponent();
     }
