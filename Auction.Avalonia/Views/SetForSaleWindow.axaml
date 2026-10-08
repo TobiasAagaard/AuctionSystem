@@ -1,0 +1,84 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Auction.Avalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        x:Class="Auction.Avalonia.Views.SetForSaleWindow"
+        Title="SetForSaleWindow"
+        x:DataType="vm:SetForSaleViewModel">
+      <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                  <StackPanel Margin="20, 20, 0, 0">
+                        <TextBlock FontSize="18" FontWeight="DemiBold" Text="Set for sale"/>
+                        <StackPanel Width="250" HorizontalAlignment="Left" Margin="0, 15, 0, 0">
+
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Name"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding Name}"/>
+                              </DockPanel>
+                              
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Milage"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding Milage}"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Reg. num"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding RegNum}"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Year"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding Year}"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Base price"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding BasePrice}"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Engine size"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding EngineSize}"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="km per liter"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding Kmpl}"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Tow bar"/>
+                                    <CheckBox IsChecked="{Binding TowBar}"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Fuel type"/>
+                                    <ComboBox SelectedItem="{Binding SelectedFuelType}"
+                                    ItemsSource="{Binding FuelTypes}"
+                                    PlaceholderText="Select a fuel type"
+                                    Width="200" 
+                                    SelectedIndex="0"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 60, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Starting bid"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding StartingBid}"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Close auction"/>
+                                    <CalendarDatePicker SelectedDate="{Binding CloseAuctionDate}"/>
+                              </DockPanel>
+                        </StackPanel>
+                  </StackPanel>
+                  <StackPanel Margin="100, 40, 0, 0">
+                        <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                              <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Vehicle type"/>
+                              <ComboBox SelectedItem="{Binding SelectedVehicleType}"
+                                    ItemsSource="{Binding VehicleTypes}"
+                                    PlaceholderText="Select a vehicle type"
+                                    Width="200" 
+                                    SelectedIndex="0"/>
+                        </DockPanel>
+                        <ContentControl Content="{Binding SelectedVehicleView}"/>
+                  </StackPanel>
+            </StackPanel>
+            <DockPanel HorizontalAlignment="Stretch" Margin="20, 25, 20, 0">
+                  <Button Content="Cancel" HorizontalAlignment="Left"/>
+                  <Button Content="Create auction" HorizontalAlignment="Right"/>
+            </DockPanel>
+      </StackPanel>
+</Window>

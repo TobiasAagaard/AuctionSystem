@@ -102,13 +102,15 @@ CREATE TABLE auctions (
     seller_id INT NOT NULL REFERENCES users(id),
     vehicle_id INT NOT NULL REFERENCES vehicles(id),
     minimum_price DECIMAL(18, 2) NOT NULL,
+    is_sold BOOLEAN DEFAULT FALSE NOT NULL,
+    end_time TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE bids (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    auction_id INT NOT NULL REFERENCES auctions(id),
+    auction_id INT NOT NULL REFERENCES auctions(id) ON DELETE CASCADE,
     bidder_id INT NOT NULL REFERENCES users(id),
     amount DECIMAL(18, 2) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
@@ -162,4 +164,3 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO auction_app;
 
 GRANT EXECUTE ON FUNCTION register_user(VARCHAR, VARCHAR, VARCHAR) TO auction_app;
 GRANT EXECUTE ON FUNCTION get_user_by_username(VARCHAR) TO auction_app;
-

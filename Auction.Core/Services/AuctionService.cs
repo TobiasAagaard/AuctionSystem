@@ -1,87 +1,86 @@
 using Auction_Core.Models;
 using Auction_Core.Repository;
-
 namespace Auction_Core.Services;
-
-
 
 public class AuctionService : IAuctionService
 {
     private readonly IAuctionRepository _auctionRepository;
-    private readonly List<Auction> _soldAuctions = new List<Auction>();
+    private readonly IUserRepository _userRepository;
 
-    public AuctionService(IAuctionRepository auctionRepository)
+    public AuctionService(IAuctionRepository auctionRepository, IUserRepository userRepository)
     {
         _auctionRepository = auctionRepository ?? throw new ArgumentNullException(nameof(auctionRepository), "Auction repository cannot be null.");
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository), "User repository cannot be null.");
     }
 
-    public IReadOnlyList<Auction> SoldAuctions => _soldAuctions;
-
-    public int SetForSale(Vehicle vehicle, ISeller seller, decimal minimumPrice)
+    public async Task<int> SetForSale(Vehicle vehicle, User seller, decimal minimumPrice, DateTime endTime)
     {
-        throw new NotImplementedException(); 
-        // if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
+        if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
+        if (vehicle == null) throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
+        if (minimumPrice < 0) throw new ArgumentOutOfRangeException(nameof(minimumPrice), "Minimum price cannot be negative.");
+        if (endTime < DateTime.UtcNow) throw new ArgumentOutOfRangeException(nameof(endTime), "End time cannot be in the past.");
 
-
-        // return SetForSale(vehicle, seller, minimumPrice, (auction, bid) => seller.ReceiveNotificationOfBid(auction, bid));
+        return await SetForSale(vehicle, seller, minimumPrice, endTime, seller.ReceiveNotificationOfBid);
     }
 
-    public int SetForSale(Vehicle vehicle, ISeller seller, decimal minimumPrice, NotificationDelegate notificationFunction)
+    public async Task<int> SetForSale(Vehicle vehicle, User seller, decimal minimumPrice, DateTime endTime, NotificationDelegate notificationFunction)
     {
-        throw new NotImplementedException();
-        // if (vehicle == null) throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
-        // if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
-        // if (notificationFunction == null) throw new ArgumentNullException(nameof(notificationFunction), "Notification function cannot be null.");
-        // if (minimumPrice < 0) throw new ArgumentOutOfRangeException(nameof(minimumPrice), "Minimum price cannot be negative.");
+        if (vehicle == null) throw new ArgumentNullException(nameof(vehicle), "Vehicle cannot be null.");
+        if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
+        if (minimumPrice < 0) throw new ArgumentOutOfRangeException(nameof(minimumPrice), "Minimum price cannot be negative.");
+        if (notificationFunction == null) throw new ArgumentNullException(nameof(notificationFunction), "Notification function cannot be null.");
+        if (endTime < DateTime.UtcNow) throw new ArgumentOutOfRangeException(nameof(endTime), "End time cannot be in the past.");
 
-        // _auctionRepository.AddAuctionAsync(vehicle, seller, minimumPrice, notificationFunction);
-        // return 0; 
+
+        return await _auctionRepository.AddAuctionAsync(vehicle, seller, minimumPrice, endTime, notificationFunction);
     }
 
-    public bool ReceiveBid(IBuyer buyer, int auctionId, decimal bidAmount)
+    public async Task<bool> ReceiveBid(User buyer, int auctionId, decimal bidAmount)
     {
-        throw new NotImplementedException();
-        // if (buyer == null) throw new ArgumentNullException(nameof(buyer), "Buyer cannot be null.");
-        // if (bidAmount < 0) throw new ArgumentOutOfRangeException(nameof(bidAmount), "Bid cannot be negative.");
+        if (buyer == null) throw new ArgumentNullException(nameof(buyer), "Buyer cannot be null.");
+        if (bidAmount < 0) throw new ArgumentOutOfRangeException(nameof(bidAmount), "Bid cannot be negative.");
 
-        // var auction = _auctionRepository.GetAuctionByIdAsync(auctionId);
-        // if (auction == null) return false;
+        var auction = await _auctionRepository.GetAuctionByIdAsync(auctionId);
+        if (auction == null) return false;
+        if (DateTime.UtcNow >= auction.EndTime) return false;
 
-        // if (bidAmount <= auction.HighestBid) return false;
-        // if (buyer.Balance < bidAmount) return false;
+        var highestBid = await _auctionRepository.GetHighestBidByAuctionIdAsync(auctionId);
+        if (highestBid != null && bidAmount <= highestBid.Amount) return false;
+        if (buyer.Balance < bidAmount) return false;
 
-        // auction.HighestBid = bidAmount;
-        // auction.HighestBidder = buyer;
+        if (bidAmount >= auction.MinimumPrice)
+        {
+            auction.NotificationFunction?.Invoke(auction, bidAmount);
+        }
 
-        // if (bidAmount >= auction.MinimumPrice)
-        // {
-        //     auction.NotificationFunction?.Invoke(auction, bidAmount);
-        // }
-
-        // return true;
+        return await _auctionRepository.AddBidAsync(auctionId, buyer, bidAmount) > 0;
     }
 
-    public bool AcceptBid(ISeller seller, int auctionId)
+    public async Task<bool> AcceptBid(User seller, int auctionId)
     {
-        throw new NotImplementedException();
-        // if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
+        if (seller == null) throw new ArgumentNullException(nameof(seller), "Seller cannot be null.");
 
-        // var auction = _auctionRepository.GetAuctionByIdAsync(auctionId);
-        // if (auction == null) return false;
+        var auction = await _auctionRepository.GetAuctionByIdAsync(auctionId) ?? throw new KeyNotFoundException($"Auction with ID {auctionId} not found.");
+        if (auction.User.ID != seller.ID) return false;
 
-        // if (!ReferenceEquals(auction.Seller, seller)) return false;
+        var highestBid = await _auctionRepository.GetHighestBidByAuctionIdAsync(auctionId);
+        if (highestBid == null) return false;
+        if (highestBid.Amount < auction.MinimumPrice) return false;
 
-        // if (auction.HighestBidder == null) return false;
-        // if (auction.HighestBid < auction.MinimumPrice) return false;
+        if (highestBid.User.Balance < highestBid.Amount) return false;
 
-        // if (auction.HighestBidder.Balance < auction.HighestBid) return false;
+        highestBid.User.Balance -= highestBid.Amount;
+        seller.Balance += highestBid.Amount;
 
-        // auction.HighestBidder.Balance -= auction.HighestBid;
-        // seller.Balance += auction.HighestBid;
+        // Update user balances in the database.
+        await _userRepository.UpdateUserAsync(highestBid.User);
+        await _userRepository.UpdateUserAsync(seller);
 
-        // _auctionRepository.RemoveAuction(auction.Id);
-        // _soldAuctions.Add(auction);
-
-        // return true;
+        // Mark the auction as sold and update its status in the database.
+        auction.IsSold = true;
+        auction.UpdatedAt = DateTime.UtcNow;
+        await _auctionRepository.UpdateAuctionAsync(auction);
+        
+        return true;
     }
 }

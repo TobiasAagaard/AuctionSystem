@@ -28,7 +28,7 @@ public partial class HomeViewModel : ViewModelBase
         {
             Auctions.Add(auction);
 
-            if (auction.Seller.ID == _mainViewModel.CurrentUser.ID) //TODO: use the current user's ID instead of 1
+            if (auction.User.ID == _mainViewModel.CurrentUser.ID) //TODO: use the current user's ID instead of 1
             {
                 UserAuctions.Add(auction);
             }
