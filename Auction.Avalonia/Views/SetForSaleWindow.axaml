@@ -31,6 +31,10 @@
                                     <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding Year}"/>
                               </DockPanel>
                               <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
+                                    <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Base price"/>
+                                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding BasePrice}"/>
+                              </DockPanel>
+                              <DockPanel HorizontalAlignment="Stretch" HorizontalSpacing="20" Margin="0, 5, 0, 0">
                                     <TextBlock Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Engine size"/>
                                     <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding EngineSize}"/>
                               </DockPanel>

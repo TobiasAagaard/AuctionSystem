@@ -12,8 +12,15 @@ namespace Auction.Avalonia.ViewModels;
 
 public partial class SetForSaleViewModel : ViewModelBase
 {
+    public SetForSaleViewModel(IAuctionService auctionService, IVehicleRepository vehicleRepository, MainViewModel mainViewModel)
+    {
+        _auctionService = auctionService ?? throw new ArgumentNullException(nameof(auctionService), "Auction service cannot be null.");
+        _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository), "Vehicle repository cannot be null.");
+        _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel), "Main view model cannot be null.");
+    }
     private readonly IAuctionService _auctionService;
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly MainViewModel _mainViewModel;
     
     // Vehicle properties
     [ObservableProperty]
@@ -25,7 +32,9 @@ public partial class SetForSaleViewModel : ViewModelBase
     [ObservableProperty]
     private  int _year;
     [ObservableProperty]
-    private  double _startingBid;
+    private  decimal _startingBid;
+    [ObservableProperty]
+    private  double _basePrice;
     [ObservableProperty]
     private  double _engineSize;
     [ObservableProperty]
@@ -96,7 +105,7 @@ public partial class SetForSaleViewModel : ViewModelBase
         };
     }
     
-    void CreateAuction()
+    public async void CreateAuction()
     {
         // Here you would create the auction based on the selected vehicle type and its properties.
         // This is just a placeholder for demonstration purposes.
@@ -115,12 +124,12 @@ public partial class SetForSaleViewModel : ViewModelBase
                 // Create a Business Personal Car auction
                 var businessCar = new BusinessPersonalCar
                 (
-                    1,
+                    0,
                     Name,
                     Milage,
                     RegNum,
                     Year,
-                    StartingBid,
+                    BasePrice,
                     EngineSize,
                     Kmpl,
                     SelectedFuelType,
@@ -128,18 +137,19 @@ public partial class SetForSaleViewModel : ViewModelBase
                     RollCage,
                     CargoCapacity
                 );
-                // Create a Business Personal Car auction
+                await _vehicleRepository.AddVehicleAsync(businessCar);
+                await _auctionService.SetForSale(businessCar, _mainViewModel.CurrentUser, StartingBid, CloseAuctionDate);
                 break;
             case "Private Personal Car":
                 // Create a Private Personal Car auction
                 var privateCar = new PrivatePersonalCar
                 (
-                    1,
+                    0,
                     Name,
                     Milage,
                     RegNum,
                     Year,
-                    StartingBid,
+                    BasePrice,
                     TowBar,
                     EngineSize,
                     Kmpl,
@@ -147,15 +157,57 @@ public partial class SetForSaleViewModel : ViewModelBase
                     SeatCount,
                     Isofix
                 );
+                await _vehicleRepository.AddVehicleAsync(privateCar);
+                await _auctionService.SetForSale(privateCar, _mainViewModel.CurrentUser, StartingBid, CloseAuctionDate);
                 break;
             case "Semi Truck":
                 // Create a Semi Truck auction
+                var semiTruck = new SemiTruck
+                (
+                    0,
+                    Name,
+                    Milage,
+                    RegNum,
+                    Year,
+                    BasePrice,
+                    TowBar,
+                    EngineSize,
+                    Kmpl,
+                    CargoCapacity,
+                    Weight,
+                    Height,
+                    Length
+                );
+                await _vehicleRepository.AddVehicleAsync(semiTruck);
+                await _auctionService.SetForSale(semiTruck, _mainViewModel.CurrentUser, StartingBid, CloseAuctionDate);
                 break;
             case "Bus":
                 // Create a Bus auction
+                var bus = new Bus
+                (
+                    0,
+                    Name,
+                    Milage,
+                    RegNum,
+                    Year,
+                    BasePrice,
+                    TowBar,
+                    EngineSize,
+                    Kmpl,
+                    Weight,
+                    Height,
+                    Length,
+                    SeatCount,
+                    BedCount,
+                    Toilet
+                );
+                await _vehicleRepository.AddVehicleAsync(bus);
+                await _auctionService.SetForSale(bus, _mainViewModel.CurrentUser, StartingBid, CloseAuctionDate);
                 break;
             default:
                 throw new InvalidOperationException("Unknown vehicle type selected.");
         }
+
+
     }
 }
