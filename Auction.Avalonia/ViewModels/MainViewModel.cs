@@ -15,6 +15,7 @@ public partial class MainViewModel : ViewModelBase
     private readonly CreateUserViewModel _createUserViewModel;
 
     private readonly HomeViewModel _homeViewModel;
+    private readonly SetForSaleViewModel _setForSaleViewModel;
 
     public User? CurrentUser { get; private set; }
     public ToastService Notifications { get; }
@@ -22,10 +23,11 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     public partial ViewModelBase CurrentPage { get; set; }
 
-    public MainViewModel(LoginViewModel loginViewModel, CreateUserViewModel createUserViewModel, AuctionRepository auctionRepo, ToastService notifications)
+    public MainViewModel(LoginViewModel loginViewModel, CreateUserViewModel createUserViewModel, SetForSaleViewModel setForSaleViewModel, AuctionRepository auctionRepo, ToastService notifications)
     {
         _loginViewModel = loginViewModel;
         _createUserViewModel = createUserViewModel;
+        _setForSaleViewModel = setForSaleViewModel;
         Notifications = notifications;
 
         _loginViewModel.CreateUserRequested = ShowCreateUser;
