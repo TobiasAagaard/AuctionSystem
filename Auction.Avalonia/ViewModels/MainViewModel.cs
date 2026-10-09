@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Auction_Core.Models;
-using Auction.Avalonia.Services;
+using Auction_Avalonia.Services;
 using Auction_Core.Repository;
 
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 /// <summary>
 /// The Core view model. It holds whichever page is currently shown in MainWindow

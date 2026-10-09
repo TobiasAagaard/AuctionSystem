@@ -1,10 +1,10 @@
-using Auction.Avalonia.ViewModels;
+using Auction_Avalonia.ViewModels;
 using Avalonia;
 using Auction_Core.Models;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Auction.Avalonia.Views;
+namespace Auction_Avalonia.Views;
 
 public partial class HomeView : UserControl
 {

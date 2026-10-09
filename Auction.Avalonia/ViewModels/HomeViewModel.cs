@@ -1,4 +1,4 @@
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 using System;
 using System.Collections.ObjectModel;
