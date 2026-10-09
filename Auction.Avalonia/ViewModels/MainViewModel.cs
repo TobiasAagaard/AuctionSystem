@@ -27,8 +27,6 @@ public partial class MainViewModel : ViewModelBase
     private SellerOfAuctionViewModel _sellerOfAuctionViewModel;
     private BuyerOfAuctionViewModel _buyerOfAuctionViewModel;
 
-    private readonly HomeViewModel  _homeViewModel;
-
     public ToastService Notifications { get; }
 
     [ObservableProperty]
@@ -36,7 +34,6 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel(LoginViewModel loginViewModel, 
         CreateUserViewModel createUserViewModel, 
-        SetForSaleViewModel setForSaleViewModel, 
         HomeViewModel homeViewModel,
         SessionService sessionService, 
         ToastService notifications)
