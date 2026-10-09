@@ -6,12 +6,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Auction_Core.Models;
 using Auction_Core.Repository;
+using CommunityToolkit.Mvvm.Input;
 
 public partial class HomeViewModel : ViewModelBase
 {
     public ObservableCollection<Auction> UserAuctions { get; private set; } = new();
     public ObservableCollection<Auction> Auctions { get; private set; } = new();
 
+    public Action? UserProfileRequested { get; set; }
     public int SelectedAuctionId { get; set; }
 
     public Action<Auction_Core.Models.Auction>? SellerOfAuctionRequested { get; set; }
@@ -26,6 +28,9 @@ public partial class HomeViewModel : ViewModelBase
         _auctionRepo = auctionRepo;
     }
 
+    [RelayCommand]
+    private void GoToUserProfile() => UserProfileRequested?.Invoke();
+
     public async void RefreshAuctionsAsync()
     {
         Auctions.Clear();
@@ -35,6 +40,8 @@ public partial class HomeViewModel : ViewModelBase
         foreach (var auction in allAuctions)
         {
             Auctions.Add(auction);
+            if (_mainViewModel.CurrentUser == null)
+                continue;
 
             if (auction.Seller.ID == _mainViewModel.CurrentUser.ID) //TODO: use the current user's ID instead of 1
             {
