@@ -17,6 +17,8 @@ public partial class BuyerOfAuctionViewModel : ViewModelBase
 
     public string ClosingString => $"Closing {DateTime.Now.ToShortDateString()}";
 
+    public string CurrentBid => $"DKK {_auction.MinimumPrice}";
+
     public BuyerOfAuctionViewModel(MainViewModel mainViewModel, Auction_Core.Models.Auction auction)
     {
         _auction = auction;
