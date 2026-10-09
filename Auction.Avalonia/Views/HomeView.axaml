@@ -19,7 +19,7 @@
         <StackPanel Spacing="5">
           <Button Content="+ Set for sale" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#FF33B733" Foreground="White"></Button>
           <Button Content="Bid history" Command="{Binding GoToBidHistoryCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
-          <Button Content="User profile" Command="{Binding GoToUserProfileCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button
+          <Button Content="User profile" Command="{Binding GoToUserProfileCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
         </StackPanel>
       </Border>
       <ScrollViewer>
