@@ -15,6 +15,8 @@ public partial class SellerOfAuctionViewModel : ViewModelBase
         BackRequested?.Invoke();
     }
 
+    public string ClosingString => $"Closing {DateTime.Now.ToShortDateString()}";
+
 
     public SellerOfAuctionViewModel(MainViewModel mainViewModel, Auction_Core.Models.Auction auction)
     {

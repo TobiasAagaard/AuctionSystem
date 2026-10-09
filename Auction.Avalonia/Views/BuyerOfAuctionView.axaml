@@ -23,7 +23,7 @@
       <Border Padding="20" DockPanel.Dock="Right" HorizontalAlignment="Right">
         
         <StackPanel Spacing="20" VerticalAlignment="Stretch" Orientation="Vertical">
-        <TextBlock Text="Closing 12/12/22" FontSize="20" FontWeight="Medium" TextAlignment="Right"></TextBlock>
+        <TextBlock Text="{Binding ClosingString}" FontSize="20" FontWeight="Medium" TextAlignment="Right"></TextBlock>
           <StackPanel Orientation="Horizontal" Spacing="10">
             <TextBlock Text="Current Bid:" FontSize="20" FontWeight="Medium" TextAlignment="Right"></TextBlock>
             <TextBlock Text="DKK 568.000" FontSize="20" FontWeight="Bold" TextAlignment="Right"></TextBlock>
