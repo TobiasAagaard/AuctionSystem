@@ -12,6 +12,7 @@ namespace Auction_Avalonia.ViewModels;
 public partial class LoginViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
+    private readonly SessionService _sessionService;
 
     public ToastService Notification { get; }
 
@@ -28,10 +29,11 @@ public partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool IsLoggedIn { get; set; } = false;
 
-    public LoginViewModel(IAuthService authService, ToastService notification)
+    public LoginViewModel(IAuthService authService, ToastService notification, SessionService sessionService)
     {
         this._authService = authService;
         this.Notification = notification;
+        this._sessionService = sessionService;
     }
 
     [RelayCommand]
@@ -55,6 +57,7 @@ public partial class LoginViewModel : ViewModelBase
                 IsLoggedIn = true;
                 Username = string.Empty;
                 Password = string.Empty;
+                _sessionService.Login(user);
                 LoginSuccessful?.Invoke(user);
 
                 Notification.Show("Login successful", ToastViewModel.NotificationType.Success);

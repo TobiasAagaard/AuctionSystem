@@ -2,6 +2,7 @@ using Auction_Avalonia.ViewModels;
 using Avalonia;
 using Auction_Core.Models;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 
 namespace Auction_Avalonia.Views;

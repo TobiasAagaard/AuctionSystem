@@ -31,6 +31,7 @@ public partial class App : Application
         services.AddTransient<CreateUserViewModel>();
         services.AddTransient<HomeViewModel>();
         services.AddSingleton<ToastService>();
+        services.AddSingleton<SessionService>();
         services.AddTransient<AuctionRepository>();
         services.AddTransient<UserProfileViewModel>();
 
