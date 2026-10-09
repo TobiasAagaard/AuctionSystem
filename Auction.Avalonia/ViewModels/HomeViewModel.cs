@@ -14,6 +14,8 @@ public partial class HomeViewModel : ViewModelBase
     public ObservableCollection<Auction> Auctions { get; private set; } = new();
 
     public Action? UserProfileRequested { get; set; }
+
+    public Action? BidHistoryRequested { get; set; }
     public int SelectedAuctionId { get; set; }
 
     public Action<Auction_Core.Models.Auction>? SellerOfAuctionRequested { get; set; }
@@ -30,6 +32,9 @@ public partial class HomeViewModel : ViewModelBase
 
     [RelayCommand]
     private void GoToUserProfile() => UserProfileRequested?.Invoke();
+
+    [RelayCommand]
+    private void GoToBidHistory() => BidHistoryRequested?.Invoke();
 
     public async void RefreshAuctionsAsync()
     {
