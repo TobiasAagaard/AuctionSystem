@@ -37,10 +37,11 @@ public partial class MainViewModel : ViewModelBase
         _createUserViewModel.BackRequested = ShowLogin;
         _homeViewModel = new(this, auctionRepo)
         {
-            UserProfileRequested = ShowUserProfile        
+            UserProfileRequested = ShowUserProfile, 
             SellerOfAuctionRequested = ShowSellerOfAuction,
             BuyerOfAuctionRequested = ShowBuyerOfAuction
         }; 
+
         _userProfileViewModel = new(this)
         {
             BackRequested = ShowHome
