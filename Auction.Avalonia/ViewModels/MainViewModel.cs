@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Auction_Core.Models;
 using Auction_Avalonia.Services;
 using Auction_Avalonia.Services;
 using Auction_Core.Repository;
@@ -30,7 +29,6 @@ public partial class MainViewModel : ViewModelBase
 
     private readonly HomeViewModel  _homeViewModel;
 
-    public User? CurrentUser { get; private set; }
     public ToastService Notifications { get; }
 
     [ObservableProperty]
@@ -82,22 +80,25 @@ public partial class MainViewModel : ViewModelBase
             CurrentUser = user;
             ShowHome();
         };
+
+        _sessionService.LoggedOut += () =>
+        {
+            _loginViewModel.Reset();
+            Notifications.Show("Logged out successfully", ToastViewModel.NotificationType.Success);
+            ShowLogin();
+        };
     }
 
     [RelayCommand]
     private void Logout()
     {
-        if (CurrentUser == null)
+        if (!_sessionService.IsLoggedIn)
         {
             Notifications.Show("No user is currently logged in", ToastViewModel.NotificationType.Warning);
+            return;
         }
-        else
-        {
-            _sessionService.Logout();
-            _loginViewModel.Reset();
-            Notifications.Show("Logged out successfully", ToastViewModel.NotificationType.Success);
-            ShowLogin();
-        }
+
+        _sessionService.Logout();
     }
 
     private void ShowLogin() => CurrentPage = _loginViewModel;
