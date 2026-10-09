@@ -20,6 +20,7 @@ public partial class MainViewModel : ViewModelBase
     private readonly UserProfileViewModel _userProfileViewModel;
 
     private readonly BidHistoryViewModel _bidHistoryViewModel;
+    
     private SellerOfAuctionViewModel _sellerOfAuctionViewModel;
     private BuyerOfAuctionViewModel _buyerOfAuctionViewModel;
 
@@ -50,6 +51,11 @@ public partial class MainViewModel : ViewModelBase
             BackRequested = ShowHome
         };
         _bidHistoryViewModel = new(this)
+        {
+            BackRequested = ShowHome
+        };
+
+        _userProfileViewModel = new(this)
         {
             BackRequested = ShowHome
         };
@@ -89,6 +95,7 @@ public partial class MainViewModel : ViewModelBase
     private void ShowUserProfile() => CurrentPage = _userProfileViewModel;
 
     private void ShowBidHistory() => CurrentPage = _bidHistoryViewModel;
+    
     private void ShowSellerOfAuction(Auction_Core.Models.Auction selectedAuction) {
         _sellerOfAuctionViewModel = new(this, selectedAuction)
         {
