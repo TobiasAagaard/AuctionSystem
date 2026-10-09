@@ -57,7 +57,7 @@ public class AuctionRepository : IAuctionRepository
         using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, end_time, created_at, updated_at FROM auctions";
+        cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, created_at, updated_at FROM auctions";
 
         using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
         while (reader.Read())
@@ -71,7 +71,7 @@ public class AuctionRepository : IAuctionRepository
         using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, end_time, created_at, updated_at FROM auctions WHERE id = @id";
+        cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, created_at, updated_at FROM auctions WHERE id = @id";
 
         cmd.Parameters.AddWithValue("id", auctionId);
 
