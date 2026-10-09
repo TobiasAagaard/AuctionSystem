@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Auction_Core.Models;
 using Auction.Avalonia.Services;
 using Auction_Core.Repository;
@@ -17,6 +18,8 @@ public partial class MainViewModel : ViewModelBase
     private readonly HomeViewModel _homeViewModel;
 
     private readonly UserProfileViewModel _userProfileViewModel;
+    private SellerOfAuctionViewModel _sellerOfAuctionViewModel;
+    private BuyerOfAuctionViewModel _buyerOfAuctionViewModel;
 
     public User? CurrentUser { get; private set; }
     public ToastService Notifications { get; }
@@ -41,6 +44,9 @@ public partial class MainViewModel : ViewModelBase
         {
             BackRequested = ShowHome
         };
+            SellerOfAuctionRequested = ShowSellerOfAuction,
+            BuyerOfAuctionRequested = ShowBuyerOfAuction
+        }; 
 
         CurrentPage = _loginViewModel;
 
@@ -52,6 +58,22 @@ public partial class MainViewModel : ViewModelBase
         };
     }
 
+    [RelayCommand]
+    private void Logout()
+    {
+        if (CurrentUser == null)
+        {
+            Notifications.Show("No user is currently logged in", ToastViewModel.NotificationType.Warning);
+        }
+        else
+        {
+            CurrentUser = null;
+            _loginViewModel.Reset();
+            Notifications.Show("Logged out successfully", ToastViewModel.NotificationType.Success);
+            ShowLogin();
+        }
+    }
+
     private void ShowLogin() => CurrentPage = _loginViewModel;
 
     private void ShowCreateUser() => CurrentPage = _createUserViewModel;
@@ -59,4 +81,21 @@ public partial class MainViewModel : ViewModelBase
     private void ShowHome() => CurrentPage = _homeViewModel;
 
     private void ShowUserProfile() => CurrentPage = _userProfileViewModel;
+    private void ShowSellerOfAuction(Auction_Core.Models.Auction selectedAuction) {
+        _sellerOfAuctionViewModel = new(this, selectedAuction)
+        {
+            BackRequested = ShowHome
+        };
+
+        CurrentPage = _sellerOfAuctionViewModel;
+    }
+
+    private void ShowBuyerOfAuction(Auction_Core.Models.Auction selectedAuction) {
+        _buyerOfAuctionViewModel = new(this, selectedAuction)
+        {
+            BackRequested = ShowHome
+        };
+
+        CurrentPage = _buyerOfAuctionViewModel;
+    }
 }

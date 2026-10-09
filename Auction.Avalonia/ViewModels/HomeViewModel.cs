@@ -2,6 +2,7 @@ namespace Auction.Avalonia.ViewModels;
 
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Auction_Core.Models;
 using Auction_Core.Repository;
@@ -13,6 +14,10 @@ public partial class HomeViewModel : ViewModelBase
     public ObservableCollection<Auction> Auctions { get; private set; } = new();
 
     public Action? UserProfileRequested { get; set; }
+    public int SelectedAuctionId { get; set; }
+
+    public Action<Auction_Core.Models.Auction>? SellerOfAuctionRequested { get; set; }
+    public Action<Auction_Core.Models.Auction>? BuyerOfAuctionRequested { get; set; }
 
     private AuctionRepository _auctionRepo;
     private MainViewModel _mainViewModel;
@@ -42,6 +47,24 @@ public partial class HomeViewModel : ViewModelBase
             {
                 UserAuctions.Add(auction);
             }
+        }
+    }
+
+    public void GoToSellerOfAuction()
+    {
+        var selectedAuction = UserAuctions.FirstOrDefault(a => a.Id == SelectedAuctionId);
+        if (selectedAuction is not null)
+        {
+            SellerOfAuctionRequested?.Invoke(selectedAuction);
+        }
+    }
+
+    public void GoToBuyerOfAuction()
+    {
+        var selectedAuction = Auctions.FirstOrDefault(a => a.Id == SelectedAuctionId);
+        if (selectedAuction is not null)
+        {
+            BuyerOfAuctionRequested?.Invoke(selectedAuction);
         }
     }
 }

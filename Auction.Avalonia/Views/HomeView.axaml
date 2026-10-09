@@ -30,9 +30,10 @@
         
         <Border Padding="40 0">
           <Border BorderBrush="#ccc" BorderThickness="2" HorizontalAlignment="Stretch">
-            <TableView
+            <TableView Name="yourAuctionsTable"
               CanUserResizeColumns="False"
               ItemsSource="{Binding UserAuctions}"
+              SelectionChanged="TableView_SelectionChanged"
             >
               <TableView.Columns>
                 <TableViewColumn x:DataType="model:Auction" Header="Name" Binding="{Binding Vehicle.Name}" Width="*" HorizontalContentAlignment="Center" />
@@ -48,9 +49,10 @@
       
         <Border Padding="40 0">
           <Border BorderBrush="#ccc" BorderThickness="1" HorizontalAlignment="Stretch">
-            <TableView
+            <TableView Name="currentAuctionsTable"
               CanUserResizeColumns="False"
               ItemsSource="{Binding Auctions}"
+              SelectionChanged="TableView_SelectionChanged"
             >
               <TableView.Columns>
                 <TableViewColumn x:DataType="model:Auction" Header="Name" Binding="{Binding Vehicle.Name}" Width="*" HorizontalContentAlignment="Center" />
