@@ -1,9 +1,12 @@
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Auction_Avalonia.Services;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using Auction_Core.Models;
 using Auction_Core.Repository;
 using CommunityToolkit.Mvvm.Input;
@@ -22,12 +25,12 @@ public partial class HomeViewModel : ViewModelBase
     public Action<Auction_Core.Models.Auction>? BuyerOfAuctionRequested { get; set; }
 
     private AuctionRepository _auctionRepo;
-    private MainViewModel _mainViewModel;
+    private SessionService _sessionService;
 
-    public HomeViewModel(MainViewModel mainViewModel, AuctionRepository auctionRepo)
+    public HomeViewModel(AuctionRepository auctionRepo, SessionService sessionService)
     {
-        _mainViewModel = mainViewModel;
         _auctionRepo = auctionRepo;
+        _sessionService = sessionService;
     }
 
     [RelayCommand]
@@ -48,12 +51,14 @@ public partial class HomeViewModel : ViewModelBase
             if (_mainViewModel.CurrentUser == null)
                 continue;
 
-            if (auction.Seller.ID == _mainViewModel.CurrentUser.ID) //TODO: use the current user's ID instead of 1
+            if (auction.User.ID == _sessionService.CurrentUser?.ID) //TODO: use the current user's ID instead of 1
             {
                 UserAuctions.Add(auction);
             }
         }
     }
+
+
 
     public void GoToSellerOfAuction()
     {

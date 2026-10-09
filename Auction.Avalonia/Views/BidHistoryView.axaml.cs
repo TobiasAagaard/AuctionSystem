@@ -1,9 +1,9 @@
-using Auction.Avalonia.ViewModels;
+using Auction_Avalonia.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Auction.Avalonia.Views;
+namespace Auction_Avalonia.Views;
 
 public partial class BidHistoryView : UserControl
 {

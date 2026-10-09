@@ -1,15 +1,15 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Auction.Avalonia.Services;
-using Auction.Avalonia.ViewModels;
-using Auction.Avalonia.Views;
+using Auction_Avalonia.Services;
+using Auction_Avalonia.ViewModels;
+using Auction_Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Auction_Core;
 using Auction_Core.Repository;
 using System;
 
-namespace Auction.Avalonia;
+namespace Auction_Avalonia;
 
 public partial class App : Application
 {
@@ -31,6 +31,7 @@ public partial class App : Application
         services.AddTransient<CreateUserViewModel>();
         services.AddTransient<HomeViewModel>();
         services.AddSingleton<ToastService>();
+        services.AddSingleton<SessionService>();
         services.AddTransient<AuctionRepository>();
         services.AddTransient<UserProfileViewModel>();
 

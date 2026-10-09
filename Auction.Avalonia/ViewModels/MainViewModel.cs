@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Auction_Core.Models;
-using Auction.Avalonia.Services;
+using Auction_Avalonia.Services;
+using Auction_Avalonia.Services;
 using Auction_Core.Repository;
 
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 /// <summary>
 /// The Core view model. It holds whichever page is currently shown in MainWindow
@@ -13,9 +13,12 @@ namespace Auction.Avalonia.ViewModels;
 public partial class MainViewModel : ViewModelBase
 {
     private readonly LoginViewModel _loginViewModel;
+
     private readonly CreateUserViewModel _createUserViewModel;
 
     private readonly HomeViewModel _homeViewModel;
+    
+    private readonly SessionService _sessionService;
 
     private readonly UserProfileViewModel _userProfileViewModel;
 
@@ -24,17 +27,23 @@ public partial class MainViewModel : ViewModelBase
     private SellerOfAuctionViewModel _sellerOfAuctionViewModel;
     private BuyerOfAuctionViewModel _buyerOfAuctionViewModel;
 
-    public User? CurrentUser { get; private set; }
     public ToastService Notifications { get; }
 
     [ObservableProperty]
     public partial ViewModelBase CurrentPage { get; set; }
 
-    public MainViewModel(LoginViewModel loginViewModel, CreateUserViewModel createUserViewModel, AuctionRepository auctionRepo, ToastService notifications)
+    public MainViewModel(LoginViewModel loginViewModel, 
+        CreateUserViewModel createUserViewModel, 
+        HomeViewModel homeViewModel,
+        SessionService sessionService, 
+        ToastService notifications)
     {
         _loginViewModel = loginViewModel;
         _createUserViewModel = createUserViewModel;
+        _homeViewModel = homeViewModel;
+        _setForSaleViewModel = setForSaleViewModel;
         Notifications = notifications;
+        _sessionService = sessionService;
 
         _loginViewModel.CreateUserRequested = ShowCreateUser;
         _createUserViewModel.BackRequested = ShowLogin;
@@ -63,27 +72,30 @@ public partial class MainViewModel : ViewModelBase
         CurrentPage = _loginViewModel;
 
         // Subscribe to the login successful event to update the current user
-        _loginViewModel.LoginSuccessful = user =>
+        _loginViewModel.LoginSuccessful = _ =>
         {
             CurrentUser = user;
             ShowHome();
+        };
+
+        _sessionService.LoggedOut += () =>
+        {
+            _loginViewModel.Reset();
+            Notifications.Show("Logged out successfully", ToastViewModel.NotificationType.Success);
+            ShowLogin();
         };
     }
 
     [RelayCommand]
     private void Logout()
     {
-        if (CurrentUser == null)
+        if (!_sessionService.IsLoggedIn)
         {
             Notifications.Show("No user is currently logged in", ToastViewModel.NotificationType.Warning);
+            return;
         }
-        else
-        {
-            CurrentUser = null;
-            _loginViewModel.Reset();
-            Notifications.Show("Logged out successfully", ToastViewModel.NotificationType.Success);
-            ShowLogin();
-        }
+
+        _sessionService.Logout();
     }
 
     private void ShowLogin() => CurrentPage = _loginViewModel;

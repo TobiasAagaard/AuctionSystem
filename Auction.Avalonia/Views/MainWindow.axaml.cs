@@ -1,7 +1,7 @@
 using Avalonia.Controls;
-using Auction.Avalonia.ViewModels;
+using Auction_Avalonia.ViewModels;
 
-namespace Auction.Avalonia.Views;
+namespace Auction_Avalonia.Views;
 
 public partial class MainWindow : Window
 {

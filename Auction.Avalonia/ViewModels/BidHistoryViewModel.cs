@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using Auction_Core.Models;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 public partial class BidHistoryViewModel : ViewModelBase
 {

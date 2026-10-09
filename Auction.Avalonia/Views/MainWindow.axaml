@@ -1,13 +1,13 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Auction.Avalonia.ViewModels"
+        xmlns:vm="using:Auction_Avalonia.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Auction.Avalonia.Views.MainWindow"
+        x:Class="Auction_Avalonia.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Auction.Avalonia">
+        Title="Auction_Avalonia">
 
     <!-- The ViewLocator (see App.axaml) turns whatever view model is in CurrentPage
          into its matching view, so swapping CurrentPage swaps the page shown here. -->

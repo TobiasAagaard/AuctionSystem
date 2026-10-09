@@ -2,10 +2,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="using:Auction.Avalonia.ViewModels"
-        xmlns:con="using:Auction.Avalonia.Converters"
+        xmlns:vm="using:Auction_Avalonia.ViewModels"
+        xmlns:con="using:Auction_Avalonia.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Auction.Avalonia.Views.UserProfileView"
+        x:Class="Auction_Avalonia.Views.UserProfileView"
         x:DataType="vm:UserProfileViewModel"
 >
   <UserControl.Resources>

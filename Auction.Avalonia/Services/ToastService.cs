@@ -1,11 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using Auction.Avalonia.ViewModels;
+using Auction_Avalonia.ViewModels;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 
-namespace Auction.Avalonia.Services
+namespace Auction_Avalonia.Services
 {
     public partial class ToastService : ObservableObject
     {
