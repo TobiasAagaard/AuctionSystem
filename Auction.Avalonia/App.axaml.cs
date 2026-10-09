@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Auction.Avalonia.Services;
+using Auction_Avalonia.Services;
 using Auction.Avalonia.ViewModels;
 using Auction.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +30,9 @@ public partial class App : Application
         services.AddTransient<LoginViewModel>();
         services.AddTransient<CreateUserViewModel>();
         services.AddTransient<HomeViewModel>();
+        services.AddTransient<SetForSaleViewModel>();
         services.AddSingleton<ToastService>();
+        services.AddSingleton<SessionService>();
         services.AddTransient<AuctionRepository>();
 
         var serviceProvider = services.BuildServiceProvider();

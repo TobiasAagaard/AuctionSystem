@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Auction_Core.Models;
-using Auction.Avalonia.Services;
+using Auction_Avalonia.Services;
 using Auction_Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;

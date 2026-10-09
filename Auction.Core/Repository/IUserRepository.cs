@@ -9,5 +9,5 @@ public interface IUserRepository {
     Task<User> AddUserAsync(string username, string password, string postalCode);
     Task<PrivateCustomer> AddPrivateCustomerAsync(string username, string password, string postalCode, string cpr);
     Task<BusinessCustomer> AddBusinessCustomerAsync(string username, string password, string postalCode, string cvr, decimal credit);
-
+    Task<bool> UpdateUserAsync(User user);
 }

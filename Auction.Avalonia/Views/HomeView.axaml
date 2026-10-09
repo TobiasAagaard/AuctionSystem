@@ -11,7 +11,7 @@
     <DockPanel>
       <Border DockPanel.Dock="Right" Padding="20">
         <StackPanel Spacing="5">
-          <Button Content="+ Set for sale" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#FF33B733" Foreground="White"></Button>
+          <Button Content="+ Set for sale" Command="{Binding SetForSaleCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#FF33B733" Foreground="White"></Button>
           <Button Content="User profile" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
           <Button Content="Bid history" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
         </StackPanel>

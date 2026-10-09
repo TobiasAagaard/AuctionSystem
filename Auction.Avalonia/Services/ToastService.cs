@@ -5,7 +5,7 @@ using Auction.Avalonia.ViewModels;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 
-namespace Auction.Avalonia.Services
+namespace Auction_Avalonia.Services
 {
     public partial class ToastService : ObservableObject
     {
