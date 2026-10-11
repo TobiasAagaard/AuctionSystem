@@ -35,6 +35,9 @@ public partial class App : Application
         services.AddSingleton<SessionService>();
         services.AddTransient<AuctionRepository>();
         services.AddTransient<UserProfileViewModel>();
+        // The buyer view is created per selected auction, so it is resolved through a factory
+        services.AddTransient<Func<Auction_Core.Models.Auction, BuyerOfAuctionViewModel>>(sp =>
+            auction => ActivatorUtilities.CreateInstance<BuyerOfAuctionViewModel>(sp, auction));
 
         var serviceProvider = services.BuildServiceProvider();
         Services = serviceProvider;

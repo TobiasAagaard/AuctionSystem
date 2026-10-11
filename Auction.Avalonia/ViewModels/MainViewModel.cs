@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Auction_Avalonia.Services;
 using Auction_Core.Repository;
+using System;
 
 namespace Auction_Avalonia.ViewModels;
 
@@ -26,6 +27,8 @@ public partial class MainViewModel : ViewModelBase
     private readonly UserProfileViewModel _userProfileViewModel;
 
     private readonly BidHistoryViewModel _bidHistoryViewModel;
+
+    private readonly Func<Auction_Core.Models.Auction, BuyerOfAuctionViewModel> _buyerOfAuctionViewModelFactory;
     
     private SellerOfAuctionViewModel _sellerOfAuctionViewModel;
     private BuyerOfAuctionViewModel _buyerOfAuctionViewModel;
@@ -39,9 +42,12 @@ public partial class MainViewModel : ViewModelBase
         CreateUserViewModel createUserViewModel, 
         SetForSaleViewModel setForSaleViewModel, 
         HomeViewModel homeViewModel,
+        UserProfileViewModel userProfileViewModel,
         SessionService sessionService, 
-        ToastService notifications)
+        ToastService notifications,
+        Func<Auction_Core.Models.Auction, BuyerOfAuctionViewModel> buyerOfAuctionViewModelFactory)
     {
+        _buyerOfAuctionViewModelFactory = buyerOfAuctionViewModelFactory;
         _loginViewModel = loginViewModel;
         _createUserViewModel = createUserViewModel;
         _homeViewModel = homeViewModel;
@@ -51,7 +57,8 @@ public partial class MainViewModel : ViewModelBase
 
         _bidHistoryViewModel = new(sessionService) { BackRequested = ShowHome };
 
-        _userProfileViewModel = new(sessionService) { BackRequested = ShowHome };
+        _userProfileViewModel = userProfileViewModel;
+        _userProfileViewModel.BackRequested = ShowHome;
         
 
         _loginViewModel.CreateUserRequested = ShowCreateUser;
@@ -115,10 +122,8 @@ public partial class MainViewModel : ViewModelBase
     }
 
     private void ShowBuyerOfAuction(Auction_Core.Models.Auction selectedAuction) {
-        _buyerOfAuctionViewModel = new(this, selectedAuction)
-        {
-            BackRequested = ShowHome
-        };
+        _buyerOfAuctionViewModel = _buyerOfAuctionViewModelFactory(selectedAuction);
+        _buyerOfAuctionViewModel.BackRequested = ShowHome;
 
         CurrentPage = _buyerOfAuctionViewModel;
     }

@@ -40,6 +40,16 @@
                 <TextBlock Text="Balance:" FontSize="14"></TextBlock>
                 <TextBlock Text="{Binding Balance, Converter={StaticResource CurrencyConvert}}" FontSize="14"></TextBlock>
               </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <NumericUpDown
+                    PlaceholderText="Deposit amount"
+                    Value="{Binding DepositAmount}"
+                    Minimum="0"
+                    Increment="1000"
+                    Width="250"
+                />
+                <Button Content="Deposit" Command="{Binding DepositCommand}"></Button>
+              </StackPanel>
             </StackPanel>
             <StackPanel Spacing="8">
               <StackPanel Orientation="Horizontal" Spacing="10">

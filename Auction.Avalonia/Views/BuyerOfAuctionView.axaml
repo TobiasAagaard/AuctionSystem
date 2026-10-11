@@ -28,7 +28,15 @@
             <TextBlock Text="Current Bid:" FontSize="20" FontWeight="Medium" TextAlignment="Right"></TextBlock>
             <TextBlock Text="{Binding CurrentBid}" FontSize="20" FontWeight="Bold" TextAlignment="Right"></TextBlock>
           </StackPanel>
-          <Button Content="Make a bid" HorizontalAlignment="Right" ></Button>
+          <NumericUpDown
+              PlaceholderText="Bid amount"
+              Value="{Binding BidAmount}"
+              Minimum="0"
+              Increment="1000"
+              Width="250"
+              HorizontalAlignment="Right"
+          />
+          <Button Content="Make a bid" HorizontalAlignment="Right" Command="{Binding MakeBidCommand}"></Button>
         </StackPanel>
       </Border>
     </DockPanel>
