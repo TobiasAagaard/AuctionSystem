@@ -1,7 +1,7 @@
 using System;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 public partial class BuyerOfAuctionViewModel : ViewModelBase
 {
     private Auction_Core.Models.Auction _auction;

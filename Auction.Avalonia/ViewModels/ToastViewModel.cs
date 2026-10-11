@@ -1,7 +1,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 public partial class ToastViewModel : ObservableObject
 {

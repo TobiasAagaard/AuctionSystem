@@ -3,7 +3,7 @@ using System.Globalization;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 
-namespace Auction.Avalonia.Converters;
+namespace Auction_Avalonia.Converters;
 
 public class CurrencyConverters : IValueConverter
 {

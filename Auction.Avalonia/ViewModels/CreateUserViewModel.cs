@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using Auction_Core.Models;
-using Auction.Avalonia.Services;
+using Auction_Avalonia.Services;
 using Auction_Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Linq;
 
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 public partial class CreateUserViewModel : ViewModelBase
 {

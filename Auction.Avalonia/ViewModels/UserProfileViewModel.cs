@@ -1,13 +1,14 @@
 using System;
+using Auction_Avalonia.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 public partial class UserProfileViewModel : ViewModelBase
 {
 
-    private readonly MainViewModel _mainViewModel;
+    private readonly SessionService _sessionService;
 
     public Action? BackRequested { get; set; }
 
@@ -23,14 +24,14 @@ public partial class UserProfileViewModel : ViewModelBase
     [ObservableProperty]
     private decimal _balance;
 
-    public UserProfileViewModel(MainViewModel mainViewModel)
+    public UserProfileViewModel(SessionService sessionService)
     {
-        _mainViewModel = mainViewModel;
+        _sessionService = sessionService;
     }
 
     public async void RefreshUserProfile()
     {
-        Balance = _mainViewModel.CurrentUser?.Balance ?? 0;
-        Username = _mainViewModel.CurrentUser?.Username ?? "Unknown";
+        Balance = _sessionService.CurrentUser?.Balance ?? 0;
+        Username = _sessionService.CurrentUser?.Username ?? "Unknown";
     }
 }

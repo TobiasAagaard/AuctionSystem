@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Auction.Avalonia.Views;
+namespace Auction_Avalonia.Views;
 
 public partial class BuyerOfAuctionView : UserControl
 {

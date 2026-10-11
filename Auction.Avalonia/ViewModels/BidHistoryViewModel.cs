@@ -1,14 +1,16 @@
 using System;
 using System.Collections.ObjectModel;
 using Auction_Core.Models;
+using Auction_Avalonia.Services;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 public partial class BidHistoryViewModel : ViewModelBase
 {
 
-    private MainViewModel _mainViewModel;
+    private SessionService _sessionService;
+
     public ObservableCollection<Bid> UserBids { get; private set; } = new();
 
     public Action? BackRequested { get; set; }
@@ -19,9 +21,9 @@ public partial class BidHistoryViewModel : ViewModelBase
         BackRequested?.Invoke();
     }
 
-    public BidHistoryViewModel(MainViewModel mainViewModel)
+    public BidHistoryViewModel(SessionService sessionService)
     {
-        _mainViewModel = mainViewModel;
+        _sessionService = sessionService;
     }
 
     public async void RefreshBidHistoryAsync()

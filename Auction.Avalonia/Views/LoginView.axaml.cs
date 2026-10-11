@@ -1,8 +1,8 @@
-using Auction.Avalonia.ViewModels;
+using Auction_Avalonia.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Input;
 
-namespace Auction.Avalonia.Views;
+namespace Auction_Avalonia.Views;
 
 public partial class LoginView : UserControl
 {
