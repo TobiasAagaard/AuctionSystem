@@ -16,53 +16,10 @@ public class VehicleRepository : IVehicleRepository
         _database = database;
     }
 
-    private const string InsertVehicle = """
-        WITH new_vehicle AS (
-            INSERT INTO vehicles (name, kilometers, release_year, registration_number, base_price,
-                                  tow_bar, engine_size, km_per_liter, fuel_type)
-            VALUES (@name, @kilometers, @release_year, @registration_number, @base_price,
-                    @tow_bar, @engine_size, @km_per_liter, @fuel_type::FuelType)
-            RETURNING id
-        )
-        """;
-
-    private const string InsertHeavyVehicle = """
-        new_heavy_vehicle AS (
-            INSERT INTO heavy_vehicles (vehicle_id, weight, height, length)
-            VALUES ((SELECT id FROM new_vehicle), @weight, @height, @length)
-            RETURNING id
-        )
-        """;
-
-    private const string InsertPersonalCar = """
-        new_personal_car AS (
-            INSERT INTO personal_cars (vehicle_id, seat_count)
-            VALUES ((SELECT id FROM new_vehicle), @seat_count)
-            RETURNING id
-        )
-        """;
-
     public async Task<Vehicle> GetVehicleByIdAsync(int id)
     {
         await using var connection = await _database.GetConnection();
-        await using var command = new NpgsqlCommand("""
-             SELECT  v.id, v.name, v.release_year, v.registration_number, v.base_price, v.tow_bar, v.engine_size,
-                v.kilometers, v.km_per_liter, v.fuel_type,
-                hv.weight, hv.height, hv.length,
-                st.cargo_capacity AS truck_cargo_capacity,
-                b.seat_count AS bus_seat_count, b.bed_count, b.toilet,
-                pc.seat_count AS car_seat_count,
-                bpc.cargo_capacity AS business_cargo_capacity, bpc.roll_cage,
-                ppc.isofix
-            FROM vehicles v
-            LEFT JOIN heavy_vehicles hv ON v.id = hv.vehicle_id
-            LEFT JOIN semi_trucks st ON hv.id = st.heavy_vehicle_id
-            LEFT JOIN buses b ON hv.id = b.heavy_vehicle_id
-            LEFT JOIN personal_cars pc ON v.id = pc.vehicle_id
-            LEFT JOIN business_personal_cars bpc ON pc.id = bpc.car_id
-            LEFT JOIN private_personal_cars ppc ON pc.id = ppc.car_id
-            WHERE v.id = @id;
-            """, connection);
+        await using var command = new NpgsqlCommand("SELECT * FROM get_vehicle_by_id(@id)", connection);
         command.Parameters.AddWithValue("@id", id);
 
         await using var reader = await command.ExecuteReaderAsync();
@@ -109,11 +66,10 @@ public class VehicleRepository : IVehicleRepository
         };
         
         command.Parameters.AddWithValue("@id", id);
-        command.CommandText = "DELETE FROM vehicles WHERE id = @id";
+        command.CommandText = "SELECT delete_vehicle(@id)";
 
-
-        int affectedRows = await command.ExecuteNonQueryAsync();
-        if (affectedRows == 0)
+        bool deleted = (bool)(await command.ExecuteScalarAsync() ?? false);
+        if (!deleted)
         {
             throw new KeyNotFoundException($"Vehicle with ID {id} not found");
         }
@@ -132,87 +88,89 @@ public class VehicleRepository : IVehicleRepository
         double KmPerLiter,
         FuelType FuelType);
 
+    private const string SharedArguments = """
+        @name,
+        @kilometers,
+        @release_year,
+        @registration_number,
+        @base_price,
+        @tow_bar,
+        @engine_size,
+        @km_per_liter,
+        @fuel_type::fueltype
+        """;
 
-
-     private static void BuildSubTypeInsert(NpgsqlCommand command, Vehicle vehicle)
+    private static void BuildSubTypeInsert(NpgsqlCommand command, Vehicle vehicle)
     {
-        if (vehicle is SemiTruck semiTruck)
+        switch (vehicle)
         {
-            command.CommandText =  $"""
-                {InsertVehicle},
-                {InsertHeavyVehicle},
-                new_semi_truck AS (
-                    INSERT INTO semi_trucks (heavy_vehicle_id, cargo_capacity)
-                    VALUES ((SELECT id FROM new_heavy_vehicle), @cargo_capacity)
-                )
-                SELECT id FROM new_vehicle
-                """;
+            case SemiTruck semiTruck:
+                command.CommandText = $"""
+                    SELECT add_semi_truck(
+                        {SharedArguments},
+                        @weight,
+                        @height,
+                        @length,
+                        @cargo_capacity
+                    )
+                    """;
 
-            AddHeavyVehicleParameters(command, semiTruck);
-            command.Parameters.AddWithValue("@cargo_capacity", semiTruck.MaxLoad);
+                AddHeavyVehicleParameters(command, semiTruck);
+                command.Parameters.AddWithValue("@cargo_capacity", semiTruck.MaxLoad);
+                break;
 
-            return;
+            case Bus bus:
+                command.CommandText = $"""
+                    SELECT add_bus(
+                        {SharedArguments},
+                        @weight,
+                        @height,
+                        @length,
+                        @seat_count,
+                        @bed_count,
+                        @toilet
+                    )
+                    """;
+
+                AddHeavyVehicleParameters(command, bus);
+                command.Parameters.AddWithValue("@seat_count", bus.Seats);
+                command.Parameters.AddWithValue("@bed_count", bus.SleepingPlaces);
+                command.Parameters.AddWithValue("@toilet", bus.HasToilet);
+                break;
+
+            case BusinessPersonalCar businessPersonalCar:
+                command.CommandText = $"""
+                    SELECT add_business_personal_car(
+                        {SharedArguments},
+                        @seat_count,
+                        @cargo_capacity,
+                        @roll_cage
+                    )
+                    """;
+
+                command.Parameters.AddWithValue("@seat_count", businessPersonalCar.SeatCount);
+                command.Parameters.AddWithValue("@cargo_capacity", businessPersonalCar.CargoCapacity);
+                command.Parameters.AddWithValue("@roll_cage", businessPersonalCar.RollCage);
+                break;
+
+            case PrivatePersonalCar privatePersonalCar:
+                command.CommandText = $"""
+                    SELECT add_private_personal_car(
+                        {SharedArguments},
+                        @seat_count,
+                        @isofix
+                    )
+                    """;
+
+                command.Parameters.AddWithValue("@seat_count", privatePersonalCar.SeatCount);
+                command.Parameters.AddWithValue("@isofix", privatePersonalCar.Isofix);
+                break;
+
+            default:
+                throw new InvalidOperationException($"Vehicle type {vehicle.GetType().Name} is not supported.");
         }
-
-        if (vehicle is Bus bus)
-        {
-            command.CommandText =  $"""
-                {InsertVehicle},
-                {InsertHeavyVehicle},
-                new_bus AS (
-                    INSERT INTO buses (heavy_vehicle_id, seat_count, bed_count, toilet)
-                    VALUES ((SELECT id FROM new_heavy_vehicle), @seat_count, @bed_count, @toilet)
-                )
-                SELECT id FROM new_vehicle
-                """;
-
-            AddHeavyVehicleParameters(command, bus);
-            command.Parameters.AddWithValue("@seat_count", bus.Seats);
-            command.Parameters.AddWithValue("@bed_count", bus.SleepingPlaces);
-            command.Parameters.AddWithValue("@toilet", bus.HasToilet);
-            
-            return;
-        }
-
-        if (vehicle is BusinessPersonalCar businessPersonalCar)
-        {
-            command.CommandText =  $"""
-                {InsertVehicle},
-                {InsertPersonalCar},
-                new_business_personal_car AS (
-                    INSERT INTO business_personal_cars (car_id, cargo_capacity, roll_cage)
-                    VALUES ((SELECT id FROM new_personal_car), @cargo_capacity, @roll_cage)
-                )
-                SELECT id FROM new_vehicle
-                """;
-            
-            command.Parameters.AddWithValue("@seat_count", businessPersonalCar.SeatCount);
-            command.Parameters.AddWithValue("@cargo_capacity", businessPersonalCar.CargoCapacity);
-            command.Parameters.AddWithValue("@roll_cage", businessPersonalCar.RollCage);
-
-            return;
-        }
-
-        if (vehicle is PrivatePersonalCar privatePersonalCar)
-        {
-
-            command.CommandText =  $"""
-                {InsertVehicle},
-                {InsertPersonalCar},
-                new_private_personal_car AS (
-                    INSERT INTO private_personal_cars(car_id, isofix)
-                    VALUES ((SELECT id FROM new_personal_car), @isofix)
-                )
-                SELECT id FROM new_vehicle
-                """;
-            command.Parameters.AddWithValue("@seat_count", privatePersonalCar.SeatCount);
-            command.Parameters.AddWithValue("@isofix", privatePersonalCar.Isofix);
-
-            return;
-        }
-
-        throw new InvalidOperationException($"Vehicle type {vehicle.GetType().Name} is not supported.");
     }
+
     private static Vehicle MapVehicle(DbDataReader reader)
     {
         VehicleRow row = ReadSharedColumns(reader);
