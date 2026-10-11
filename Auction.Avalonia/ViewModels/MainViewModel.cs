@@ -41,40 +41,33 @@ public partial class MainViewModel : ViewModelBase
         _loginViewModel = loginViewModel;
         _createUserViewModel = createUserViewModel;
         _homeViewModel = homeViewModel;
-        _setForSaleViewModel = setForSaleViewModel;
         Notifications = notifications;
         _sessionService = sessionService;
 
+        _bidHistoryViewModel = new(sessionService)
+        {
+            BackRequested = ShowHome
+        };
+
+        _userProfileViewModel = new(sessionService)
+        {
+            BackRequested = ShowHome
+        };
+        
+
         _loginViewModel.CreateUserRequested = ShowCreateUser;
         _createUserViewModel.BackRequested = ShowLogin;
-        _homeViewModel = new(this, auctionRepo)
-        {
-            UserProfileRequested = ShowUserProfile,
-            BidHistoryRequested = ShowBidHistory,
-            SellerOfAuctionRequested = ShowSellerOfAuction,
-            BuyerOfAuctionRequested = ShowBuyerOfAuction
-        };
-
-        _userProfileViewModel = new(this)
-        {
-            BackRequested = ShowHome
-        };
-        _bidHistoryViewModel = new(this)
-        {
-            BackRequested = ShowHome
-        };
-
-        _userProfileViewModel = new(this)
-        {
-            BackRequested = ShowHome
-        };
+        _homeViewModel.UserProfileRequested = ShowUserProfile;
+        _homeViewModel.BidHistoryRequested = ShowBidHistory;
+        _homeViewModel.SellerOfAuctionRequested = ShowSellerOfAuction;
+        _homeViewModel.BuyerOfAuctionRequested = ShowBuyerOfAuction;
 
         CurrentPage = _loginViewModel;
 
         // Subscribe to the login successful event to update the current user
         _loginViewModel.LoginSuccessful = _ =>
         {
-            CurrentUser = user;
+            _userProfileViewModel?.RefreshUserProfile();
             ShowHome();
         };
 

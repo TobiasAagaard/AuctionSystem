@@ -48,10 +48,10 @@ public partial class HomeViewModel : ViewModelBase
         foreach (var auction in allAuctions)
         {
             Auctions.Add(auction);
-            if (_mainViewModel.CurrentUser == null)
+            if (_sessionService.CurrentUser == null)
                 continue;
 
-            if (auction.User.ID == _sessionService.CurrentUser?.ID) //TODO: use the current user's ID instead of 1
+            if (auction.Seller.ID == _sessionService.CurrentUser?.ID) //TODO: use the current user's ID instead of 1
             {
                 UserAuctions.Add(auction);
             }
