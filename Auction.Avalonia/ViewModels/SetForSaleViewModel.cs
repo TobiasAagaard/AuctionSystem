@@ -5,24 +5,32 @@ using Auction_Core.Services;
 using Auction_Avalonia.Services;
 using Auction_Core.Repository;
 using Avalonia.Controls;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Auction_Core.Models;
 using Auction_Core.Enums;
+using System.Linq;
+using System.Threading.Tasks;
+using Avalonia.Controls.Notifications;
 
 namespace Auction_Avalonia.ViewModels;
 
 public partial class SetForSaleViewModel : ViewModelBase
 {
     private readonly SessionService _sessionService;
-    
-    public SetForSaleViewModel(IAuctionService auctionService, IVehicleRepository vehicleRepository, SessionService sessionService)
+    private readonly IAuctionService _auctionService;
+    private readonly IVehicleRepository _vehicleRepository;
+    private readonly ToastService _notifications;
+
+        public SetForSaleViewModel(IAuctionService auctionService, IVehicleRepository vehicleRepository, SessionService sessionService, ToastService notifications)
     {
         _auctionService = auctionService ?? throw new ArgumentNullException(nameof(auctionService), "Auction service cannot be null.");
         _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository), "Vehicle repository cannot be null.");
         _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService), "Session service cannot be null.");
+        _notifications = notifications ?? throw new ArgumentNullException(nameof(notifications), "Notifications service cannot be null.");
     }
-    private readonly IAuctionService _auctionService;
-    private readonly IVehicleRepository _vehicleRepository;
+
+    public Action? BackRequested { get; set; }
     
     // Vehicle properties
     [ObservableProperty]
@@ -95,6 +103,7 @@ public partial class SetForSaleViewModel : ViewModelBase
         "Semi Truck",
         "Bus"
     };
+
     partial void OnSelectedVehicleTypeChanged(string? value)
     {
         SelectedVehicleView = value switch
@@ -106,110 +115,97 @@ public partial class SetForSaleViewModel : ViewModelBase
             _ => null
         };
     }
-    
-    public async void CreateAuction()
-    {
-        // Here you would create the auction based on the selected vehicle type and its properties.
-        // This is just a placeholder for demonstration purposes.
-        if (string.IsNullOrEmpty(SelectedVehicleType)) throw new InvalidOperationException("No vehicle type selected.");
-        
-        if (CloseAuctionDate < DateTime.Now) throw new InvalidOperationException("Close auction date cannot be in the past.");
-        
-        if (StartingBid <= 0) throw new InvalidOperationException("Starting bid must be greater than zero.");
 
-        if (string.IsNullOrEmpty(Name)) throw new InvalidOperationException("Vehicle name cannot be empty.");
-        if (string.IsNullOrEmpty(RegNum)) throw new InvalidOperationException("Vehicle registration number cannot be empty.");
-        
-        switch (SelectedVehicleType)
+    [RelayCommand]
+    private void Cancel()
+    {
+        ResetFildes();
+        BackRequested?.Invoke();
+    }
+
+    [RelayCommand]
+    private async Task CreateAuctionAsync()
+    {
+        User seller = _sessionService.CurrentUser;
+
+        if (seller == null)
         {
-            case "Business Personal Car":
-                // Create a Business Personal Car auction
-                var businessCar = new BusinessPersonalCar
-                (
-                    0,
-                    Name,
-                    Milage,
-                    RegNum,
-                    Year,
-                    BasePrice,
-                    EngineSize,
-                    Kmpl,
-                    SelectedFuelType,
-                    SeatCount,
-                    RollCage,
-                    CargoCapacity
-                );
-                await _vehicleRepository.AddVehicleAsync(businessCar);
-                await _auctionService.SetForSale(businessCar, _sessionService?.CurrentUser, StartingBid, CloseAuctionDate);
-                break;
-            case "Private Personal Car":
-                // Create a Private Personal Car auction
-                var privateCar = new PrivatePersonalCar
-                (
-                    0,
-                    Name,
-                    Milage,
-                    RegNum,
-                    Year,
-                    BasePrice,
-                    TowBar,
-                    EngineSize,
-                    Kmpl,
-                    SelectedFuelType,
-                    SeatCount,
-                    Isofix
-                );
-                await _vehicleRepository.AddVehicleAsync(privateCar);
-                await _auctionService.SetForSale(privateCar, _sessionService?.CurrentUser, StartingBid, CloseAuctionDate);
-                break;
-            case "Semi Truck":
-                // Create a Semi Truck auction
-                var semiTruck = new SemiTruck
-                (
-                    0,
-                    Name,
-                    Milage,
-                    RegNum,
-                    Year,
-                    BasePrice,
-                    TowBar,
-                    EngineSize,
-                    Kmpl,
-                    CargoCapacity,
-                    Weight,
-                    Height,
-                    Length
-                );
-                await _vehicleRepository.AddVehicleAsync(semiTruck);
-                await _auctionService.SetForSale(semiTruck, _sessionService?.CurrentUser, StartingBid, CloseAuctionDate);
-                break;
-            case "Bus":
-                // Create a Bus auction
-                var bus = new Bus
-                (
-                    0,
-                    Name,
-                    Milage,
-                    RegNum,
-                    Year,
-                    BasePrice,
-                    TowBar,
-                    EngineSize,
-                    Kmpl,
-                    Weight,
-                    Height,
-                    Length,
-                    SeatCount,
-                    BedCount,
-                    Toilet
-                );
-                await _vehicleRepository.AddVehicleAsync(bus);
-                await _auctionService.SetForSale(bus, _sessionService?.CurrentUser, StartingBid, CloseAuctionDate);
-                break;
-            default:
-                throw new InvalidOperationException("Unknown vehicle type selected.");
+            _notifications.Show("You must be logged in to create a auction", ToastViewModel.NotificationType.Warning);
+            return;
         }
 
+        string? error = ValidateAuction();
+
+        if (error != null)
+        {
+            _notifications.Show(error, ToastViewModel.NotificationType.Error);
+            return;
+        }
+
+        try
+        {
+            Vehicle vehicle = BuildVehicle();
+            await _vehicleRepository.AddVehicleAsync(vehicle);
+            await _auctionService.SetForSale(vehicle, seller, StartingBid, CloseAuctionDate);
+        }
+        catch (Exception ex)
+        {
+            _notifications.Show("Auction creation failed. Retry or contact support", ToastViewModel.NotificationType.Error);
+            throw new InvalidOperationException("Failed to create auction", ex);
+        }
+
+        _notifications.Show("Auction created successfully", ToastViewModel.NotificationType.Success);
+        ResetFildes();
+        BackRequested?.Invoke();
 
     }
+
+    private string? ValidateAuction()
+    {
+        if (string.IsNullOrWhiteSpace(SelectedVehicleType)) return "Vehicle type is required";
+        if (string.IsNullOrWhiteSpace(Name)) return "Vehicle name is required";
+        if (string.IsNullOrWhiteSpace(RegNum)) return "Registration number is required";
+        if (StartingBid <= 0) return "Starting bid must be greater than zero";
+        if (CloseAuctionDate <= DateTime.Now) return "Close auction date must be in the future";
+
+        return null;
+    }
+
+    private Vehicle BuildVehicle() => SelectedVehicleType switch
+    {
+        "Business Personal Car" => new BusinessPersonalCar(0, Name!, Milage, RegNum!, Year, BasePrice, EngineSize, Kmpl,
+                                       SelectedFuelType, SeatCount, RollCage, CargoCapacity),
+        "Private Personal Car" => new PrivatePersonalCar(0, Name!, Milage, RegNum!, Year, BasePrice,TowBar, EngineSize, Kmpl,
+                                       SelectedFuelType, SeatCount, RollCage),
+        "Semi Truck" => new SemiTruck(0, Name!, Milage, RegNum!, Year, BasePrice, TowBar, EngineSize, Kmpl, CargoCapacity,
+                                       Height, Weight, Length),
+        "Bus" => new Bus(0, Name!, Milage, RegNum!, Year, BasePrice, TowBar, EngineSize, Kmpl, Weight, Height, Length, SeatCount, BedCount, Toilet),
+        _ => throw new InvalidOperationException("Unsupported vehicle type")
+    };
+
+    private void ResetFildes()
+    {
+        Name = string.Empty;
+        RegNum = string.Empty;
+        Milage = 0;
+        Year = 0;
+        StartingBid = 0;
+        BasePrice = 0;
+        EngineSize = 0;
+        Kmpl = 0;
+        TowBar = false;
+        CloseAuctionDate = DateTime.Now.AddDays(7);
+        Weight = 0;
+        Height = 0;
+        Length = 0;
+        Toilet = false;
+        BedCount = 0;
+        Isofix = false;
+        RollCage = false;
+        SeatCount = 0;
+        CargoCapacity = 0;
+        SelectedFuelType = FuelTypes.FirstOrDefault();
+        SelectedVehicleType = VehicleTypes.FirstOrDefault();
+    }
+    
 }

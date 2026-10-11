@@ -46,18 +46,12 @@ public partial class MainViewModel : ViewModelBase
         _createUserViewModel = createUserViewModel;
         _homeViewModel = homeViewModel;
         _setForSaleViewModel = setForSaleViewModel;
-        Notifications = notifications;
         _sessionService = sessionService;
+        Notifications = notifications;
 
-        _bidHistoryViewModel = new(sessionService)
-        {
-            BackRequested = ShowHome
-        };
+        _bidHistoryViewModel = new(sessionService) { BackRequested = ShowHome };
 
-        _userProfileViewModel = new(sessionService)
-        {
-            BackRequested = ShowHome
-        };
+        _userProfileViewModel = new(sessionService) { BackRequested = ShowHome };
         
 
         _loginViewModel.CreateUserRequested = ShowCreateUser;
@@ -67,6 +61,7 @@ public partial class MainViewModel : ViewModelBase
         _homeViewModel.BidHistoryRequested = ShowBidHistory;
         _homeViewModel.SellerOfAuctionRequested = ShowSellerOfAuction;
         _homeViewModel.BuyerOfAuctionRequested = ShowBuyerOfAuction;
+        _setForSaleViewModel.BackRequested = ShowHome;
 
         CurrentPage = _loginViewModel;
 
@@ -108,6 +103,7 @@ public partial class MainViewModel : ViewModelBase
     private void ShowUserProfile() => CurrentPage = _userProfileViewModel;
 
     private void ShowBidHistory() => CurrentPage = _bidHistoryViewModel;
+    
     
     private void ShowSellerOfAuction(Auction_Core.Models.Auction selectedAuction) {
         _sellerOfAuctionViewModel = new(this, selectedAuction)
