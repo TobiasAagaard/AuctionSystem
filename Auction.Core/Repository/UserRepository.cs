@@ -198,6 +198,20 @@ public class UserRepository : IUserRepository
         }
     }
 
+    public async Task<decimal> AddToBalanceAsync(int userId, decimal amount)
+    {
+        await using NpgsqlConnection connection = await _database.GetConnection();
+
+        await using NpgsqlCommand cmd = new NpgsqlCommand(
+            "UPDATE users SET balance = balance + @amount WHERE id = @id RETURNING balance", connection);
+        cmd.Parameters.AddWithValue("amount", amount);
+        cmd.Parameters.AddWithValue("id", userId);
+
+        object? balance = await cmd.ExecuteScalarAsync() ?? throw new InvalidOperationException($"User with ID {userId} not found.");
+
+        return Convert.ToDecimal(balance);
+    }
+
     public Task<bool> DeleteUserAsync(int id) {
         throw new NotImplementedException();
     }

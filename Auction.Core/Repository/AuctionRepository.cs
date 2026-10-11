@@ -7,6 +7,12 @@ public delegate void NotificationDelegate (Auction auction, decimal bid);
 
 public class AuctionRepository : IAuctionRepository
 {
+    private const string SelectAuctionSql = """
+        SELECT id, seller_id, vehicle_id, minimum_price, is_sold, end_time, created_at, updated_at,
+               (SELECT MAX(amount) FROM bids WHERE bids.auction_id = auctions.id) AS highest_bid
+        FROM auctions
+        """;
+
     private readonly Database _database;
     private UserRepository _userRepository;
     private VehicleRepository _vehicleRepository;
@@ -57,7 +63,7 @@ public class AuctionRepository : IAuctionRepository
         using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, is_sold, end_time, created_at, updated_at FROM auctions";
+        cmd.CommandText = SelectAuctionSql;
 
         using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
         while (reader.Read())
@@ -71,7 +77,7 @@ public class AuctionRepository : IAuctionRepository
         using NpgsqlConnection connection = await _database.GetConnection();
 
         NpgsqlCommand cmd = connection.CreateCommand();
-        cmd.CommandText = "SELECT id, seller_id, vehicle_id, minimum_price, is_sold, end_time, created_at, updated_at FROM auctions WHERE id = @id";
+        cmd.CommandText = $"{SelectAuctionSql} WHERE id = @id";
 
         cmd.Parameters.AddWithValue("id", auctionId);
 
@@ -212,7 +218,10 @@ public class AuctionRepository : IAuctionRepository
             reader.GetDateTime(6),
             reader.GetDateTime(7),
             null
-        );
+        )
+        {
+            HighestBid = reader.IsDBNull(8) ? null : reader.GetDecimal(8)
+        };
     }
     
     private static void BindAuctionToCommand(NpgsqlCommand cmd, Auction auction)

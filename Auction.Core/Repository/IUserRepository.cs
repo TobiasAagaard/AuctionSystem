@@ -10,4 +10,5 @@ public interface IUserRepository {
     Task<PrivateCustomer> AddPrivateCustomerAsync(string username, string password, string postalCode, string cpr);
     Task<BusinessCustomer> AddBusinessCustomerAsync(string username, string password, string postalCode, string cvr, decimal credit);
     Task<bool> UpdateUserAsync(User user);
+    Task<decimal> AddToBalanceAsync(int userId, decimal amount);
 }

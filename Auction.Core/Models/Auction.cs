@@ -31,4 +31,8 @@ public class Auction
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public NotificationDelegate? NotificationFunction { get; }
+
+    // Highest bid placed on the auction, null when no bids have been placed yet
+    public decimal? HighestBid { get; set; }
+    public decimal CurrentBid => HighestBid ?? MinimumPrice;
 }

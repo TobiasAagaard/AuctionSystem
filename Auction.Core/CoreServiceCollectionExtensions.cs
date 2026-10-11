@@ -19,6 +19,7 @@ public static class CoreServiceCollectionExtensions
 
         services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IAuctionService, AuctionService>();
+        services.AddSingleton<IUserService, UserService>();
 
         return services;
     }

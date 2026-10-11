@@ -43,6 +43,7 @@ public class AuctionService : IAuctionService
         var auction = await _auctionRepository.GetAuctionByIdAsync(auctionId);
         if (auction == null) return false;
         if (DateTime.UtcNow >= auction.EndTime) return false;
+        if (bidAmount < auction.MinimumPrice) return false;
 
         var highestBid = await _auctionRepository.GetHighestBidByAuctionIdAsync(auctionId);
         if (highestBid != null && bidAmount <= highestBid.Amount) return false;
@@ -82,5 +83,10 @@ public class AuctionService : IAuctionService
         await _auctionRepository.UpdateAuctionAsync(auction);
         
         return true;
+    }
+
+    public async Task<Bid?> GetHighestBid(int auctionId)
+    {
+        return await _auctionRepository.GetHighestBidByAuctionIdAsync(auctionId);
     }
 }
