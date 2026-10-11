@@ -2,7 +2,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Auction_Avalonia.Services;
 using Auction_Core.Repository;
-namespace Auction.Avalonia.ViewModels;
+
+namespace Auction_Avalonia.ViewModels;
 
 
 
@@ -16,10 +17,18 @@ public partial class MainViewModel : ViewModelBase
 
     private readonly CreateUserViewModel _createUserViewModel;
 
+    private readonly HomeViewModel _homeViewModel;
+    
     private readonly SessionService _sessionService;
 
     private readonly SetForSaleViewModel _setForSaleViewModel;
-    private readonly HomeViewModel  _homeViewModel;
+
+    private readonly UserProfileViewModel _userProfileViewModel;
+
+    private readonly BidHistoryViewModel _bidHistoryViewModel;
+    
+    private SellerOfAuctionViewModel _sellerOfAuctionViewModel;
+    private BuyerOfAuctionViewModel _buyerOfAuctionViewModel;
 
     public ToastService Notifications { get; }
 
@@ -40,17 +49,32 @@ public partial class MainViewModel : ViewModelBase
         Notifications = notifications;
         _sessionService = sessionService;
 
+        _bidHistoryViewModel = new(sessionService)
+        {
+            BackRequested = ShowHome
+        };
+
+        _userProfileViewModel = new(sessionService)
+        {
+            BackRequested = ShowHome
+        };
+        
+
         _loginViewModel.CreateUserRequested = ShowCreateUser;
         _createUserViewModel.BackRequested = ShowLogin;
         _homeViewModel.GoToSetForSale = ShowSetForSale;
-
+        _homeViewModel.UserProfileRequested = ShowUserProfile;
+        _homeViewModel.BidHistoryRequested = ShowBidHistory;
+        _homeViewModel.SellerOfAuctionRequested = ShowSellerOfAuction;
+        _homeViewModel.BuyerOfAuctionRequested = ShowBuyerOfAuction;
 
         CurrentPage = _loginViewModel;
 
         // Subscribe to the login successful event to update the current user
         _loginViewModel.LoginSuccessful = _ =>
         {
-            CurrentPage = _homeViewModel;
+            _userProfileViewModel?.RefreshUserProfile();
+            ShowHome();
         };
 
         _sessionService.LoggedOut += () =>
@@ -76,5 +100,30 @@ public partial class MainViewModel : ViewModelBase
     private void ShowLogin() => CurrentPage = _loginViewModel;
 
     private void ShowCreateUser() => CurrentPage = _createUserViewModel;
+
     private void ShowSetForSale() => CurrentPage = _setForSaleViewModel;
+
+    private void ShowHome() => CurrentPage = _homeViewModel;
+
+    private void ShowUserProfile() => CurrentPage = _userProfileViewModel;
+
+    private void ShowBidHistory() => CurrentPage = _bidHistoryViewModel;
+    
+    private void ShowSellerOfAuction(Auction_Core.Models.Auction selectedAuction) {
+        _sellerOfAuctionViewModel = new(this, selectedAuction)
+        {
+            BackRequested = ShowHome
+        };
+
+        CurrentPage = _sellerOfAuctionViewModel;
+    }
+
+    private void ShowBuyerOfAuction(Auction_Core.Models.Auction selectedAuction) {
+        _buyerOfAuctionViewModel = new(this, selectedAuction)
+        {
+            BackRequested = ShowHome
+        };
+
+        CurrentPage = _buyerOfAuctionViewModel;
+    }
 }

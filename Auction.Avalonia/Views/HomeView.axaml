@@ -1,19 +1,25 @@
 <UserControl xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:vm="using:Auction.Avalonia.ViewModels"
+  xmlns:vm="using:Auction_Avalonia.ViewModels"
   xmlns:model="using:Auction_Core.Models"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        
+        xmlns:con="using:Auction_Avalonia.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Auction.Avalonia.Views.HomeView"
+        x:Class="Auction_Avalonia.Views.HomeView"
   x:DataType="vm:HomeViewModel"
         >
+
+  <UserControl.Resources>
+    <con:CurrencyConverters x:Key="CurrencyConvert"/>
+  </UserControl.Resources>
     <DockPanel>
       <Border DockPanel.Dock="Right" Padding="20">
         <StackPanel Spacing="5">
           <Button Content="+ Set for sale" Command="{Binding SetForSaleCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#FF33B733" Foreground="White"></Button>
-          <Button Content="User profile" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
-          <Button Content="Bid history" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
+          <Button Content="Bid history" Command="{Binding GoToBidHistoryCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
+          <Button Content="User profile" Command="{Binding GoToUserProfileCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
         </StackPanel>
       </Border>
       <ScrollViewer>
@@ -24,14 +30,15 @@
         
         <Border Padding="40 0">
           <Border BorderBrush="#ccc" BorderThickness="2" HorizontalAlignment="Stretch">
-            <TableView
+            <TableView Name="yourAuctionsTable"
               CanUserResizeColumns="False"
               ItemsSource="{Binding UserAuctions}"
+              SelectionChanged="TableView_SelectionChanged"
             >
               <TableView.Columns>
                 <TableViewColumn x:DataType="model:Auction" Header="Name" Binding="{Binding Vehicle.Name}" Width="*" HorizontalContentAlignment="Center" />
                 <TableViewColumn x:DataType="model:Auction" Header="Årgang" Binding="{Binding Vehicle.Year}" Width="*" HorizontalContentAlignment="Center" />
-                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice}" Width="*" HorizontalContentAlignment="Center"/>
+                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice, Converter={StaticResource CurrencyConvert}}" Width="*" HorizontalContentAlignment="Center"/>
               </TableView.Columns>
             </TableView>
           </Border>
@@ -42,14 +49,15 @@
       
         <Border Padding="40 0">
           <Border BorderBrush="#ccc" BorderThickness="1" HorizontalAlignment="Stretch">
-            <TableView
+            <TableView Name="currentAuctionsTable"
               CanUserResizeColumns="False"
               ItemsSource="{Binding Auctions}"
+              SelectionChanged="TableView_SelectionChanged"
             >
               <TableView.Columns>
                 <TableViewColumn x:DataType="model:Auction" Header="Name" Binding="{Binding Vehicle.Name}" Width="*" HorizontalContentAlignment="Center" />
                 <TableViewColumn x:DataType="model:Auction" Header="Årgang" Binding="{Binding Vehicle.Year}" Width="*" HorizontalContentAlignment="Center" />
-                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice}" Width="*" HorizontalContentAlignment="Center"/>
+                <TableViewColumn x:DataType="model:Auction" Header="Bud" Binding="{Binding MinimumPrice, Converter={StaticResource CurrencyConvert}}" Width="*" HorizontalContentAlignment="Center"/>
               </TableView.Columns>
             </TableView>
           </Border>

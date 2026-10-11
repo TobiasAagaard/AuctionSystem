@@ -2,9 +2,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Auction.Avalonia.ViewModels;
+using Auction_Avalonia.ViewModels;
 
-namespace Auction.Avalonia;
+namespace Auction_Avalonia;
 
 /// <summary>
 /// Given a view model, returns the corresponding view if possible.

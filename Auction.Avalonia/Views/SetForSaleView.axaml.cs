@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Auction.Avalonia.Views;
+namespace Auction_Avalonia.Views;
 
 public partial class SetForSaleView : UserControl
 {

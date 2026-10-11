@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using System;
 
-namespace Auction.Avalonia;
+namespace Auction_Avalonia;
 
 sealed class Program
 {

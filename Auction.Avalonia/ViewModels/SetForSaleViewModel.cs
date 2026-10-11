@@ -1,6 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
-using Auction.Avalonia.Views;
+using Auction_Avalonia.Views;
 using Auction_Core.Services;
 using Auction_Avalonia.Services;
 using Auction_Core.Repository;
@@ -9,7 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Auction_Core.Models;
 using Auction_Core.Enums;
 
-namespace Auction.Avalonia.ViewModels;
+namespace Auction_Avalonia.ViewModels;
 
 public partial class SetForSaleViewModel : ViewModelBase
 {

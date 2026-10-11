@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using Auction.Avalonia.ViewModels;
+using Auction_Avalonia.ViewModels;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 
