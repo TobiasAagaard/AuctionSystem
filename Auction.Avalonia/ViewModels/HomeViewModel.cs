@@ -3,7 +3,6 @@ namespace Auction_Avalonia.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Auction_Avalonia.Services;
 using Auction_Core.Models;
 using Auction_Core.Repository;
@@ -44,6 +43,8 @@ public partial class HomeViewModel : ViewModelBase
     [RelayCommand]
     private void GoToBidHistory() => BidHistoryRequested?.Invoke();
 
+    [RelayCommand]
+    private void LogOut() => _sessionService.Logout();
     public async void RefreshAuctionsAsync()
     {
         Auctions.Clear();
@@ -80,4 +81,5 @@ public partial class HomeViewModel : ViewModelBase
             BuyerOfAuctionRequested?.Invoke(selectedAuction);
         }
     }
+
 }

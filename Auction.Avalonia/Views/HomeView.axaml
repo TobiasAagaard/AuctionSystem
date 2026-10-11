@@ -20,6 +20,7 @@
           <Button Content="+ Set for sale" Command="{Binding SetForSaleCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#FF33B733" Foreground="White"></Button>
           <Button Content="Bid history" Command="{Binding GoToBidHistoryCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
           <Button Content="User profile" Command="{Binding GoToUserProfileCommand}" Padding="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
+          <Button Content="Log out" Command="{Binding LogOutCommand}" Padding="8"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#eee" BorderBrush="#555"></Button>
         </StackPanel>
       </Border>
       <ScrollViewer>
