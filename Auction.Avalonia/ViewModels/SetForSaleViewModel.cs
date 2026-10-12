@@ -8,6 +8,8 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Auction_Core.Models;
 using Auction_Core.Enums;
+using CommunityToolkit.Mvvm.Input;
+using System.Threading.Tasks;
 
 namespace Auction_Avalonia.ViewModels;
 
@@ -15,14 +17,16 @@ public partial class SetForSaleViewModel : ViewModelBase
 {
     private readonly SessionService _sessionService;
     
-    public SetForSaleViewModel(IAuctionService auctionService, IVehicleRepository vehicleRepository, SessionService sessionService)
+    public SetForSaleViewModel(IAuctionService auctionService, IVehicleRepository vehicleRepository, SessionService sessionService,  ToastService notification)
     {
         _auctionService = auctionService ?? throw new ArgumentNullException(nameof(auctionService), "Auction service cannot be null.");
         _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository), "Vehicle repository cannot be null.");
         _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService), "Session service cannot be null.");
+        Notification = notification ?? throw new ArgumentNullException(nameof(notification), "Notification service cannot be null.");
     }
     private readonly IAuctionService _auctionService;
     private readonly IVehicleRepository _vehicleRepository;
+    public ToastService Notification { get; }
     
     // Vehicle properties
     [ObservableProperty]
@@ -106,8 +110,17 @@ public partial class SetForSaleViewModel : ViewModelBase
             _ => null
         };
     }
+
+    public Action? BackRequested { get; set; }
+
+    [RelayCommand]
+    private void GoBackToHome()
+    {
+        BackRequested?.Invoke();
+    }
     
-    public async void CreateAuction()
+    [RelayCommand]
+    public async Task CreateAuction()
     {
         // Here you would create the auction based on the selected vehicle type and its properties.
         // This is just a placeholder for demonstration purposes.
@@ -210,6 +223,7 @@ public partial class SetForSaleViewModel : ViewModelBase
                 throw new InvalidOperationException("Unknown vehicle type selected.");
         }
 
-
+        BackRequested?.Invoke();
+        Notification.Show("Auction created successfully", ToastViewModel.NotificationType.Success);
     }
 }

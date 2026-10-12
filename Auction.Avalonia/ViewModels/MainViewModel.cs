@@ -67,6 +67,7 @@ public partial class MainViewModel : ViewModelBase
         _homeViewModel.BidHistoryRequested = ShowBidHistory;
         _homeViewModel.SellerOfAuctionRequested = ShowSellerOfAuction;
         _homeViewModel.BuyerOfAuctionRequested = ShowBuyerOfAuction;
+        _setForSaleViewModel.BackRequested = ShowHome;
 
         CurrentPage = _loginViewModel;
 

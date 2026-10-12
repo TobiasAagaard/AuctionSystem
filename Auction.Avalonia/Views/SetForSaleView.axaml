@@ -76,8 +76,8 @@
                   </StackPanel>
             </StackPanel>
             <DockPanel HorizontalAlignment="Stretch" Margin="20, 25, 20, 0">
-                  <Button Content="Cancel" HorizontalAlignment="Left"/>
-                  <Button Content="Create auction" HorizontalAlignment="Right"/>
+                  <Button Content="Cancel" HorizontalAlignment="Left" Command="{Binding GoBackToHomeCommand}"/>
+                  <Button Content="Create auction" Command="{Binding CreateAuctionCommand}" HorizontalAlignment="Right"/>
             </DockPanel>
       </StackPanel>
 </UserControl>
