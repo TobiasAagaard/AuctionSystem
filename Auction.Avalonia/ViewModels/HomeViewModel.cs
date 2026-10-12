@@ -3,10 +3,7 @@ namespace Auction_Avalonia.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Auction_Avalonia.Services;
-using CommunityToolkit.Mvvm.Input;
-using System;
 using Auction_Core.Models;
 using Auction_Core.Repository;
 using CommunityToolkit.Mvvm.Input;
@@ -32,6 +29,13 @@ public partial class HomeViewModel : ViewModelBase
         _auctionRepo = auctionRepo;
         _sessionService = sessionService;
     }
+    internal Action? GoToSetForSale { get; set; }
+
+    [RelayCommand]
+    private void SetForSale()
+    {
+        GoToSetForSale?.Invoke();
+    }
 
     [RelayCommand]
     private void GoToUserProfile() => UserProfileRequested?.Invoke();
@@ -39,6 +43,8 @@ public partial class HomeViewModel : ViewModelBase
     [RelayCommand]
     private void GoToBidHistory() => BidHistoryRequested?.Invoke();
 
+    [RelayCommand]
+    private void LogOut() => _sessionService.Logout();
     public async void RefreshAuctionsAsync()
     {
         Auctions.Clear();
@@ -51,14 +57,12 @@ public partial class HomeViewModel : ViewModelBase
             if (_sessionService.CurrentUser == null)
                 continue;
 
-            if (auction.Seller.ID == _sessionService.CurrentUser?.ID) //TODO: use the current user's ID instead of 1
+            if (auction.User.ID == _sessionService.CurrentUser?.ID) //TODO: use the current user's ID instead of 1
             {
                 UserAuctions.Add(auction);
             }
         }
     }
-
-
 
     public void GoToSellerOfAuction()
     {
@@ -77,4 +81,5 @@ public partial class HomeViewModel : ViewModelBase
             BuyerOfAuctionRequested?.Invoke(selectedAuction);
         }
     }
+
 }

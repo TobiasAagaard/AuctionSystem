@@ -21,6 +21,11 @@ public partial class HomeView : UserControl
         };
     }
 
+    private void OnSetForSalePressed(object? sender, PointerPressedEventArgs e)
+    {
+        (DataContext as HomeViewModel)?.SetForSaleCommand?.Execute(null);
+    }
+
     private void TableView_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (e.AddedItems.Count <= 0) return;

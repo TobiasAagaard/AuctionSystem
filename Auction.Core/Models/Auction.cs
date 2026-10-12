@@ -4,17 +4,18 @@ namespace Auction_Core.Models;
 
 public class Auction
 {
-    public Auction(int id, ISeller seller, Vehicle vehicle, decimal minimumPrice, DateTime endTime)
-        : this(id, seller, vehicle, minimumPrice, endTime, DateTime.Now, DateTime.Now, null)
+    public Auction(int id, User user, Vehicle vehicle, decimal minimumPrice, DateTime endTime)
+        : this(id, user, vehicle, minimumPrice, false, endTime, DateTime.Now, DateTime.Now, null)
     {
     }
 
-    public Auction(int id, ISeller seller, Vehicle vehicle, decimal minimumPrice, DateTime endTime, DateTime createdAt, DateTime updatedAt, NotificationDelegate? notificationFunction)
+    public Auction(int id, User user, Vehicle vehicle, decimal minimumPrice, bool isSold, DateTime endTime, DateTime createdAt, DateTime updatedAt, NotificationDelegate? notificationFunction)
     {
         Id = id;
         Vehicle = vehicle;
-        Seller = seller;
+        User = user;
         MinimumPrice = minimumPrice;
+        IsSold = isSold;
         EndTime = endTime;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
@@ -23,10 +24,15 @@ public class Auction
 
     public int Id { get; set; }
     public Vehicle Vehicle { get; set; }
-    public ISeller Seller { get; set; }
+    public User User { get; set; }
     public decimal MinimumPrice { get; set; }
+    public bool IsSold { get; set; } = false;
     public DateTime EndTime { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public NotificationDelegate? NotificationFunction { get; }
+
+    // Highest bid placed on the auction, null when no bids have been placed yet
+    public decimal? HighestBid { get; set; }
+    public decimal CurrentBid => HighestBid ?? MinimumPrice;
 }

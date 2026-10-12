@@ -1,10 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Auction_Avalonia.Services;
-using Auction_Avalonia.Services;
 using Auction_Core.Repository;
+using System;
 
 namespace Auction_Avalonia.ViewModels;
+
+
 
 /// <summary>
 /// The Core view model. It holds whichever page is currently shown in MainWindow
@@ -20,9 +22,13 @@ public partial class MainViewModel : ViewModelBase
     
     private readonly SessionService _sessionService;
 
+    private readonly SetForSaleViewModel _setForSaleViewModel;
+
     private readonly UserProfileViewModel _userProfileViewModel;
 
     private readonly BidHistoryViewModel _bidHistoryViewModel;
+
+    private readonly Func<Auction_Core.Models.Auction, BuyerOfAuctionViewModel> _buyerOfAuctionViewModelFactory;
     
     private SellerOfAuctionViewModel _sellerOfAuctionViewModel;
     private BuyerOfAuctionViewModel _buyerOfAuctionViewModel;
@@ -34,33 +40,35 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel(LoginViewModel loginViewModel, 
         CreateUserViewModel createUserViewModel, 
+        SetForSaleViewModel setForSaleViewModel, 
         HomeViewModel homeViewModel,
+        UserProfileViewModel userProfileViewModel,
         SessionService sessionService, 
-        ToastService notifications)
+        ToastService notifications,
+        Func<Auction_Core.Models.Auction, BuyerOfAuctionViewModel> buyerOfAuctionViewModelFactory)
     {
+        _buyerOfAuctionViewModelFactory = buyerOfAuctionViewModelFactory;
         _loginViewModel = loginViewModel;
         _createUserViewModel = createUserViewModel;
         _homeViewModel = homeViewModel;
-        Notifications = notifications;
+        _setForSaleViewModel = setForSaleViewModel;
         _sessionService = sessionService;
+        Notifications = notifications;
 
-        _bidHistoryViewModel = new(sessionService)
-        {
-            BackRequested = ShowHome
-        };
+        _bidHistoryViewModel = new(sessionService) { BackRequested = ShowHome };
 
-        _userProfileViewModel = new(sessionService)
-        {
-            BackRequested = ShowHome
-        };
+        _userProfileViewModel = userProfileViewModel;
+        _userProfileViewModel.BackRequested = ShowHome;
         
 
         _loginViewModel.CreateUserRequested = ShowCreateUser;
         _createUserViewModel.BackRequested = ShowLogin;
+        _homeViewModel.GoToSetForSale = ShowSetForSale;
         _homeViewModel.UserProfileRequested = ShowUserProfile;
         _homeViewModel.BidHistoryRequested = ShowBidHistory;
         _homeViewModel.SellerOfAuctionRequested = ShowSellerOfAuction;
         _homeViewModel.BuyerOfAuctionRequested = ShowBuyerOfAuction;
+        _setForSaleViewModel.BackRequested = ShowHome;
 
         CurrentPage = _loginViewModel;
 
@@ -95,11 +103,14 @@ public partial class MainViewModel : ViewModelBase
 
     private void ShowCreateUser() => CurrentPage = _createUserViewModel;
 
+    private void ShowSetForSale() => CurrentPage = _setForSaleViewModel;
+
     private void ShowHome() => CurrentPage = _homeViewModel;
 
     private void ShowUserProfile() => CurrentPage = _userProfileViewModel;
 
     private void ShowBidHistory() => CurrentPage = _bidHistoryViewModel;
+    
     
     private void ShowSellerOfAuction(Auction_Core.Models.Auction selectedAuction) {
         _sellerOfAuctionViewModel = new(this, selectedAuction)
@@ -111,10 +122,8 @@ public partial class MainViewModel : ViewModelBase
     }
 
     private void ShowBuyerOfAuction(Auction_Core.Models.Auction selectedAuction) {
-        _buyerOfAuctionViewModel = new(this, selectedAuction)
-        {
-            BackRequested = ShowHome
-        };
+        _buyerOfAuctionViewModel = _buyerOfAuctionViewModelFactory(selectedAuction);
+        _buyerOfAuctionViewModel.BackRequested = ShowHome;
 
         CurrentPage = _buyerOfAuctionViewModel;
     }
