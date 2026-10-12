@@ -151,7 +151,8 @@ public partial class SetForSaleViewModel : ViewModelBase
         catch (Exception ex)
         {
             _notifications.Show("Auction creation failed. Retry or contact support", ToastViewModel.NotificationType.Error);
-            throw new InvalidOperationException("Failed to create auction", ex);
+            BackRequested?.Invoke();
+            return;
         }
 
         _notifications.Show("Auction created successfully", ToastViewModel.NotificationType.Success);
