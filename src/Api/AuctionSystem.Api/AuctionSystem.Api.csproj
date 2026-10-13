@@ -8,13 +8,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+        <PackageReference Include="Microsoft.OpenApi" Version="2.11.0" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Include="..\..\..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="../../Modules/Vehicles/AuctionSystem.Modules.Vehicles.Api/AuctionSystem.Modules.Vehicles.Api.csproj" />
     </ItemGroup>
 
 </Project>
