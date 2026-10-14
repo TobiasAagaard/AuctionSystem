@@ -3,5 +3,5 @@
 	<Project Path="Auction.Avalonia/Auction.Avalonia.csproj" />
 	<Project Path="Auction.Test/Auction.Test.csproj" />
 	<Project Path="src/Api/AuctionSystem.Api/AuctionSystem.Api.csproj" />
-	<Project Path="src/Modules/AuctionSystem.Modules.Auctions.Api/AuctionSystem.Modules.Auctions.Api.csproj" />
+	<Project Path="src/Modules/Auctions/AuctionSystem.Modules.Auctions.Api/AuctionSystem.Modules.Auctions.Api.csproj" />
 </Solution>
