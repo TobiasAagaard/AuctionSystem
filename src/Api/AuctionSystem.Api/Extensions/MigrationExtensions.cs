@@ -1,6 +1,6 @@
 using System.Reflection;
-using AuctionSystem.Modules.Vehicles.Api;
-using AuctionSystem.Modules.Vehicles.Api.Database;
+using AuctionSystem.Modules.Auctions.Api;
+using AuctionSystem.Modules.Auctions.Api.Database;
 using DbUp;
 using DbUp.Engine;
 
@@ -16,7 +16,7 @@ internal static class MigrationExtensions
 
         EnsureDatabase.For.PostgresqlDatabase(connectionString);
 
-        ApplyMigration(connectionString, Schemas.Vehicles, typeof(VehiclesModule).Assembly);
+        ApplyMigration(connectionString, Schemas.Auctions, typeof(AuctionsModule).Assembly);
     }
 
     private static void ApplyMigration(string connectionString, string schema, Assembly assembly)

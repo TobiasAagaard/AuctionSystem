@@ -1,14 +1,14 @@
 using System.Data;
 using Npgsql;
 
-namespace AuctionSystem.Modules.Vehicles.Api.Database;
+namespace AuctionSystem.Modules.Auctions.Api.Database;
 
-public sealed class NpgsqlVehicleDbConnectionFactory : IVehicleDbConnectionFactory
+public sealed class NpgsqlAuctionsDbConnectionFactory 
 {
 
     private readonly string _connectionString;
 
-    public NpgsqlVehicleDbConnectionFactory(string connectionString)
+    public NpgsqlAuctionsDbConnectionFactory(string connectionString)
     {
         _connectionString = connectionString;
     }

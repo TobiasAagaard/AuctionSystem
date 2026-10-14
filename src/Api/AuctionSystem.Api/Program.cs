@@ -1,12 +1,12 @@
 using AuctionSystem.Api.Extensions;
-using AuctionSystem.Modules.Vehicles.Api;
+using AuctionSystem.Modules.Auctions.Api;
 using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddOpenApi();
-builder.Services.AddVehiclesModule(builder.Configuration);
+builder.Services.AddAuctionsModule(builder.Configuration);
 
 WebApplication app = builder.Build();
 
