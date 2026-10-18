@@ -8,7 +8,7 @@ public static class CreateAuction
 {
     public static void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/auctions", async (CreateAuctionRequest request, AuctionRepository auctionRepository, CancellationToken cancellationToken) =>
+        app.MapPost("/auctions", async (CreateAuctionRequest request, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
         {
             var @auction = new Auction(
                 request.Title,

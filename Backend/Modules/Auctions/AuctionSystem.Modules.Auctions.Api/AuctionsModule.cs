@@ -11,7 +11,8 @@ public static class AuctionsModule
 {
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
-        throw new NotImplementedException();
+        CreateAuction.MapEndpoint(app);
+        GetAuction.MapEndpoint(app);
     }
 
     public static IServiceCollection AddAuctionsModule(this IServiceCollection services, IConfiguration configuration)
@@ -19,9 +20,7 @@ public static class AuctionsModule
         string connectionString = configuration.GetConnectionString("Database")
             ?? throw new InvalidCastException("Database connection is not configured.");
 
-        
         services.AddSingleton(new NpgsqlAuctionsDbConnectionFactory(connectionString));
-        
         services.AddSingleton<IAuctionRepository, AuctionRepository>();
 
         return services;

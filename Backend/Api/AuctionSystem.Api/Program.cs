@@ -18,6 +18,8 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
+AuctionsModule.MapEndpoints(app);
+
 
 await app.RunAsync();
 
