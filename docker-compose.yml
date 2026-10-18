@@ -48,7 +48,7 @@ services:
       # A bind mount like ./db-data would persist on the host and survive `down -v`.
       - db-data:/var/lib/postgresql
       # Scripts placed here are executed by the entrypoint only when the data directory is empty.
-      - ./db-data/init-db/:/docker-entrypoint-initdb.d/
+      #- ./db-data/init-db/:/docker-entrypoint-initdb.d/
 
 volumes:
   db-data:
