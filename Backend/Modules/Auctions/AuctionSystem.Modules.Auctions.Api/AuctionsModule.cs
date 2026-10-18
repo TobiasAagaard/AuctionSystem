@@ -13,6 +13,7 @@ public static class AuctionsModule
     {
         CreateAuction.MapEndpoint(app);
         GetAuction.MapEndpoint(app);
+        GetAuctions.MapEndpoint(app);
     }
 
     public static IServiceCollection AddAuctionsModule(this IServiceCollection services, IConfiguration configuration)

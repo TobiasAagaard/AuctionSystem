@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace AuctionSystem.Modules.Auctions.Api.Auctions;
 
-public static class CreateAuction
+public static partial class CreateAuction
 {
     public static void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -27,14 +27,5 @@ public static class CreateAuction
 
         })
         .WithTags(Tags.Auctions);
-    }
-
-    internal sealed class CreateAuctionRequest
-    {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set;}
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
     }
 }

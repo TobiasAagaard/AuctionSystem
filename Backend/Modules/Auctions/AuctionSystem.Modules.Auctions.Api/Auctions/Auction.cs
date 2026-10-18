@@ -2,7 +2,7 @@ namespace AuctionSystem.Modules.Auctions.Api.Auctions;
 
 public class Auction
 {
-
+    public Auction() { }
     public Auction(string title, string description, decimal price, DateTime startTime, DateTime endTime)
     {
         Title = title;

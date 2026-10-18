@@ -13,9 +13,11 @@ public sealed class AuctionRepository(
 
         var command = (
             sql: """
-                INSERT INTO auctions.auctions ( title, description, price, start_time, end_time)
-                VALUES ( @Title, @Description, @Price, @StartTime, @EndTime)
-            """,
+                INSERT INTO auctions.auctions
+                    (title, description, price, start_time, end_time)
+                VALUES
+                    (@Title, @Description, @Price, @StartTime, @EndTime)
+                """,
             param: new
             {
                 auction.Title,
@@ -35,7 +37,7 @@ public sealed class AuctionRepository(
 
         var command = (
             sql: """
-                SELECT id, title, description, price, start_time, end_time, is_sold
+                SELECT id AS "Id", title AS "Title", description AS "Description", price AS "Price", start_time AS "StartTime", end_time AS "EndTime", is_sold AS "IsSold"
                 FROM auctions.auctions
                 WHERE id = @Id
             """,
@@ -44,4 +46,20 @@ public sealed class AuctionRepository(
 
         return await connection.QuerySingleAsync<Auction>(command.sql, command.param);
     }
+
+    public async Task<IEnumerable<Auction>> GetAuctionsAsync(CancellationToken cancellationToken)
+    {
+        using IDbConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+
+        var command = (
+            sql: """
+                SELECT id AS "Id", title AS "Title", description AS "Description", price AS "Price", start_time AS "StartTime", end_time AS "EndTime", is_sold AS "IsSold"
+                FROM auctions.auctions
+            """,
+            param: new { }
+        );
+
+        return await connection.QueryAsync<Auction>(command.sql, command.param);
+    }
+
 }
