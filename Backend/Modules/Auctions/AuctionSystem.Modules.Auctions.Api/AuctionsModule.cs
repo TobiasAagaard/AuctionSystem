@@ -1,4 +1,5 @@
 using AuctionSystem.Modules.Auctions.Api.Database;
+using AuctionSystem.Modules.Auctions.Api.Auctions;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,8 @@ public static class AuctionsModule
 
         
         services.AddSingleton(new NpgsqlAuctionsDbConnectionFactory(connectionString));
+        
+        services.AddSingleton<IAuctionRepository, AuctionRepository>();
 
         return services;
     }
