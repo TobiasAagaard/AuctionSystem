@@ -1,0 +1,11 @@
+namespace AuctionSystem.Modules.Auctions.Api.Auctions;
+
+public record GetAuctionResponse(
+    int Id,
+    string Title,
+    string Description,
+    decimal Price,
+    AuctionStatus Status,
+    DateTime StartTime,
+    DateTime? EndTime
+);

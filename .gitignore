@@ -66,3 +66,4 @@ nunit-*.xml
 
 # VSCODE
 .vscode/
+.idea/
