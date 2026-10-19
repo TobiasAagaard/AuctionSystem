@@ -25,7 +25,7 @@ public sealed class AuctionRepository(
                 auction.Price,
                 auction.StartTime,
                 auction.EndTime,
-                auction.Status,
+                Status = auction.Status.ToString(),
                 auction.CreatedAt,
                 auction.UpdatedAt,
                 auction.IsDeleted

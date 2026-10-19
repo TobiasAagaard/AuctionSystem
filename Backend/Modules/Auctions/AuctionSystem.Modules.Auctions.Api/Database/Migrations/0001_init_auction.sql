@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS auctions.auctions (
     description TEXT NOT NULL,
     price DECIMAL (18, 6) NOT NULL,
     status TEXT NOT NULL,
+        CHECK (status IN ('Draft', 'Active', 'Sold', 'Cancelled')),
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP,
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -21,9 +22,10 @@ CREATE TABLE IF NOT EXISTS auctions.vehicles (
     mileage INT NOT NULL,
     base_price DECIMAL (18, 6) NOT NULL,
     engine_size DOUBLE PRECISION NOT NULL,
-    fuel_type TEXT NOT NULL,
+    fuel_type TEXT NOT NULL
+        CHECK (fuel_type IN ('Petrol', 'Diesel', 'Electric', 'Hybrid')),
     vehicle_type TEXT NOT NULL
-        CHECK (vehicle_type IN ('personal_car', 'business_car')),
+        CHECK (vehicle_type IN ('PersonalCar', 'BusinessCar')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     auction_id INT NOT NULL UNIQUE REFERENCES auctions.auctions(id) ON DELETE CASCADE
