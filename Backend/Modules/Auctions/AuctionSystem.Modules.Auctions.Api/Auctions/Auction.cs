@@ -31,8 +31,8 @@ public class Auction
 
 public enum AuctionStatus
 {
-    Draft,
-    Active,
-    Sold,
-    Cancelled
+    Draft = 0,
+    Active = 1,
+    Sold = 2,
+    Cancelled = 3
 }

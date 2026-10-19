@@ -17,9 +17,9 @@ public static class GetAuction
                     auctionEntity.Title,
                     auctionEntity.Description,
                     auctionEntity.Price,
+                    auctionEntity.Status,
                     auctionEntity.StartTime,
-                    auctionEntity.EndTime,
-                    auctionEntity.IsSold
+                    auctionEntity.EndTime
                 )
                 : null;
 

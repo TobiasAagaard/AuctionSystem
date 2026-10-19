@@ -1,4 +1,5 @@
 using AuctionSystem.Modules.Auctions.Api.Auctions;
+using AuctionSystem.Modules.Auctions.Api.Vehicles.Enums;
 
 namespace AuctionSystem.Modules.Auctions.Api.Vehicles;
 
@@ -17,18 +18,4 @@ public class Vehicle
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
     public Auction Auction { get; private set; } = null!;
-}
-
-public enum FuelType
-{
-    Petrol,
-    Diesel,
-    Electric,
-    Hybrid
-}
-
-public enum VehicleType
-{
-    PersonalCar,
-    BusinessCar
 }

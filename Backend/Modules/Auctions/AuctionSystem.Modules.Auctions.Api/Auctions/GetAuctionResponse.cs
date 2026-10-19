@@ -5,7 +5,7 @@ public record GetAuctionResponse(
     string Title,
     string Description,
     decimal Price,
+    AuctionStatus Status,
     DateTime StartTime,
-    DateTime? EndTime,
-    bool IsSold
+    DateTime? EndTime
 );
