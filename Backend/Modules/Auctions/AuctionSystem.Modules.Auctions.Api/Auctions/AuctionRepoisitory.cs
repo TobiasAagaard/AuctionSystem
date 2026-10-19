@@ -14,9 +14,9 @@ public sealed class AuctionRepository(
         var command = (
             sql: """
                 INSERT INTO auctions.auctions
-                    (title, description, price, start_time, end_time)
+                    (title, description, price, start_time, end_time, status, created_at, updated_at, is_deleted)
                 VALUES
-                    (@Title, @Description, @Price, @StartTime, @EndTime)
+                    (@Title, @Description, @Price, @StartTime, @EndTime, @Status, @CreatedAt, @UpdatedAt, @IsDeleted)
                 """,
             param: new
             {
@@ -24,42 +24,46 @@ public sealed class AuctionRepository(
                 auction.Description,
                 auction.Price,
                 auction.StartTime,
-                auction.EndTime
+                auction.EndTime,
+                Status = auction.Status.ToString(),
+                auction.CreatedAt,
+                auction.UpdatedAt,
+                auction.IsDeleted
             }
         );
         
         await connection.ExecuteAsync(command.sql, command.param);
     }
 
-    public async Task<Auction> GetAuctionByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<Auction?> GetAuctionByIdAsync(int id, CancellationToken cancellationToken)
     {
         using IDbConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
         var command = (
             sql: """
-                SELECT id AS "Id", title AS "Title", description AS "Description", price AS "Price", start_time AS "StartTime", end_time AS "EndTime", is_sold AS "IsSold"
+                SELECT id AS "Id", title AS "Title", description AS "Description", price AS "Price", start_time AS "StartTime", end_time AS "EndTime", status AS "Status", created_at AS "CreatedAt", updated_at AS "UpdatedAt", is_deleted AS "IsDeleted"
                 FROM auctions.auctions
                 WHERE id = @Id
             """,
             param: new { Id = id }
         );
 
-        return await connection.QuerySingleAsync<Auction>(command.sql, command.param);
+        return await connection.QuerySingleOrDefaultAsync<Auction>(command.sql, command.param);
     }
 
-    public async Task<IEnumerable<Auction>> GetAuctionsAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Auction>> GetAuctionsAsync(CancellationToken cancellationToken)
     {
         using IDbConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
         var command = (
             sql: """
-                SELECT id AS "Id", title AS "Title", description AS "Description", price AS "Price", start_time AS "StartTime", end_time AS "EndTime", is_sold AS "IsSold"
+                SELECT id AS "Id", title AS "Title", description AS "Description", price AS "Price", start_time AS "StartTime", end_time AS "EndTime", status AS "Status", created_at AS "CreatedAt", updated_at AS "UpdatedAt", is_deleted AS "IsDeleted"
                 FROM auctions.auctions
             """,
             param: new { }
         );
 
-        return await connection.QueryAsync<Auction>(command.sql, command.param);
+        return (IReadOnlyList<Auction>)await connection.QueryAsync<Auction>(command.sql, command.param);
     }
 
 }
