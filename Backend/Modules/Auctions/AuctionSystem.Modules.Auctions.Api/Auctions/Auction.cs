@@ -10,21 +10,29 @@ public class Auction
         Price = price;
         StartTime = startTime;
         EndTime = endTime;
-        IsSold = false;
+        Status = AuctionStatus.Draft;
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
         IsDeleted = false;
     }
 
-    public int Id { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public decimal Price { get; set;}
-    public bool IsSold { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public bool IsDeleted { get; set; }
-    
+    public int Id { get; private set; }
+    public string Title { get; private set; }
+    public string Description { get; private set; }
+    public decimal Price { get; private set; }
+    public AuctionStatus Status { get; private set; }
+    public DateTime StartTime { get; private set; }
+    public DateTime EndTime { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public DateTime UpdatedAt { get; private set; }
+    public bool IsDeleted { get; private set; }
+    public bool IsSold { get; private set; }
+}
+
+public enum AuctionStatus
+{
+    Draft,
+    Active,
+    Sold,
+    Cancelled
 }

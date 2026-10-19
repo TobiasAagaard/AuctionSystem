@@ -18,7 +18,7 @@ internal static class MigrationExtensions
 
         ApplyMigration(connectionString, Schemas.Auctions, typeof(AuctionsModule).Assembly);
     }
-
+    
     private static void ApplyMigration(string connectionString, string schema, Assembly assembly)
     {
         UpgradeEngine upgrader = DeployChanges.To
