@@ -31,13 +31,13 @@ CREATE TABLE IF NOT EXISTS auctions.vehicles (
     auction_id INT NOT NULL UNIQUE REFERENCES auctions.auctions(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS auctions.personal_cars_specs (
+CREATE TABLE IF NOT EXISTS auctions.personal_cars (
     vehicle_id INT PRIMARY KEY REFERENCES auctions.vehicles(id) ON DELETE CASCADE,
     seat_count INT NOT NULL,
     isofix BOOLEAN NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS auctions.business_cars_specs (
+CREATE TABLE IF NOT EXISTS auctions.business_cars (
     vehicle_id INT PRIMARY KEY REFERENCES auctions.vehicles(id) ON DELETE CASCADE,
     cargo_volume DOUBLE PRECISION NOT NULL,
     max_payload DOUBLE PRECISION NOT NULL
