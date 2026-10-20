@@ -74,10 +74,6 @@ public sealed class AuctionRepository(
         tx.Commit();
         return auctionId;
     }
-
-
-    // Shared SELECT for reading auctions with their vehicle.
-    // LEFT JOIN on the detail tables because each vehicle only has a row in one of them.
     private const string SelectAuctionWithVehicle = """
         SELECT
             a.id           AS "Id",
