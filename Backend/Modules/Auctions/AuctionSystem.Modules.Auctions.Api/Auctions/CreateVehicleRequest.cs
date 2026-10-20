@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using AuctionSystem.Modules.Auctions.Api.Vehicles.Enums;
+using AuctionSystem.Modules.Auctions.Api.Auctions.Enums;
 
 namespace AuctionSystem.Modules.Auctions.Api.Auctions;
 

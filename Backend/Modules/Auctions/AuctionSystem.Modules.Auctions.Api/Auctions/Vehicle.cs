@@ -1,7 +1,6 @@
-using AuctionSystem.Modules.Auctions.Api.Auctions;
-using AuctionSystem.Modules.Auctions.Api.Vehicles.Enums;
+using AuctionSystem.Modules.Auctions.Api.Auctions.Enums;
 
-namespace AuctionSystem.Modules.Auctions.Api.Vehicles;
+namespace AuctionSystem.Modules.Auctions.Api.Auctions;
 
 
 public class Vehicle
@@ -47,7 +46,12 @@ public class Vehicle
     public int Mileage { get; private set; }
     public decimal BasePrice { get; private set; }
     public double EngineSize { get; private set; }
-    public VehicleType VehicleType { get; private set; }
+    public VehicleType VehicleType  => VehicleDetails switch
+    {
+        PersonalCar _ => VehicleType.PersonalCar,
+        BusinessCar _ => VehicleType.BusinessCar,
+        _ => throw new InvalidOperationException("Unknown vehicle type.")
+    };
     public FuelType FuelType { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
@@ -57,6 +61,7 @@ public class Vehicle
 public abstract record VehicleDetails();
 
 public record PersonalCar(
+    int SeatCount,
     bool Isofix
 
 

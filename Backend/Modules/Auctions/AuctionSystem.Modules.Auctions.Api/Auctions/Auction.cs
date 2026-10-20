@@ -1,11 +1,9 @@
-using AuctionSystem.Modules.Auctions.Api.Vehicles;
-
 namespace AuctionSystem.Modules.Auctions.Api.Auctions;
 
 public class Auction
 {
     public Auction() { }
-    public Auction(string title, string description, decimal price, DateTime startTime, DateTime endTime)
+    public Auction(string title, string description, decimal price, DateTime startTime, DateTime endTime, Vehicle vehicle)
     {
         Title = title;
         Description = description;
@@ -16,6 +14,7 @@ public class Auction
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
         IsDeleted = false;
+        Vehicle = vehicle ?? throw new ArgumentNullException(nameof(vehicle));
     }
 
     public int Id { get; private set; }

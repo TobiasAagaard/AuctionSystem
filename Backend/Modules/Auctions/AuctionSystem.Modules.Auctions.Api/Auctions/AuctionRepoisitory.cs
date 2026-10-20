@@ -10,30 +10,68 @@ public sealed class AuctionRepository(
     public async Task<int> AddAuctionAsync(Auction auction, CancellationToken cancellationToken)
     {
         using IDbConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using IDbTransaction tx = connection.BeginTransaction();
 
-        var command = (
-            sql: """
-                INSERT INTO auctions.auctions
-                    (title, description, price, start_time, end_time, status, created_at, updated_at, is_deleted)
-                VALUES
-                    (@Title, @Description, @Price, @StartTime, @EndTime, @Status, @CreatedAt, @UpdatedAt, @IsDeleted)
-                    RETURNING id;
-                """,
-            param: new
+        int auctionId = await connection.QuerySingleAsync<int>(
+            """
+            INSERT INTO auctions.auctions
+                (title, description, price, start_time, end_time, status, created_at, updated_at, is_deleted)
+            VALUES
+                (@Title, @Description, @Price, @StartTime, @EndTime, @Status, @CreatedAt, @UpdatedAt, @IsDeleted)
+            RETURNING id
+            """,
+            new
             {
-                auction.Title,
-                auction.Description,
-                auction.Price,
-                auction.StartTime,
-                auction.EndTime,
-                Status = auction.Status.ToString(),
-                auction.CreatedAt,
-                auction.UpdatedAt,
-                auction.IsDeleted
-            }
-        );
-        
-        return await connection.QuerySingleAsync<int>(command.sql, command.param);
+                auction.Title, auction.Description, auction.Price, auction.StartTime,
+                auction.EndTime, auction.Status, auction.CreatedAt,
+                auction.UpdatedAt, auction.IsDeleted
+            },
+            transaction: tx);
+        Vehicle vehicle = auction.Vehicle;
+        int vehicleId = await connection.QuerySingleAsync<int>(
+            """
+            INSERT INTO auctions.vehicles
+                (make, model, year, mileage, base_price, engine_size, fuel_type, vehicle_type, auction_id)
+            VALUES
+                (@Make, @Model, @Year, @Mileage, @BasePrice, @EngineSize, @FuelType, @VehicleType, @AuctionId)
+            RETURNING id
+            """,
+            new
+            {
+                vehicle.Make, vehicle.Model, vehicle.Year, vehicle.Mileage, vehicle.BasePrice, vehicle.EngineSize,
+                vehicle.FuelType, vehicle.VehicleType, AuctionId = auctionId
+            },
+            transaction: tx);
+
+        switch (vehicle.VehicleDetails)
+        {
+            case PersonalCar p:
+                await connection.ExecuteAsync(
+                    """
+                    INSERT INTO auctions.personal_cars
+                        (vehicle_id, seat_count, isofix)
+                    VALUES
+                        (@VehicleId, @SeatCount, @Isofix)
+                    """,
+                    new {VehicleId = vehicleId, p.SeatCount, p.Isofix},
+                    transaction: tx);
+                break;
+            case BusinessCar b:
+                await connection.ExecuteAsync(
+                    """
+                    INSERT INTO auctions.business_cars
+                        (vehicle_id, cargo_volume, max_payload)
+                    VALUES
+                        (@VehicleId, @CargoVolume, @MaxPayload)
+                    """,
+                    new { VehicleId = vehicleId, b.CargoVolume, b.MaxPayload },
+                    transaction: tx);
+                break;
+            default:
+                throw new InvalidOperationException("Unknown vehicle details type");
+        }
+        tx.Commit();
+        return auctionId;
     }
 
     public async Task<Auction?> GetAuctionByIdAsync(int id, CancellationToken cancellationToken)
