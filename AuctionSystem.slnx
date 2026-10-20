@@ -1,5 +1,6 @@
 <Solution>
 	<Project Path="Auction.Core/Auction.Core.csproj" />
+	<Project Path="AppHost/AppHost.csproj" />
 	<Project Path="Auction.Avalonia/Auction.Avalonia.csproj" />
 	<Project Path="Auction.Test/Auction.Test.csproj" />
 	<Project Path="Backend/Api/AuctionSystem.Api/AuctionSystem.Api.csproj" />
