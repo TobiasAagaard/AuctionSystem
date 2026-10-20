@@ -2,8 +2,6 @@ using AuctionSystem.Modules.Auctions.Api.Auctions.Enums;
 
 namespace AuctionSystem.Modules.Auctions.Api.Auctions;
 
-// One flat row from the auctions + vehicles + detail tables join.
-// Detail columns are nullable because only one detail table matches per vehicle.
 internal sealed class AuctionRow
 {
     // Auction
