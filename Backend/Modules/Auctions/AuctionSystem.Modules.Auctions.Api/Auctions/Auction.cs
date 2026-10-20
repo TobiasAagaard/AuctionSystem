@@ -1,3 +1,5 @@
+using AuctionSystem.Modules.Auctions.Api.Vehicles;
+
 namespace AuctionSystem.Modules.Auctions.Api.Auctions;
 
 public class Auction
@@ -26,7 +28,7 @@ public class Auction
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
     public bool IsDeleted { get; private set; }
-    public bool IsSold { get; private set; }
+    public Vehicle Vehicle { get; private set; }
 }
 
 public enum AuctionStatus

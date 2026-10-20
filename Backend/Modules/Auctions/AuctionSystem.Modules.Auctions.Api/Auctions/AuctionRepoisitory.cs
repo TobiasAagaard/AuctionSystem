@@ -7,7 +7,7 @@ namespace AuctionSystem.Modules.Auctions.Api.Auctions;
 public sealed class AuctionRepository(
     NpgsqlAuctionsDbConnectionFactory connectionFactory) : IAuctionRepository
 {
-    public async Task AddAuctionAsync(Auction auction, CancellationToken cancellationToken)
+    public async Task<int> AddAuctionAsync(Auction auction, CancellationToken cancellationToken)
     {
         using IDbConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
@@ -17,6 +17,7 @@ public sealed class AuctionRepository(
                     (title, description, price, start_time, end_time, status, created_at, updated_at, is_deleted)
                 VALUES
                     (@Title, @Description, @Price, @StartTime, @EndTime, @Status, @CreatedAt, @UpdatedAt, @IsDeleted)
+                    RETURNING id;
                 """,
             param: new
             {
@@ -32,7 +33,7 @@ public sealed class AuctionRepository(
             }
         );
         
-        await connection.ExecuteAsync(command.sql, command.param);
+        return await connection.QuerySingleAsync<int>(command.sql, command.param);
     }
 
     public async Task<Auction?> GetAuctionByIdAsync(int id, CancellationToken cancellationToken)
@@ -41,7 +42,11 @@ public sealed class AuctionRepository(
 
         var command = (
             sql: """
-                SELECT id AS "Id", title AS "Title", description AS "Description", price AS "Price", start_time AS "StartTime", end_time AS "EndTime", status AS "Status", created_at AS "CreatedAt", updated_at AS "UpdatedAt", is_deleted AS "IsDeleted"
+                SELECT id AS "Id", title AS "Title", description AS "Description", 
+                price AS "Price", start_time AS "StartTime", end_time AS "EndTime", 
+                status AS "Status", created_at AS "CreatedAt", updated_at AS "UpdatedAt", 
+                is_deleted AS "IsDeleted"
+
                 FROM auctions.auctions
                 WHERE id = @Id
             """,
@@ -57,7 +62,11 @@ public sealed class AuctionRepository(
 
         var command = (
             sql: """
-                SELECT id AS "Id", title AS "Title", description AS "Description", price AS "Price", start_time AS "StartTime", end_time AS "EndTime", status AS "Status", created_at AS "CreatedAt", updated_at AS "UpdatedAt", is_deleted AS "IsDeleted"
+                SELECT id AS "Id", title AS "Title", description AS "Description", 
+                price AS "Price", start_time AS "StartTime", end_time AS "EndTime", 
+                status AS "Status", created_at AS "CreatedAt", updated_at AS "UpdatedAt", 
+                is_deleted AS "IsDeleted"
+
                 FROM auctions.auctions
             """,
             param: new { }

@@ -18,11 +18,11 @@ public static partial class CreateAuction
                 request.EndTime
             );
 
-            await auctionRepository.AddAuctionAsync(@auction, cancellationToken);
+            int auctionId = await auctionRepository.AddAuctionAsync(@auction, cancellationToken);
 
-            return @auction is not null ? Results.Created($"/auctions/{@auction.Id}", new
+            return auctionId != 0 ? Results.Created($"/auctions/{auctionId}", new
             {
-                @auction.Id,
+                Id = auctionId
             }) : Results.BadRequest();
 
         })
