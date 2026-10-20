@@ -10,14 +10,15 @@ public static class GetAuctions
     {
         app.MapGet("/auctions", async (IAuctionRepository repository, CancellationToken cancellationToken) =>
         {
-            IReadOnlyList<Auction> auctions = await repository.GetAuctionsAsync(cancellationToken);
+            IReadOnlyList<GetAuctionResponse> auctions = await repository.GetAuctionsAsync(cancellationToken);
             return Results.Ok(new GetAuctionsResponse(auctions.Select(@auction => new AuctionSummary(
                 @auction.Id,
                 @auction.Title,
                 @auction.Price,
                 @auction.Status,
                 @auction.StartTime,
-                @auction.EndTime
+                @auction.EndTime,
+                @auction.Vehicle
             )).ToList()));
         })
         .WithTags("Auctions");
@@ -30,7 +31,8 @@ public record AuctionSummary(
     decimal Price,
     AuctionStatus Status,
     DateTime StartTime,
-    DateTime? EndTime
+    DateTime? EndTime,
+    VehicleResponse Vehicle
 );
 
 public record GetAuctionsResponse(

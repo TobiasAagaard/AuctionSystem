@@ -11,17 +11,7 @@ public static class GetAuction
     {
         app.MapGet("/auctions/{id}", async (int id, [FromServices] IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
         {
-            GetAuctionResponse? @auction = await auctionRepository.GetAuctionByIdAsync(id, cancellationToken) is Auction auctionEntity
-                ? new GetAuctionResponse(
-                    auctionEntity.Id,
-                    auctionEntity.Title,
-                    auctionEntity.Description,
-                    auctionEntity.Price,
-                    auctionEntity.Status,
-                    auctionEntity.StartTime,
-                    auctionEntity.EndTime
-                )
-                : null;
+            GetAuctionResponse? @auction = await auctionRepository.GetAuctionByIdAsync(id, cancellationToken);
 
             return @auction is not null ? Results.Ok(@auction) : Results.NotFound();
         })

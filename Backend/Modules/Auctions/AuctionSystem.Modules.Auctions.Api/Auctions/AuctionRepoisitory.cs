@@ -1,3 +1,4 @@
+using AuctionSystem.Modules.Auctions.Api.Auctions.Enums;
 using AuctionSystem.Modules.Auctions.Api.Database;
 using System.Data;
 using Dapper;
@@ -23,7 +24,7 @@ public sealed class AuctionRepository(
             new
             {
                 auction.Title, auction.Description, auction.Price, auction.StartTime,
-                auction.EndTime, auction.Status, auction.CreatedAt,
+                auction.EndTime, Status = auction.Status.ToString(), auction.CreatedAt,
                 auction.UpdatedAt, auction.IsDeleted
             },
             transaction: tx);
@@ -39,7 +40,7 @@ public sealed class AuctionRepository(
             new
             {
                 vehicle.Make, vehicle.Model, vehicle.Year, vehicle.Mileage, vehicle.BasePrice, vehicle.EngineSize,
-                vehicle.FuelType, vehicle.VehicleType, AuctionId = auctionId
+                FuelType = vehicle.FuelType.ToString(), VehicleType = vehicle.VehicleType.ToString(), AuctionId = auctionId
             },
             transaction: tx);
 
@@ -74,43 +75,103 @@ public sealed class AuctionRepository(
         return auctionId;
     }
 
-    public async Task<Auction?> GetAuctionByIdAsync(int id, CancellationToken cancellationToken)
+
+    // Shared SELECT for reading auctions with their vehicle.
+    // LEFT JOIN on the detail tables because each vehicle only has a row in one of them.
+    private const string SelectAuctionWithVehicle = """
+        SELECT
+            a.id           AS "Id",
+            a.title        AS "Title",
+            a.description  AS "Description",
+            a.price        AS "Price",
+            a.status       AS "Status",
+            a.start_time   AS "StartTime",
+            a.end_time     AS "EndTime",
+
+            v.id           AS "VehicleId",
+            v.make         AS "Make",
+            v.model        AS "Model",
+            v.year         AS "Year",
+            v.mileage      AS "Mileage",
+            v.base_price   AS "BasePrice",
+            v.engine_size  AS "EngineSize",
+            v.fuel_type    AS "FuelType",
+            v.vehicle_type AS "VehicleType",
+
+            pc.seat_count   AS "SeatCount",
+            pc.isofix       AS "Isofix",
+            bc.cargo_volume AS "CargoVolume",
+            bc.max_payload  AS "MaxPayload"
+        FROM auctions.auctions a
+        JOIN      auctions.vehicles      v  ON v.auction_id  = a.id
+        LEFT JOIN auctions.personal_cars pc ON pc.vehicle_id = v.id
+        LEFT JOIN auctions.business_cars bc ON bc.vehicle_id = v.id
+        """;
+
+    public async Task<GetAuctionResponse?> GetAuctionByIdAsync(int id, CancellationToken cancellationToken)
     {
         using IDbConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
-        var command = (
-            sql: """
-                SELECT id AS "Id", title AS "Title", description AS "Description", 
-                price AS "Price", start_time AS "StartTime", end_time AS "EndTime", 
-                status AS "Status", created_at AS "CreatedAt", updated_at AS "UpdatedAt", 
-                is_deleted AS "IsDeleted"
+        var command = new CommandDefinition(
+            SelectAuctionWithVehicle + """
 
-                FROM auctions.auctions
-                WHERE id = @Id
-            """,
-            param: new { Id = id }
-        );
+                WHERE a.id = @Id AND a.is_deleted = FALSE
+                """,
+            new { Id = id },
+            cancellationToken: cancellationToken);
 
-        return await connection.QuerySingleOrDefaultAsync<Auction>(command.sql, command.param);
+        AuctionRow? row = await connection.QuerySingleOrDefaultAsync<AuctionRow>(command);
+
+        return row is null ? null : ToResponse(row);
     }
 
-    public async Task<IReadOnlyList<Auction>> GetAuctionsAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<GetAuctionResponse>> GetAuctionsAsync(CancellationToken cancellationToken)
     {
         using IDbConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
-        var command = (
-            sql: """
-                SELECT id AS "Id", title AS "Title", description AS "Description", 
-                price AS "Price", start_time AS "StartTime", end_time AS "EndTime", 
-                status AS "Status", created_at AS "CreatedAt", updated_at AS "UpdatedAt", 
-                is_deleted AS "IsDeleted"
+        var command = new CommandDefinition(
+            SelectAuctionWithVehicle + """
 
-                FROM auctions.auctions
-            """,
-            param: new { }
-        );
+                WHERE a.is_deleted = FALSE
+                ORDER BY a.id
+                """,
+            cancellationToken: cancellationToken);
 
-        return (IReadOnlyList<Auction>)await connection.QueryAsync<Auction>(command.sql, command.param);
+        IEnumerable<AuctionRow> rows = await connection.QueryAsync<AuctionRow>(command);
+
+        return rows.Select(ToResponse).ToList();
     }
 
+    private static GetAuctionResponse ToResponse(AuctionRow row)
+    {
+        // vehicle_type says which detail columns are filled, so .Value is safe here.
+        // If the data is broken (e.g. PersonalCar without a personal_cars row) this throws instead of returning wrong data.
+        VehicleDetailsResponse details = row.VehicleType switch
+        {
+            VehicleType.PersonalCar => new PersonalCarResponse(row.SeatCount!.Value, row.Isofix!.Value),
+            VehicleType.BusinessCar => new BusinessCarResponse(row.CargoVolume!.Value, row.MaxPayload!.Value),
+            _ => throw new InvalidOperationException($"Unknown vehicle type '{row.VehicleType}'.")
+        };
+
+        var vehicle = new VehicleResponse(
+            row.VehicleId,
+            row.Make,
+            row.Model,
+            row.Year,
+            row.Mileage,
+            row.BasePrice,
+            row.EngineSize,
+            row.FuelType,
+            details);
+
+        return new GetAuctionResponse(
+            row.Id,
+            row.Title,
+            row.Description,
+            row.Price,
+            row.Status,
+            row.StartTime,
+            row.EndTime,
+            vehicle);
+    }
 }
