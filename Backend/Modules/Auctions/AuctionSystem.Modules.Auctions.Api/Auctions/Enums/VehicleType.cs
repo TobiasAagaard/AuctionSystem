@@ -1,4 +1,4 @@
-namespace AuctionSystem.Modules.Auctions.Api.Vehicles.Enums;
+namespace AuctionSystem.Modules.Auctions.Api.Auctions.Enums;
 
 public enum VehicleType
 {

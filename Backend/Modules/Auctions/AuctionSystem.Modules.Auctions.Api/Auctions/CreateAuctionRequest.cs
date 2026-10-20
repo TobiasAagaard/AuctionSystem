@@ -9,5 +9,6 @@ public static partial class CreateAuction
         public decimal Price { get; set;}
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public VehicleRequest Vehicle { get; set; }
     }
 }

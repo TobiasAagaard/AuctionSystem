@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS auctions.auctions (
     status TEXT NOT NULL,
         CHECK (status IN ('Draft', 'Active', 'Sold', 'Cancelled')),
     start_time TIMESTAMP NOT NULL,
-    end_time TIMESTAMP,
+    end_time TIMESTAMP NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     is_deleted BOOLEAN DEFAULT FALSE
