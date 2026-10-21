@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="../Auctionly.Modules.Auctions.Domain/Auctionly.Modules.Auctions.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
