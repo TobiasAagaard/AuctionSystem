@@ -1,4 +1,8 @@
-namespace Auctionly.Modules.Auctions.Api.Auctions;
+using Auctionly.Modules.Auctions.Domain.Vehicles;
+
+namespace Auctionly.Modules.Auctions.Domain.Auctions;
+
+
 
 public class Auction
 {
@@ -28,12 +32,4 @@ public class Auction
     public DateTime UpdatedAt { get; private set; }
     public bool IsDeleted { get; private set; }
     public Vehicle Vehicle { get; private set; }
-}
-
-public enum AuctionStatus
-{
-    Draft = 0,
-    Active = 1,
-    Sold = 2,
-    Cancelled = 3
 }

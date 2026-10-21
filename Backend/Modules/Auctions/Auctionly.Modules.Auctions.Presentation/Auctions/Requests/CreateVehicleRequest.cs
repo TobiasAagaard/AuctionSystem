@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization;
-using Auctionly.Modules.Auctions.Api.Auctions.Enums;
+using Auctionly.Modules.Auctions.Domain.Vehicles;
 
-namespace Auctionly.Modules.Auctions.Api.Auctions;
+namespace Auctionly.Modules.Auctions.Presentation.Auctions.Requests;
 
-public static partial class CreateAuction
+public static partial class CreateAuctionRequest
 {
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
     [JsonDerivedType(typeof(PersonalCarRequest), "PersonalCar")]

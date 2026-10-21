@@ -1,4 +1,4 @@
-namespace Auctionly.Modules.Auctions.Api.Database;
+namespace Auctionly.Modules.Auctions.Infrastructure.Database;
 
 public static class Schemas
 {

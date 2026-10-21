@@ -1,4 +1,4 @@
-namespace Auctionly.Modules.Auctions.Api.Auctions;
+namespace Auctionly.Modules.Auctions.Presentation;
 
 internal static class Tags
 {

@@ -1,7 +1,7 @@
 using System.Data;
 using Npgsql;
 
-namespace Auctionly.Modules.Auctions.Api.Database;
+namespace Auctionly.Modules.Auctions.Infrastructure.Database;
 
 public sealed class NpgsqlAuctionsDbConnectionFactory(string connectionString)
 {

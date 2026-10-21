@@ -1,6 +1,6 @@
 using System.Reflection;
-using Auctionly.Modules.Auctions.Api;
-using Auctionly.Modules.Auctions.Api.Database;
+using Auctionly.Modules.Auctions.Infrastructure;
+using Auctionly.Modules.Auctions.Infrastructure.Database;
 using DbUp;
 using DbUp.Engine;
 

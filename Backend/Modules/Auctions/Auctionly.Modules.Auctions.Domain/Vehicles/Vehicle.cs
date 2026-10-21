@@ -1,6 +1,6 @@
-using Auctionly.Modules.Auctions.Api.Auctions.Enums;
+using Auctionly.Modules.Auctions.Domain.Vehicles.ValueObjects;
 
-namespace Auctionly.Modules.Auctions.Api.Auctions;
+namespace Auctionly.Modules.Auctions.Domain.Vehicles;
 
 
 public class Vehicle
@@ -9,7 +9,7 @@ public class Vehicle
     {
         
     }
-    public Vehicle(string make, string model, int year, int mileage, decimal basePrice, double engineSize, FuelType fuelType, VehicleDetails vehicleDetails)
+    public Vehicle(string make, string model, int year, int mileage, decimal basePrice, double engineSize, FuelType fuelType, VehicleSpecifications vehicleDetails)
     {
 
         if (fuelType == FuelType.Electric && engineSize != 0)
@@ -48,26 +48,12 @@ public class Vehicle
     public double EngineSize { get; private set; }
     public VehicleType VehicleType  => VehicleDetails switch
     {
-        PersonalCar _ => VehicleType.PersonalCar,
-        BusinessCar _ => VehicleType.BusinessCar,
+        PersonalCarSpecifications _ => VehicleType.PersonalCar,
+        BusinessCarSpecifications _ => VehicleType.BusinessCar,
         _ => throw new InvalidOperationException("Unknown vehicle type.")
     };
     public FuelType FuelType { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
-    public VehicleDetails VehicleDetails { get; private set; }
+    public VehicleSpecifications VehicleDetails { get; private set; }
 }
-
-public abstract record VehicleDetails();
-
-public record PersonalCar(
-    int SeatCount,
-    bool Isofix
-
-
-) : VehicleDetails;
-
-public record BusinessCar(
-    double CargoVolume,
-    double MaxPayload
-) : VehicleDetails;

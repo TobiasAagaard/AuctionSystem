@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 using Auctionly.Api.Extensions;
-using Auctionly.Modules.Auctions.Api;
+using Auctionly.Modules.Auctions.Infrastructure;
 using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
