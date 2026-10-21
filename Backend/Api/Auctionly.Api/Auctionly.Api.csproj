@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="../../Modules/Auctions/AuctionSystem.Modules.Auctions.Api/AuctionSystem.Modules.Auctions.Api.csproj" />
+      <ProjectReference Include="../../Modules/Auctions/Auctionly.Modules.Auctions.Api/Auctionly.Modules.Auctions.Api.csproj" />
     </ItemGroup>
 
 </Project>

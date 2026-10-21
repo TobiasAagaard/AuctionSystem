@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
-using AuctionSystem.Api.Extensions;
-using AuctionSystem.Modules.Auctions.Api;
+using Auctionly.Api.Extensions;
+using Auctionly.Modules.Auctions.Api;
 using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -28,4 +28,3 @@ AuctionsModule.MapEndpoints(app);
 
 
 await app.RunAsync();
-

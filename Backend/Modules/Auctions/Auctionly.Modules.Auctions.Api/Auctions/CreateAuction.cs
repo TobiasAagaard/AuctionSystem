@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace AuctionSystem.Modules.Auctions.Api.Auctions;
+namespace Auctionly.Modules.Auctions.Api.Auctions;
 
 public static partial class CreateAuction
 {

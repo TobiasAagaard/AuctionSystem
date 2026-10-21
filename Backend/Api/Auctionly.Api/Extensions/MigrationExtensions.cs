@@ -1,10 +1,10 @@
 using System.Reflection;
-using AuctionSystem.Modules.Auctions.Api;
-using AuctionSystem.Modules.Auctions.Api.Database;
+using Auctionly.Modules.Auctions.Api;
+using Auctionly.Modules.Auctions.Api.Database;
 using DbUp;
 using DbUp.Engine;
 
-namespace AuctionSystem.Api.Extensions;
+namespace Auctionly.Api.Extensions;
 
 internal static class MigrationExtensions
 {

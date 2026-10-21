@@ -6,7 +6,7 @@ updates:
       - "/Auction.Core"
       - "/Auction.Test"
       - "/Backend"
-      - "/Backend/Api/AuctionSystem.Api"
-      - "/Backend/Modules/Auctions/AuctionSystem.Modules.Auctions.Api"
+      - "/Backend/Api/Auctionly.Api"
+      - "/Backend/Modules/Auctions/Auctionly.Modules.Auctions.Api"
     schedule:
       interval: "daily"

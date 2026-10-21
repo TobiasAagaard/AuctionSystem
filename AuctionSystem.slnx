@@ -3,6 +3,11 @@
 	<Project Path="AppHost/AppHost.csproj" />
 	<Project Path="Auction.Avalonia/Auction.Avalonia.csproj" />
 	<Project Path="Auction.Test/Auction.Test.csproj" />
-	<Project Path="Backend/Api/AuctionSystem.Api/AuctionSystem.Api.csproj" />
-	<Project Path="Backend/Modules/Auctions/AuctionSystem.Modules.Auctions.Api/AuctionSystem.Modules.Auctions.Api.csproj" />
+	<Folder Name="/Backend/" />
+	<Folder Name="/Backend/Modules/" />
+	<Folder Name="/Backend/Modules/Auctions/">
+		<Project Path="Backend/Modules/Auctions/Auctionly.Modules.Auctions.Domain/Auctionly.Modules.Auctions.Domain.csproj" />
+	</Folder>
+	<Project Path="Backend/Api/Auctionly.Api/Auctionly.Api.csproj" />
+	<Project Path="Backend/Modules/Auctions/Auctionly.Modules.Auctions.Api/Auctionly.Modules.Auctions.Api.csproj" />
 </Solution>

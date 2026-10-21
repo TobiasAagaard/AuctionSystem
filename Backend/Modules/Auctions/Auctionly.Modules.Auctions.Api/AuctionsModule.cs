@@ -1,11 +1,11 @@
-using AuctionSystem.Modules.Auctions.Api.Database;
-using AuctionSystem.Modules.Auctions.Api.Auctions;
+using Auctionly.Modules.Auctions.Api.Database;
+using Auctionly.Modules.Auctions.Api.Auctions;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
 
-namespace AuctionSystem.Modules.Auctions.Api;
+namespace Auctionly.Modules.Auctions.Api;
 
 public static class AuctionsModule
 {

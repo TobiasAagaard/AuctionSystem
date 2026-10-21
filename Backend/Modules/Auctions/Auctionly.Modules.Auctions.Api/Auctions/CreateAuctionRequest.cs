@@ -1,4 +1,4 @@
-namespace AuctionSystem.Modules.Auctions.Api.Auctions;
+namespace Auctionly.Modules.Auctions.Api.Auctions;
 
 public static partial class CreateAuction
 {

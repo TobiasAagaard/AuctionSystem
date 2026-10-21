@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using AuctionSystem.Modules.Auctions.Api.Auctions.Enums;
+using Auctionly.Modules.Auctions.Api.Auctions.Enums;
 
-namespace AuctionSystem.Modules.Auctions.Api.Auctions;
+namespace Auctionly.Modules.Auctions.Api.Auctions;
 
 public record GetAuctionResponse(
     int Id,

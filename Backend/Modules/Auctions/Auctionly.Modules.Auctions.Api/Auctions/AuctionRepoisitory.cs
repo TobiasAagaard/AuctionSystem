@@ -1,9 +1,9 @@
-using AuctionSystem.Modules.Auctions.Api.Auctions.Enums;
-using AuctionSystem.Modules.Auctions.Api.Database;
+using Auctionly.Modules.Auctions.Api.Auctions.Enums;
+using Auctionly.Modules.Auctions.Api.Database;
 using System.Data;
 using Dapper;
 
-namespace AuctionSystem.Modules.Auctions.Api.Auctions;
+namespace Auctionly.Modules.Auctions.Api.Auctions;
 
 public sealed class AuctionRepository(
     NpgsqlAuctionsDbConnectionFactory connectionFactory) : IAuctionRepository
