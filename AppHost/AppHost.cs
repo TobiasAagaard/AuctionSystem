@@ -6,7 +6,7 @@ var postgres = builder.AddPostgres("postgres")
 
 var db = postgres.AddDatabase("AuctionSystem");
 
-var api = builder.AddProject<Projects.AuctionSystem_Api>("api")
+var api = builder.AddProject<Projects.Auctionly_Api>("api")
     .WithReference(db, connectionName: "Database")
     .WaitFor(db);
 

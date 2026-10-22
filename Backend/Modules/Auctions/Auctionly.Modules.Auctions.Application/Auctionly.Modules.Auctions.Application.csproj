@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="../Auctionly.Modules.Auctions.Domain/Auctionly.Modules.Auctions.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.89" />
+    <PackageReference Include="MediatR" Version="14.2.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Auctionly.Modules.Auctions.Application/Auctionly.Modules.Auctions.Application.csproj" />
+  </ItemGroup>
+
+</Project>

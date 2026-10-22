@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.89" />
+    <PackageReference Include="Npgsql" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Database/Migrations/*.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Auctionly.Modules.Auctions.Application/Auctionly.Modules.Auctions.Application.csproj" />
+    <ProjectReference Include="../Auctionly.Modules.Auctions.Presentation/Auctionly.Modules.Auctions.Presentation.csproj" />
+  </ItemGroup>
+
+</Project>

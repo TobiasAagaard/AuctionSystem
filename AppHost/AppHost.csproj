@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="../Backend/Api/AuctionSystem.Api/AuctionSystem.Api.csproj" />
+      <ProjectReference Include="../Backend/Api/Auctionly.Api/Auctionly.Api.csproj" />
     </ItemGroup>
 
     <ItemGroup>
