@@ -8,40 +8,39 @@ using static Auctionly.Modules.Auctions.Presentation.Auctions.Requests.CreateAuc
 
 namespace Auctionly.Modules.Auctions.Presentation.Auctions;
 
-// The endpoint only translates HTTP <-> command. No business logic, no database.
+
 internal static class CreateAuction
 {
     public static void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("/auctions", async (Request request, ISender sender, CancellationToken cancellationToken) =>
         {
-            CreateAuctionCommand command = ToCommand(request);
+            var command = new CreateAuctionCommand(
+                request.Title,
+                request.Description,
+                request.StartingPrice,
+                request.StartTime,
+                request.EndTime,
+                new CreateAuctionCommand.VehicleData(
+                    request.Vehicle.Make,
+                    request.Vehicle.Model,
+                    request.Vehicle.Year,
+                    request.Vehicle.Mileage,
+                    request.Vehicle.BasePrice,
+                    request.Vehicle.EngineSize,
+                    request.Vehicle.FuelType,
+                    ToSpecifications(request.Vehicle)
+                )
+            );
 
             int auctionId = await sender.Send(command, cancellationToken);
 
             return Results.Created($"/auctions/{auctionId}", new { Id = auctionId });
+
         })
         .WithTags(Tags.Auctions);
     }
 
-    private static CreateAuctionCommand ToCommand(Request request) =>
-        new(
-            request.Title,
-            request.Description,
-            request.StartingPrice,
-            request.StartTime,
-            request.EndTime,
-            new CreateAuctionCommand.VehicleData(
-                request.Vehicle.Make,
-                request.Vehicle.Model,
-                request.Vehicle.Year,
-                request.Vehicle.Mileage,
-                request.Vehicle.BasePrice,
-                request.Vehicle.EngineSize,
-                request.Vehicle.FuelType,
-                ToSpecifications(request.Vehicle)));
-
-    // The JSON "type" field picked the request subclass; map it to the matching domain value object.
     private static VehicleSpecifications ToSpecifications(VehicleRequest vehicle) =>
         vehicle switch
         {

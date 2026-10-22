@@ -12,5 +12,4 @@
 		<Project Path="Backend/Modules/Auctions/Auctionly.Modules.Auctions.Presentation/Auctionly.Modules.Auctions.Presentation.csproj" />
 	</Folder>
 	<Project Path="Backend/Api/Auctionly.Api/Auctionly.Api.csproj" />
-	<Project Path="Backend/Modules/Auctions/Auctionly.Modules.Auctions.Api/Auctionly.Modules.Auctions.Api.csproj" />
 </Solution>

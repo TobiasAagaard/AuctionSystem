@@ -2,16 +2,16 @@ using System.Data;
 using Auctionly.Modules.Auctions.Domain.Auctions;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Auctionly.Modules.Auctions.Domain.Vehicles.ValueObjects;
-using Auctionly.Modules.Auctions.Infrastructure.Database;
+using Auctionly.Modules.Auctions.Application.Abstractions.Data;
 using Dapper;
 
 namespace Auctionly.Modules.Auctions.Infrastructure.Auctions;
 
-internal sealed class AuctionRepository(NpgsqlAuctionsDbConnectionFactory connectionFactory) : IAuctionRepository
+internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) : IAuctionRepository
 {
-    public async Task<int> AddAsync(Auction auction, CancellationToken cancellationToken = default)
+    public async Task<int> AddAuctionAsync(Auction auction, CancellationToken cancellationToken = default)
     {
-        using IDbConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using IDbConnection connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
         using IDbTransaction transaction = connection.BeginTransaction();
 
         int auctionId = await connection.QuerySingleAsync<int>(new CommandDefinition(
