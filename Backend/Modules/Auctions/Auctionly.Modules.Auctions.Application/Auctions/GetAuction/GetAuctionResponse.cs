@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 
+
 namespace Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
 
 public sealed record GetAuctionResponse(
