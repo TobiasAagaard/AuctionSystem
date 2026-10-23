@@ -28,8 +28,6 @@ internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepo
             request.EndTime,
             vehicle);
 
-        await auctionRepository.AddAuctionAsync(auction, cancellationToken);
-
-        return auction.Id;
+        return await auctionRepository.AddAuctionAsync(auction, cancellationToken);
     }
 }
