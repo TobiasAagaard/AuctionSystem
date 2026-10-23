@@ -15,7 +15,7 @@ internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepo
             v.Model,
             v.Year,
             v.Mileage,
-            v.BasePrice,
+            v.PurchasePrice,
             v.EngineSize,
             v.FuelType,
             v.Specifications);
@@ -23,7 +23,7 @@ internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepo
         var auction = new Auction(
             request.Title,
             request.Description,
-            request.StartingPrice,
+            request.Price,
             request.StartTime,
             request.EndTime,
             vehicle);

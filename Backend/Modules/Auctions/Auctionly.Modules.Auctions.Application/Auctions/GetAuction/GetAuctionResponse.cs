@@ -8,7 +8,7 @@ public sealed record GetAuctionResponse(
     int Id,
     string Title,
     string Description,
-    decimal StartingPrice,
+    decimal Price,
     DateTime StartTime,
     DateTime EndTime,
     GetAuctionVehicleResponse Vehicle

@@ -42,9 +42,9 @@ internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) 
         int vehicleId = await connection.QuerySingleAsync<int>(new CommandDefinition(
             """
             INSERT INTO auctions.vehicles
-                (make, model, year, mileage, base_price, engine_size, fuel_type, vehicle_type, auction_id)
+                (make, model, year, mileage, purchase_price, engine_size, fuel_type, vehicle_type, auction_id)
             VALUES
-                (@Make, @Model, @Year, @Mileage, @BasePrice, @EngineSize, @FuelType, @VehicleType, @AuctionId)
+                (@Make, @Model, @Year, @Mileage, @PurchasePrice, @EngineSize, @FuelType, @VehicleType, @AuctionId)
             RETURNING id
             """,
             new
@@ -53,7 +53,7 @@ internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) 
                 vehicle.Model,
                 vehicle.Year,
                 vehicle.Mileage,
-                vehicle.BasePrice,
+                vehicle.PurchasePrice,
                 vehicle.EngineSize,
                 FuelType = vehicle.FuelType.ToString(),
                 VehicleType = vehicle.VehicleType.ToString(),

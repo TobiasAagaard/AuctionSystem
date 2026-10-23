@@ -13,7 +13,7 @@ public static partial class CreateAuctionRequest
         string Model,
         int Year,
         int Mileage,
-        decimal BasePrice,
+        decimal PurchasePrice,
         double EngineSize,
         FuelType FuelType);
 
@@ -22,22 +22,22 @@ public static partial class CreateAuctionRequest
         string Model,
         int Year,
         int Mileage,
-        decimal BasePrice,
+        decimal PurchasePrice,
         double EngineSize,
         FuelType FuelType,
         int SeatCount,
         bool Isofix)
-        : VehicleRequest(Make, Model, Year, Mileage, BasePrice, EngineSize, FuelType);
+        : VehicleRequest(Make, Model, Year, Mileage, PurchasePrice, EngineSize, FuelType);
 
     internal sealed record BusinessCarRequest(
         string Make,
         string Model,
         int Year,
         int Mileage,
-        decimal BasePrice,
+        decimal PurchasePrice,
         double EngineSize,
         FuelType FuelType,
         double CargoVolume,
         double MaxPayload)
-        : VehicleRequest(Make, Model, Year, Mileage, BasePrice, EngineSize, FuelType);
+        : VehicleRequest(Make, Model, Year, Mileage, PurchasePrice, EngineSize, FuelType);
 }
