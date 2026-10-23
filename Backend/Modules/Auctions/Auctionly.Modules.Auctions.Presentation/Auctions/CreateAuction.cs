@@ -18,7 +18,7 @@ internal static class CreateAuction
             var command = new CreateAuctionCommand(
                 request.Title,
                 request.Description,
-                request.StartingPrice,
+                request.Price,
                 request.StartTime,
                 request.EndTime,
                 new CreateAuctionCommand.VehicleData(
@@ -26,7 +26,7 @@ internal static class CreateAuction
                     request.Vehicle.Model,
                     request.Vehicle.Year,
                     request.Vehicle.Mileage,
-                    request.Vehicle.BasePrice,
+                    request.Vehicle.PurchasePrice,
                     request.Vehicle.EngineSize,
                     request.Vehicle.FuelType,
                     ToSpecifications(request.Vehicle)

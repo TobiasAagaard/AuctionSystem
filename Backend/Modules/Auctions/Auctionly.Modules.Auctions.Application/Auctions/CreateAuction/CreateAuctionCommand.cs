@@ -7,7 +7,7 @@ namespace Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
 public sealed record CreateAuctionCommand(
     string Title,
     string Description,
-    decimal StartingPrice,
+    decimal Price,
     DateTime StartTime,
     DateTime EndTime,
     CreateAuctionCommand.VehicleData Vehicle) : ICommand<int>
@@ -17,7 +17,7 @@ public sealed record CreateAuctionCommand(
         string Model,
         int Year,
         int Mileage,
-        decimal BasePrice,
+        decimal PurchasePrice,
         double EngineSize,
         FuelType FuelType,
         VehicleSpecifications Specifications);

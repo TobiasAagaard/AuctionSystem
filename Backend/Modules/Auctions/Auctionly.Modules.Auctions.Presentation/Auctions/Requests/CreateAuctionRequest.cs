@@ -6,7 +6,7 @@ public static partial class CreateAuctionRequest
     internal sealed record Request(
         string Title,
         string Description,
-        decimal StartingPrice,
+        decimal Price,
         DateTime StartTime,
         DateTime EndTime,
         VehicleRequest Vehicle
