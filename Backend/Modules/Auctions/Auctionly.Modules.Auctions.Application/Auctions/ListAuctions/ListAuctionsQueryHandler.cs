@@ -5,11 +5,11 @@ using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.ListAuctions;
 
-public sealed class ListAuctionsQueryHandler(IDbConnectionFactory dbConnectionFactory) : IListAuctionsQueryHandler
+public sealed class ListAuctionsQueryHandler(IDbConnectionFactory dbConnectionFactory) : IQueryHandler<ListAuctionsQuery, List<ListAuctionsResponse>>
 {
-    public async Task<List<ListAuctionsResponse>> Handle(ListAuctionsQuery request, CancellationToken cancellationToken)
+    public async Task<List<ListAuctionsResponse>> Handle(ListAuctionsQuery request, CancellationToken ct)
     {
-        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(cancellationToken);
+        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(ct);
 
         const string query =
         $"""

@@ -11,7 +11,7 @@ internal static class GetAuction
 {
     public static void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/auctions/{id}", async (int id, IGetAuctionQueryHandler handler) =>
+        app.MapGet("/auctions/{id}", async (int id, IQueryHandler<GetAuctionQuery, GetAuctionResponse?> handler) =>
         {
             GetAuctionResponse? @event =await handler.Handle(new GetAuctionQuery(id), default);
 
