@@ -13,7 +13,7 @@ internal static class CreateAuction
 {
     public static void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/auctions", async (Request request, ICreateAuctionCommandHandler handler, CancellationToken cancellationToken) =>
+        app.MapPost("/auctions", async (Request request, ICommandHandler<CreateAuctionCommand, int> handler, CancellationToken cancellationToken) =>
         {
             var command = new CreateAuctionCommand(
                 request.Title,

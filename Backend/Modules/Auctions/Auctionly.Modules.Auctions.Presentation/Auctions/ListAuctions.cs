@@ -10,7 +10,7 @@ public static class ListAuctions
 {
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapGet("/auctions", async (IListAuctionsQueryHandler handler) =>
+        app.MapGet("/auctions", async (IQueryHandler<ListAuctionsQuery, List<ListAuctionsResponse>> handler) =>
         {
             List<ListAuctionsResponse> auctions = await handler.Handle(new ListAuctionsQuery(), default);
 

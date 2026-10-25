@@ -6,11 +6,11 @@ using Auctionly.Modules.Auctions.Domain.Vehicles;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
 
-internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionFactory) : IGetAuctionQueryHandler
+internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionFactory) : IQueryHandler<GetAuctionQuery, GetAuctionResponse?>
 {
-    public async Task<GetAuctionResponse?> Handle(GetAuctionQuery request, CancellationToken cancellationToken)
+    public async Task<GetAuctionResponse?> Handle(GetAuctionQuery request, CancellationToken ct)
     {
-        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(cancellationToken);
+        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(ct);
 
             const string sql =
             """
@@ -42,7 +42,7 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
             """;
 
             AuctionRows? auction = await connection.QuerySingleOrDefaultAsync<AuctionRows>(
-            new CommandDefinition(sql, new { request.AuctionId }, cancellationToken: cancellationToken));
+            new CommandDefinition(sql, new { request.AuctionId }, cancellationToken: ct));
 
         return auction?.ToResponse();
     }

@@ -4,9 +4,10 @@ using Auctionly.Modules.Auctions.Domain.Vehicles;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
 
-internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepository) : ICreateAuctionCommandHandler
+internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepository) : ICommandHandler<CreateAuctionCommand, int>
 {
-    public async Task<int> Handle(CreateAuctionCommand request, CancellationToken cancellationToken)
+
+    public async Task<int> Handle(CreateAuctionCommand request, CancellationToken ct)
     {
         CreateAuctionCommand.VehicleData v = request.Vehicle;
 
@@ -28,6 +29,6 @@ internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepo
             request.EndTime,
             vehicle);
 
-        return await auctionRepository.AddAuctionAsync(auction, cancellationToken);
+        return await auctionRepository.AddAuctionAsync(auction, ct);
     }
 }
