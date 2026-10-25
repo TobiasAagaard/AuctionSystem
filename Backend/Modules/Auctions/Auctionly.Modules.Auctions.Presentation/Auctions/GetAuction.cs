@@ -11,16 +11,16 @@ internal static class GetAuction
 {
     public static void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/auctions/{id}", async (int id, IQueryHandler<GetAuctionQuery, GetAuctionResponse?> handler) =>
+        app.MapGet("/auctions/{id}", async (int id, IQueryHandler<GetAuctionQuery, GetAuctionResponse?> handler, CancellationToken ct) =>
         {
-            GetAuctionResponse? @event =await handler.Handle(new GetAuctionQuery(id), default);
+            GetAuctionResponse? auction =await handler.Handle(new GetAuctionQuery(id), ct);
 
-            if (@event is null)
+            if (auction is null)
             {
                 return Results.NotFound();
             }
 
-            return Results.Ok(@event);
+            return Results.Ok(auction);
 
         }).WithTags(Tags.Auctions);
     }
