@@ -13,10 +13,15 @@ builder.Services.ConfigureHttpJsonOptions(options =>
         .Add(new JsonStringEnumConverter());
 });
 
+// Add exception handling and problem details services for validation
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.AddAuctionsModule(builder.Configuration);
 
 WebApplication app = builder.Build();
 
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
