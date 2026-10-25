@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
+using FluentValidation;
 
 namespace Auctionly.Modules.Auctions.Infrastructure;
 
@@ -22,7 +23,7 @@ public static class AuctionsModule
 
     public static IServiceCollection AddAuctionsModule(this IServiceCollection services, IConfiguration configuration)
     {
-
+        
         services.AddApplication();
         services.AddInfrastructure(configuration);
 
