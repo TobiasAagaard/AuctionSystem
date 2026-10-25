@@ -28,6 +28,7 @@ internal static class CreateAuction
                     request.Vehicle.Year,
                     request.Vehicle.Mileage,
                     request.Vehicle.PurchasePrice,
+                    request.Vehicle.Currency,
                     request.Vehicle.EngineSize,
                     request.Vehicle.FuelType,
                     ToSpecifications(request.Vehicle)

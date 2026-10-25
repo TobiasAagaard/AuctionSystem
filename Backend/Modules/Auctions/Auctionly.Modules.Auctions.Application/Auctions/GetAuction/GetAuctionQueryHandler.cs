@@ -3,6 +3,7 @@ using Auctionly.Modules.Auctions.Application.Abstractions.Data;
 using System.Data.Common;
 using Dapper;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
+using Auctionly.Modules.Auctions.Domain.ValueObjects.Enums;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
 
@@ -28,6 +29,7 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
                 v.year          AS Year,
                 v.mileage       AS Mileage,
                 v.purchase_price AS PurchasePrice,
+                v.currency      AS VehicleCurrency,
                 v.engine_size   AS EngineSize,
                 v.fuel_type     AS FuelType,
                 v.vehicle_type  AS VehicleType,
@@ -66,9 +68,9 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
             };
 
             return new GetAuctionResponse(
-                AuctionId, Title, Description, Price, Currency, StartTime, EndTime,
+                AuctionId, Title, Description, Price, Enum.Parse<Currency>(Currency), StartTime, EndTime,
                 new GetAuctionVehicleResponse(
-                    VehicleId, Make, Model, Year, Mileage, PurchasePrice, vehicleCurrency, EngineSize,
+                    VehicleId, Make, Model, Year, Mileage, PurchasePrice, Enum.Parse<Currency>(vehicleCurrency), EngineSize,
                     Enum.Parse<FuelType>(FuelType), spec));
         }
     }

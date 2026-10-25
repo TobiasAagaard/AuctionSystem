@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
+using Auctionly.Modules.Auctions.Domain.ValueObjects.Enums;
 
 namespace Auctionly.Modules.Auctions.Presentation.Auctions.Requests;
 
@@ -14,6 +15,7 @@ public static partial class CreateAuctionRequest
         int Year,
         int Mileage,
         decimal PurchasePrice,
+        Currency Currency,
         double EngineSize,
         FuelType FuelType);
 
@@ -23,11 +25,12 @@ public static partial class CreateAuctionRequest
         int Year,
         int Mileage,
         decimal PurchasePrice,
+        Currency Currency,
         double EngineSize,
         FuelType FuelType,
         int SeatCount,
         bool Isofix)
-        : VehicleRequest(Make, Model, Year, Mileage, PurchasePrice, EngineSize, FuelType);
+        : VehicleRequest(Make, Model, Year, Mileage, PurchasePrice, Currency, EngineSize, FuelType);
 
     internal sealed record BusinessCarRequest(
         string Make,
@@ -35,9 +38,10 @@ public static partial class CreateAuctionRequest
         int Year,
         int Mileage,
         decimal PurchasePrice,
+        Currency Currency,
         double EngineSize,
         FuelType FuelType,
         double CargoVolume,
         double MaxPayload)
-        : VehicleRequest(Make, Model, Year, Mileage, PurchasePrice, EngineSize, FuelType);
+        : VehicleRequest(Make, Model, Year, Mileage, PurchasePrice, Currency, EngineSize, FuelType);
 }

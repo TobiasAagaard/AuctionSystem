@@ -1,5 +1,6 @@
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Auctionly.Modules.Auctions.Domain.ValueObjects;
+using Auctionly.Modules.Auctions.Domain.ValueObjects.Enums;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
 
@@ -7,7 +8,7 @@ public sealed record CreateAuctionCommand(
     string Title,
     string Description,
     decimal Price,
-    string Currency,
+    Currency Currency,
     DateTime StartTime,
     DateTime EndTime,
     CreateAuctionCommand.VehicleData Vehicle) 
@@ -18,7 +19,7 @@ public sealed record CreateAuctionCommand(
         int Year,
         int Mileage,
         decimal PurchasePrice,
-        string Currency,
+        Currency Currency,
         double EngineSize,
         FuelType FuelType,
         VehicleSpecifications Specifications);
