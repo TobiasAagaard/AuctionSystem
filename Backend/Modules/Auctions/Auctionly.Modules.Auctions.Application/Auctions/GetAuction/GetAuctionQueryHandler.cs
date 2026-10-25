@@ -1,4 +1,4 @@
-using MediatR;
+using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 using Auctionly.Modules.Auctions.Application.Abstractions.Data;
 using System.Data.Common;
 using Dapper;
@@ -6,7 +6,7 @@ using Auctionly.Modules.Auctions.Domain.Vehicles;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
 
-internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionFactory) : IRequestHandler<GetAuctionQuery, GetAuctionResponse?>
+internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionFactory) : IGetAuctionQueryHandler
 {
     public async Task<GetAuctionResponse?> Handle(GetAuctionQuery request, CancellationToken cancellationToken)
     {

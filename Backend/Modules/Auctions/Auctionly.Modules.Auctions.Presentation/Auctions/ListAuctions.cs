@@ -1,5 +1,5 @@
+using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 using Auctionly.Modules.Auctions.Application.Auctions.ListAuctions;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -10,9 +10,9 @@ public static class ListAuctions
 {
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapGet("/auctions", async (ISender sender) =>
+        app.MapGet("/auctions", async (IListAuctionsQueryHandler handler) =>
         {
-            List<ListAuctionsResponse> auctions = await sender.Send(new ListAuctionsQuery());
+            List<ListAuctionsResponse> auctions = await handler.Handle(new ListAuctionsQuery(), default);
 
             return Results.Ok(auctions);
             

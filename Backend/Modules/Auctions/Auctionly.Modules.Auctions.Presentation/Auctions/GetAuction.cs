@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
-using MediatR;
+
 using Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
+using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 
 namespace Auctionly.Modules.Auctions.Presentation.Auctions;
 
@@ -10,9 +11,9 @@ internal static class GetAuction
 {
     public static void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/auctions/{id}", async (int id, ISender sender) =>
+        app.MapGet("/auctions/{id}", async (int id, IGetAuctionQueryHandler handler) =>
         {
-            GetAuctionResponse? @event =await sender.Send(new GetAuctionQuery(id));
+            GetAuctionResponse? @event =await handler.Handle(new GetAuctionQuery(id), default);
 
             if (@event is null)
             {
