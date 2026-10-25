@@ -55,7 +55,7 @@ internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) 
                 vehicle.Year,
                 vehicle.Mileage,
                 PurchasePrice = vehicle.PurchasePrice.Amount,
-                Currency =                 Currency = auction.Price.Currency.ToString(),vehicle.PurchasePrice.Currency.ToString(),
+                Currency = vehicle.PurchasePrice.Currency.ToString(),
                 vehicle.EngineSize,
                 FuelType = vehicle.FuelType.ToString(),
                 VehicleType = vehicle.VehicleType.ToString(),
