@@ -22,12 +22,6 @@ public static class AuctionsModule
 
     public static IServiceCollection AddAuctionsModule(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMediatR(config =>
-        {
-           config.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly);
-        });
-
-
 
         services.AddApplication();
         services.AddInfrastructure(configuration);

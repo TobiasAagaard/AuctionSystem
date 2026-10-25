@@ -1,4 +1,3 @@
-using MediatR;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
 

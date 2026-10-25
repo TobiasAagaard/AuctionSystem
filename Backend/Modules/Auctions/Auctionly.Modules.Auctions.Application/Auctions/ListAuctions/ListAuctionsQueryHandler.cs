@@ -1,11 +1,11 @@
 using Auctionly.Modules.Auctions.Application.Abstractions.Data;
-using MediatR;
 using System.Data.Common;
 using Dapper;
+using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.ListAuctions;
 
-public sealed class ListAuctionsQueryHandler(IDbConnectionFactory dbConnectionFactory) : IRequestHandler<ListAuctionsQuery, List<ListAuctionsResponse>>
+public sealed class ListAuctionsQueryHandler(IDbConnectionFactory dbConnectionFactory) : IListAuctionsQueryHandler
 {
     public async Task<List<ListAuctionsResponse>> Handle(ListAuctionsQuery request, CancellationToken cancellationToken)
     {
