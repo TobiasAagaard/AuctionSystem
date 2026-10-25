@@ -10,7 +10,10 @@ public static class DependencyInjection
 {
     public static void AddApplication(this IServiceCollection services)
     {
+        // Register Command Handlers
         services.AddScoped<ICommandHandler<CreateAuctionCommand, int>, CreateAuctionCommandHandler>();
+
+        // Register Query Handlers
         services.AddScoped<IQueryHandler<GetAuctionQuery, GetAuctionResponse?>, GetAuctionQueryHandler>();
         services.AddScoped<IQueryHandler<ListAuctionsQuery, List<ListAuctionsResponse>>, ListAuctionsQueryHandler>();
     }

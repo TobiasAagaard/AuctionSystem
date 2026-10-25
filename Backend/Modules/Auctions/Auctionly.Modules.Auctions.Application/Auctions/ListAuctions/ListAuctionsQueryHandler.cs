@@ -5,7 +5,7 @@ using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.ListAuctions;
 
-public sealed class ListAuctionsQueryHandler(IDbConnectionFactory dbConnectionFactory) : IQueryHandler<ListAuctionsQuery, List<ListAuctionsResponse>>
+internal sealed class ListAuctionsQueryHandler(IDbConnectionFactory dbConnectionFactory) : IQueryHandler<ListAuctionsQuery, List<ListAuctionsResponse>>
 {
     public async Task<List<ListAuctionsResponse>> Handle(ListAuctionsQuery request, CancellationToken ct)
     {
