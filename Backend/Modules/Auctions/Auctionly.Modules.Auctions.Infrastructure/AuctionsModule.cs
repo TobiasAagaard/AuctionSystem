@@ -1,5 +1,6 @@
 using System.Reflection.Metadata;
 using Auctionly.Modules.Auctions.Application.Abstractions.Data;
+using Auctionly.Modules.Auctions.Application;
 using Auctionly.Modules.Auctions.Domain.Auctions;
 using Auctionly.Modules.Auctions.Infrastructure.Auctions;
 using Auctionly.Modules.Auctions.Infrastructure.Database;
@@ -26,6 +27,9 @@ public static class AuctionsModule
            config.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly);
         });
 
+
+
+        services.AddApplication();
         services.AddInfrastructure(configuration);
 
         return services;
@@ -43,4 +47,5 @@ public static class AuctionsModule
 
         services.AddScoped<IAuctionRepository, AuctionRepository>();
     }
+
 }

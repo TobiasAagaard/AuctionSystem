@@ -1,10 +1,10 @@
-using Auctionly.Modules.Auctions.Application.Abstractions.Messaging;
+using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 using Auctionly.Modules.Auctions.Domain.Auctions;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
 
-internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepository) : ICommandHandler<CreateAuctionCommand, int>
+internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepository) : ICreateAuctionCommandHandler
 {
     public async Task<int> Handle(CreateAuctionCommand request, CancellationToken cancellationToken)
     {

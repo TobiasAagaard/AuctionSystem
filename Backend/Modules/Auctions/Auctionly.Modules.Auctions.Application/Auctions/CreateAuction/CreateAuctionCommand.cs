@@ -1,4 +1,3 @@
-using Auctionly.Modules.Auctions.Application.Abstractions.Messaging;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Auctionly.Modules.Auctions.Domain.Vehicles.ValueObjects;
 
@@ -10,7 +9,7 @@ public sealed record CreateAuctionCommand(
     decimal Price,
     DateTime StartTime,
     DateTime EndTime,
-    CreateAuctionCommand.VehicleData Vehicle) : ICommand<int>
+    CreateAuctionCommand.VehicleData Vehicle) 
 {
     public sealed record VehicleData(
         string Make,
