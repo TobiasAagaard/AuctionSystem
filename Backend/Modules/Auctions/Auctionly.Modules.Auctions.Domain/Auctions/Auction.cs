@@ -1,5 +1,5 @@
 using Auctionly.Modules.Auctions.Domain.Vehicles;
-
+using Auctionly.Modules.Auctions.Domain.ValueObjects;
 namespace Auctionly.Modules.Auctions.Domain.Auctions;
 
 
@@ -7,7 +7,7 @@ namespace Auctionly.Modules.Auctions.Domain.Auctions;
 public class Auction
 {
     public Auction() { }
-    public Auction(string title, string description, decimal price, DateTime startTime, DateTime endTime, Vehicle vehicle)
+    public Auction(string title, string description, Money price, DateTime startTime, DateTime endTime, Vehicle vehicle)
     {
         Title = title;
         Description = description;
@@ -24,7 +24,7 @@ public class Auction
     public int Id { get; private set; }
     public string Title { get; private set; }
     public string Description { get; private set; }
-    public decimal Price { get; private set; }
+    public Money Price { get; private set; }
     public AuctionStatus Status { get; private set; }
     public DateTime StartTime { get; private set; }
     public DateTime EndTime { get; private set; }

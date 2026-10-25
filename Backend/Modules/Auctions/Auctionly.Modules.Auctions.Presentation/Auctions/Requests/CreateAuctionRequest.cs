@@ -1,3 +1,4 @@
+using Auctionly.Modules.Auctions.Domain.ValueObjects.Enums;
 
 namespace Auctionly.Modules.Auctions.Presentation.Auctions.Requests;
 
@@ -7,6 +8,7 @@ public static partial class CreateAuctionRequest
         string Title,
         string Description,
         decimal Price,
+        Currency Currency,
         DateTime StartTime,
         DateTime EndTime,
         VehicleRequest Vehicle

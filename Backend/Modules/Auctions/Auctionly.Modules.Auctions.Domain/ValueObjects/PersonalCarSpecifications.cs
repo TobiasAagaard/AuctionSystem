@@ -1,5 +1,5 @@
 
-namespace Auctionly.Modules.Auctions.Domain.Vehicles.ValueObjects;
+namespace Auctionly.Modules.Auctions.Domain.ValueObjects;
 
 public record PersonalCarSpecifications(
     int SeatCount,

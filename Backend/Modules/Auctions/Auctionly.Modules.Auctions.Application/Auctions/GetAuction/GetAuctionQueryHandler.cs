@@ -3,6 +3,7 @@ using Auctionly.Modules.Auctions.Application.Abstractions.Data;
 using System.Data.Common;
 using Dapper;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
+using Auctionly.Modules.Auctions.Domain.ValueObjects.Enums;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
 
@@ -19,6 +20,7 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
                 a.title         AS Title,
                 a.description   AS Description,
                 a.price         AS Price,
+                a.currency      AS Currency,
                 a.start_time    AS StartTime,
                 a.end_time      AS EndTime,
                 v.id            AS VehicleId,
@@ -27,6 +29,7 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
                 v.year          AS Year,
                 v.mileage       AS Mileage,
                 v.purchase_price AS PurchasePrice,
+                v.currency      AS VehicleCurrency,
                 v.engine_size   AS EngineSize,
                 v.fuel_type     AS FuelType,
                 v.vehicle_type  AS VehicleType,
@@ -48,10 +51,10 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
     }
 
     private sealed record AuctionRows(
-    int AuctionId, string Title, string Description, decimal Price,
+    int AuctionId, string Title, string Description, decimal Price, string Currency,
     DateTime StartTime, DateTime EndTime,
     int VehicleId, string Make, string Model, int Year, int Mileage,
-    decimal PurchasePrice, double EngineSize, string FuelType, string VehicleType,
+    decimal PurchasePrice, string vehicleCurrency, double EngineSize, string FuelType, string VehicleType,
     int? SeatCount, bool? Isofix, double? CargoVolume, double? MaxPayload)
     {
 
@@ -65,9 +68,9 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
             };
 
             return new GetAuctionResponse(
-                AuctionId, Title, Description, Price, StartTime, EndTime,
+                AuctionId, Title, Description, Price, Enum.Parse<Currency>(Currency), StartTime, EndTime,
                 new GetAuctionVehicleResponse(
-                    VehicleId, Make, Model, Year, Mileage, PurchasePrice, EngineSize,
+                    VehicleId, Make, Model, Year, Mileage, PurchasePrice, Enum.Parse<Currency>(vehicleCurrency), EngineSize,
                     Enum.Parse<FuelType>(FuelType), spec));
         }
     }

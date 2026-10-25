@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
+using Auctionly.Modules.Auctions.Domain.ValueObjects.Enums;
 
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
@@ -9,6 +10,7 @@ public sealed record GetAuctionResponse(
     string Title,
     string Description,
     decimal Price,
+    Currency Currency,
     DateTime StartTime,
     DateTime EndTime,
     GetAuctionVehicleResponse Vehicle
@@ -21,6 +23,7 @@ public sealed record GetAuctionVehicleResponse(
     int Year,
     int Mileage,
     decimal PurchasePrice,
+    Currency Currency,
     double EngineSize,
     FuelType FuelType,
     VehicleSpecificationResponse Specification
