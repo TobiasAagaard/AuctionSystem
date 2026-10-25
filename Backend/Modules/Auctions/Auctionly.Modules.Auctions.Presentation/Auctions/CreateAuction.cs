@@ -1,6 +1,6 @@
 using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 using Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
-using Auctionly.Modules.Auctions.Domain.Vehicles.ValueObjects;
+using Auctionly.Modules.Auctions.Domain.ValueObjects;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -19,6 +19,7 @@ internal static class CreateAuction
                 request.Title,
                 request.Description,
                 request.Price,
+                request.Currency,
                 request.StartTime,
                 request.EndTime,
                 new CreateAuctionCommand.VehicleData(

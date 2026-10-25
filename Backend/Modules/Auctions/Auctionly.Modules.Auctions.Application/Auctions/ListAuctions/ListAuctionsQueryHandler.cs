@@ -16,7 +16,8 @@ internal sealed class ListAuctionsQueryHandler(IDbConnectionFactory dbConnection
             SELECT
                 id AS {nameof(ListAuctionsResponse.Id)},
                 title AS {nameof(ListAuctionsResponse.Title)},
-                price AS {nameof(ListAuctionsResponse.Price)}
+                price AS {nameof(ListAuctionsResponse.Price)},
+                currency AS {nameof(ListAuctionsResponse.Currency)}
             FROM auctions.auctions
         """;
 

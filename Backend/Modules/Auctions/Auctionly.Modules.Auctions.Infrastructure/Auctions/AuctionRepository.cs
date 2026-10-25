@@ -1,7 +1,7 @@
 using System.Data;
 using Auctionly.Modules.Auctions.Domain.Auctions;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
-using Auctionly.Modules.Auctions.Domain.Vehicles.ValueObjects;
+using Auctionly.Modules.Auctions.Domain.ValueObjects;
 using Auctionly.Modules.Auctions.Application.Abstractions.Data;
 using Dapper;
 
@@ -17,16 +17,17 @@ internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) 
         int auctionId = await connection.QuerySingleAsync<int>(new CommandDefinition(
             """
             INSERT INTO auctions.auctions
-                (title, description, price, start_time, end_time, status, created_at, updated_at, is_deleted)
+                (title, description, price, currency, start_time, end_time, status, created_at, updated_at, is_deleted)
             VALUES
-                (@Title, @Description, @Price, @StartTime, @EndTime, @Status, @CreatedAt, @UpdatedAt, @IsDeleted)
+                (@Title, @Description, @Price, @Currency, @StartTime, @EndTime, @Status, @CreatedAt, @UpdatedAt, @IsDeleted)
             RETURNING id
             """,
             new
             {
                 auction.Title,
                 auction.Description,
-                auction.Price,
+                Price = auction.Price.Amount,
+                auction.Price.Currency,
                 auction.StartTime,
                 auction.EndTime,
                 Status = auction.Status.ToString(),
@@ -42,9 +43,9 @@ internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) 
         int vehicleId = await connection.QuerySingleAsync<int>(new CommandDefinition(
             """
             INSERT INTO auctions.vehicles
-                (make, model, year, mileage, purchase_price, engine_size, fuel_type, vehicle_type, auction_id)
+                (make, model, year, mileage, purchase_price, currency, engine_size, fuel_type, vehicle_type, auction_id)
             VALUES
-                (@Make, @Model, @Year, @Mileage, @PurchasePrice, @EngineSize, @FuelType, @VehicleType, @AuctionId)
+                (@Make, @Model, @Year, @Mileage, @PurchasePrice, @Currency, @EngineSize, @FuelType, @VehicleType, @AuctionId)
             RETURNING id
             """,
             new
@@ -53,7 +54,8 @@ internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) 
                 vehicle.Model,
                 vehicle.Year,
                 vehicle.Mileage,
-                vehicle.PurchasePrice,
+                PurchasePrice = vehicle.PurchasePrice.Amount,
+                vehicle.PurchasePrice.Currency,
                 vehicle.EngineSize,
                 FuelType = vehicle.FuelType.ToString(),
                 VehicleType = vehicle.VehicleType.ToString(),

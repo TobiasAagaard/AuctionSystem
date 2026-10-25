@@ -9,6 +9,7 @@ public sealed record GetAuctionResponse(
     string Title,
     string Description,
     decimal Price,
+    string Currency,
     DateTime StartTime,
     DateTime EndTime,
     GetAuctionVehicleResponse Vehicle
@@ -21,6 +22,7 @@ public sealed record GetAuctionVehicleResponse(
     int Year,
     int Mileage,
     decimal PurchasePrice,
+    string Currency,
     double EngineSize,
     FuelType FuelType,
     VehicleSpecificationResponse Specification

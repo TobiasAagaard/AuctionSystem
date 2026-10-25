@@ -7,6 +7,7 @@ public static partial class CreateAuctionRequest
         string Title,
         string Description,
         decimal Price,
+        string Currency,
         DateTime StartTime,
         DateTime EndTime,
         VehicleRequest Vehicle

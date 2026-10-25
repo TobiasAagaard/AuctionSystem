@@ -1,4 +1,4 @@
-using Auctionly.Modules.Auctions.Domain.Vehicles.ValueObjects;
+using Auctionly.Modules.Auctions.Domain.ValueObjects;
 
 namespace Auctionly.Modules.Auctions.Domain.Vehicles;
 
@@ -9,7 +9,28 @@ public class Vehicle
     {
         
     }
-    public Vehicle(string make, string model, int year, int mileage, decimal purchasePrice, double engineSize, FuelType fuelType, VehicleSpecifications vehicleDetails)
+ 
+    public int Id { get; private set; }
+    public string Make { get; private set; }
+    public string Model { get; private set; }
+    public int Year { get; private set; }
+    public int Mileage { get; private set; }
+    public Money PurchasePrice { get; private set; }
+    public double EngineSize { get; private set; }
+    public VehicleType VehicleType  => VehicleDetails switch
+    {
+        PersonalCarSpecifications _ => VehicleType.PersonalCar,
+        BusinessCarSpecifications _ => VehicleType.BusinessCar,
+        _ => throw new InvalidOperationException("Unknown vehicle type.")
+    };
+    public FuelType FuelType { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public DateTime UpdatedAt { get; private set; }
+
+
+    public VehicleSpecifications VehicleDetails { get; private set; }
+
+       public Vehicle(string make, string model, int year, int mileage, Money purchasePrice, double engineSize, FuelType fuelType, VehicleSpecifications vehicleDetails)
     {
 
         if (fuelType == FuelType.Electric && engineSize != 0)
@@ -38,22 +59,4 @@ public class Vehicle
         FuelType = fuelType;
         VehicleDetails = vehicleDetails;
     }
-
-    public int Id { get; private set; }
-    public string Make { get; private set; }
-    public string Model { get; private set; }
-    public int Year { get; private set; }
-    public int Mileage { get; private set; }
-    public decimal PurchasePrice { get; private set; }
-    public double EngineSize { get; private set; }
-    public VehicleType VehicleType  => VehicleDetails switch
-    {
-        PersonalCarSpecifications _ => VehicleType.PersonalCar,
-        BusinessCarSpecifications _ => VehicleType.BusinessCar,
-        _ => throw new InvalidOperationException("Unknown vehicle type.")
-    };
-    public FuelType FuelType { get; private set; }
-    public DateTime CreatedAt { get; private set; }
-    public DateTime UpdatedAt { get; private set; }
-    public VehicleSpecifications VehicleDetails { get; private set; }
 }

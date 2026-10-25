@@ -1,6 +1,7 @@
 using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 using Auctionly.Modules.Auctions.Domain.Auctions;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
+using Auctionly.Modules.Auctions.Domain.ValueObjects;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
 
@@ -16,7 +17,7 @@ internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepo
             v.Model,
             v.Year,
             v.Mileage,
-            v.PurchasePrice,
+            new Money(v.PurchasePrice, v.Currency),
             v.EngineSize,
             v.FuelType,
             v.Specifications);
@@ -24,7 +25,7 @@ internal sealed class CreateAuctionCommandHandler(IAuctionRepository auctionRepo
         var auction = new Auction(
             request.Title,
             request.Description,
-            request.Price,
+            new Money(request.Price, request.Currency),
             request.StartTime,
             request.EndTime,
             vehicle);

@@ -19,6 +19,7 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
                 a.title         AS Title,
                 a.description   AS Description,
                 a.price         AS Price,
+                a.currency      AS Currency,
                 a.start_time    AS StartTime,
                 a.end_time      AS EndTime,
                 v.id            AS VehicleId,
@@ -48,10 +49,10 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
     }
 
     private sealed record AuctionRows(
-    int AuctionId, string Title, string Description, decimal Price,
+    int AuctionId, string Title, string Description, decimal Price, string Currency,
     DateTime StartTime, DateTime EndTime,
     int VehicleId, string Make, string Model, int Year, int Mileage,
-    decimal PurchasePrice, double EngineSize, string FuelType, string VehicleType,
+    decimal PurchasePrice, string vehicleCurrency, double EngineSize, string FuelType, string VehicleType,
     int? SeatCount, bool? Isofix, double? CargoVolume, double? MaxPayload)
     {
 
@@ -65,9 +66,9 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
             };
 
             return new GetAuctionResponse(
-                AuctionId, Title, Description, Price, StartTime, EndTime,
+                AuctionId, Title, Description, Price, Currency, StartTime, EndTime,
                 new GetAuctionVehicleResponse(
-                    VehicleId, Make, Model, Year, Mileage, PurchasePrice, EngineSize,
+                    VehicleId, Make, Model, Year, Mileage, PurchasePrice, vehicleCurrency, EngineSize,
                     Enum.Parse<FuelType>(FuelType), spec));
         }
     }
