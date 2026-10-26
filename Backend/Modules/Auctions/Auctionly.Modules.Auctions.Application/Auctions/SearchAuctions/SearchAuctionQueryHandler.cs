@@ -54,8 +54,8 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
             currency AS {nameof(SearchAuctionItem.Currency)}
         FROM auctions.auctions
         WHERE status = @Status
-          AND (@StartTime IS NULL OR start_time >= @StartTime)
-          AND (@EndTime IS NULL OR end_time <= @EndTime)
+        AND (@StartTime::timestamp IS NULL OR start_time >= @StartTime)
+        AND (@EndTime::timestamp IS NULL OR end_time <= @EndTime)
           AND (@MinPrice::decimal IS NULL OR price >= @MinPrice)
           AND (@MaxPrice::decimal IS NULL OR price <= @MaxPrice)
           AND is_deleted = FALSE
@@ -74,8 +74,8 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
         SELECT COUNT(*)
         FROM auctions.auctions
         WHERE status = @Status
-          AND (@StartTime IS NULL OR start_time >= @StartTime)
-          AND (@EndTime IS NULL OR end_time <= @EndTime)
+          AND (@StartTime::timestamp IS NULL OR start_time >= @StartTime)
+          AND (@EndTime::timestamp IS NULL OR end_time <= @EndTime)
           AND (@MinPrice::decimal IS NULL OR price >= @MinPrice)
           AND (@MaxPrice::decimal IS NULL OR price <= @MaxPrice)
           AND is_deleted = FALSE
