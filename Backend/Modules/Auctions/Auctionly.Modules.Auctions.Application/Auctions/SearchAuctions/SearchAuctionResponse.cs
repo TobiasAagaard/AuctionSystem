@@ -1,10 +1,20 @@
-using Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
+using Auctionly.Modules.Auctions.Domain.ValueObjects.Enums;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.SearchAuctions;
 
 public sealed record SearchAuctionResponse(
-    int page,
-    int pageSize,
+    int Page,
+    int PageSize,
     int TotalCount,
-    IReadOnlyList<GetAuctionResponse> Auctions
+    IReadOnlyList<SearchAuctionItem> Auctions
+);
+
+public sealed record SearchAuctionItem(
+    int Id,
+    string Title,
+    string Description,
+    DateTime StartTime,
+    DateTime EndTime,
+    decimal Price,
+    Currency Currency
 );
