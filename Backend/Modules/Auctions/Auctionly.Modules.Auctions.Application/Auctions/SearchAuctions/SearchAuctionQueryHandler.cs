@@ -54,10 +54,10 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
             currency AS {nameof(SearchAuctionItem.Currency)}
         FROM auctions.auctions
         WHERE status = @Status
-          AND (start_time >= @StartTime)
-          AND (end_time <= @EndTime)
-          AND (price >= @MinPrice)
-          AND (price <= @MaxPrice)
+          AND (@StartTime IS NULL OR start_time >= @StartTime)
+          AND (@EndTime IS NULL OR end_time <= @EndTime)
+          AND (@MinPrice::decimal IS NULL OR price >= @MinPrice)
+          AND (@MaxPrice::decimal IS NULL OR price <= @MaxPrice)
           AND is_deleted = FALSE
         ORDER BY start_time
         LIMIT @Take
@@ -74,10 +74,10 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
         SELECT COUNT(*)
         FROM auctions.auctions
         WHERE status = @Status
-          AND (start_time >= @StartTime)
-          AND (end_time <= @EndTime)
-          AND (price >= @MinPrice)
-          AND (price <= @MaxPrice)
+          AND (@StartTime IS NULL OR start_time >= @StartTime)
+          AND (@EndTime IS NULL OR end_time <= @EndTime)
+          AND (@MinPrice::decimal IS NULL OR price >= @MinPrice)
+          AND (@MaxPrice::decimal IS NULL OR price <= @MaxPrice)
           AND is_deleted = FALSE
         """;
         int totalCount = await connection.ExecuteScalarAsync<int>(new CommandDefinition(query, parameters, cancellationToken: ct));
