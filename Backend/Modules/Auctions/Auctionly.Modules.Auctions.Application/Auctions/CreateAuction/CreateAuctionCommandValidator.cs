@@ -1,4 +1,5 @@
 using FluentValidation;
+using Auctionly.Modules.Auctions.Domain.Vehicles;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
 
@@ -28,7 +29,8 @@ internal sealed class VehicleDataValidator : AbstractValidator<CreateAuctionComm
         RuleFor(x => x.Mileage).GreaterThanOrEqualTo(0);
         RuleFor(x => x.PurchasePrice).GreaterThan(0);
         RuleFor(x => x.Currency).IsInEnum();
-        RuleFor(x => x.EngineSize).GreaterThanOrEqualTo(0);
+        RuleFor(x => x.EngineSize).Equal(0).When(x => x.FuelType == FuelType.Electric);
+        RuleFor(x => x.EngineSize).GreaterThan(0).When(x => x.FuelType != FuelType.Electric);
         RuleFor(x => x.FuelType).IsInEnum();
         RuleFor(x => x.Specifications).NotNull();
     }
