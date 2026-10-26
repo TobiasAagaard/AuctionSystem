@@ -1,25 +1,12 @@
+using Auctionly.Modules.Auctions.Domain.Abstractions;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Auctionly.Modules.Auctions.Domain.ValueObjects;
+
 namespace Auctionly.Modules.Auctions.Domain.Auctions;
-
-
 
 public class Auction
 {
     private Auction() { }
-    public Auction(string title, string description, Money price, DateTime startTime, DateTime endTime, Vehicle vehicle)
-    {
-        Title = title;
-        Description = description;
-        Price = price;
-        StartTime = startTime;
-        EndTime = endTime;
-        Status = AuctionStatus.Draft;
-        CreatedAt = DateTime.UtcNow;
-        UpdatedAt = DateTime.UtcNow;
-        IsDeleted = false;
-        Vehicle = vehicle ?? throw new ArgumentNullException(nameof(vehicle));
-    }
 
     public int Id { get; private set; }
     public string Title { get; private set; }
@@ -32,4 +19,40 @@ public class Auction
     public DateTime UpdatedAt { get; private set; }
     public bool IsDeleted { get; private set; }
     public Vehicle Vehicle { get; private set; }
+
+    public static Result<Auction> Create(
+        string title,
+        string description,
+        Money price,
+        DateTime startTime,
+        DateTime endTime,
+        Vehicle vehicle,
+        DateTime utcNow)
+    {
+        ArgumentNullException.ThrowIfNull(vehicle);
+
+        if (startTime < utcNow)
+        {
+            return Result.Failure<Auction>(AuctionErrors.StartDateInPast);
+        }
+
+        if (endTime <= startTime)
+        {
+            return Result.Failure<Auction>(AuctionErrors.EndDatePrecedesStartDate);
+        }
+
+        return new Auction
+        {
+            Title = title,
+            Description = description,
+            Price = price,
+            StartTime = startTime,
+            EndTime = endTime,
+            Status = AuctionStatus.Draft,
+            CreatedAt = utcNow,
+            UpdatedAt = utcNow,
+            IsDeleted = false,
+            Vehicle = vehicle
+        };
+    }
 }

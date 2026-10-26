@@ -1,6 +1,8 @@
 using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 using Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
+using Auctionly.Modules.Auctions.Domain.Abstractions;
 using Auctionly.Modules.Auctions.Domain.ValueObjects;
+using Auctionly.Modules.Auctions.Presentation.ApiResults;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -13,7 +15,7 @@ internal static class CreateAuction
 {
     public static void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/auctions", async (Request request, ICommandHandler<CreateAuctionCommand, int> handler, CancellationToken cancellationToken) =>
+        app.MapPost("/auctions", async (Request request, ICommandHandler<CreateAuctionCommand, Result<int>> handler, CancellationToken cancellationToken) =>
         {
             var command = new CreateAuctionCommand(
                 request.Title,
@@ -35,9 +37,11 @@ internal static class CreateAuction
                 )
             );
 
-            int auctionId = await handler.Handle(command, cancellationToken);
+            Result<int> result = await handler.Handle(command, cancellationToken);
 
-            return Results.Created($"/auctions/{auctionId}", new { Id = auctionId });
+            return result.Match(
+                auctionId => Results.Created($"/auctions/{auctionId}", new { Id = auctionId }),
+                ApiResults.ApiResults.Problem);
 
         })
         .WithTags(Tags.Auctions);
