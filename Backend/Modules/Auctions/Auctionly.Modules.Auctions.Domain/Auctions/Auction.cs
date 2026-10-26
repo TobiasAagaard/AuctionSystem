@@ -6,7 +6,7 @@ namespace Auctionly.Modules.Auctions.Domain.Auctions;
 
 public class Auction
 {
-    public Auction() { }
+    private Auction() { }
     public Auction(string title, string description, Money price, DateTime startTime, DateTime endTime, Vehicle vehicle)
     {
         Title = title;

@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using Auctionly.Modules.Auctions.Domain.Auctions;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Auctionly.Modules.Auctions.Domain.ValueObjects;
@@ -11,8 +12,8 @@ internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) 
 {
     public async Task<int> AddAuctionAsync(Auction auction, CancellationToken cancellationToken = default)
     {
-        using IDbConnection connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
-        using IDbTransaction transaction = connection.BeginTransaction();
+        await using DbConnection connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
+        await using DbTransaction transaction = await connection.BeginTransactionAsync(cancellationToken);
 
         int auctionId = await connection.QuerySingleAsync<int>(new CommandDefinition(
             """
@@ -66,7 +67,7 @@ internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) 
 
         await InsertSpecificationsAsync(connection, transaction, vehicleId, vehicle.VehicleDetails, cancellationToken);
 
-        transaction.Commit();
+        await transaction.CommitAsync(cancellationToken);
 
         return auctionId;
     }
