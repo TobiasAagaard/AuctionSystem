@@ -1,6 +1,8 @@
 using System.Reflection.Metadata;
 using Auctionly.Modules.Auctions.Application.Abstractions.Data;
 using Auctionly.Modules.Auctions.Application;
+using Auctionly.Modules.Auctions.Application.Abstractions.Clock;
+using Auctionly.Modules.Auctions.Infrastructure.Clock;
 using Auctionly.Modules.Auctions.Domain.Auctions;
 using Auctionly.Modules.Auctions.Infrastructure.Auctions;
 using Auctionly.Modules.Auctions.Infrastructure.Database;
@@ -39,6 +41,8 @@ public static class AuctionsModule
         services.TryAddSingleton(npgsqlDataSource);
 
         services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
+
+        services.TryAddSingleton<IDateTimeProvider, DateTimeProvider>();
 
         services.AddScoped<IAuctionRepository, AuctionRepository>();
     }

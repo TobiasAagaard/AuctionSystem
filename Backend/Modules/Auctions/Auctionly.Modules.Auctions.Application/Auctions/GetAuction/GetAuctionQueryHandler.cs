@@ -4,12 +4,14 @@ using System.Data.Common;
 using Dapper;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Auctionly.Modules.Auctions.Domain.ValueObjects.Enums;
+using Auctionly.Modules.Auctions.Domain.Abstractions;
+using Auctionly.Modules.Auctions.Domain.Auctions;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
 
-internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionFactory) : IQueryHandler<GetAuctionQuery, GetAuctionResponse?>
+internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionFactory) : IQueryHandler<GetAuctionQuery, Result<GetAuctionResponse>>
 {
-    public async Task<GetAuctionResponse?> Handle(GetAuctionQuery request, CancellationToken ct)
+    public async Task<Result<GetAuctionResponse>> Handle(GetAuctionQuery request, CancellationToken ct)
     {
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(ct);
 
@@ -47,7 +49,12 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
             AuctionRows? auction = await connection.QuerySingleOrDefaultAsync<AuctionRows>(
             new CommandDefinition(sql, new { request.AuctionId }, cancellationToken: ct));
 
-        return auction?.ToResponse();
+        if (auction is null)
+        {
+            return Result.Failure<GetAuctionResponse>(AuctionErrors.NotFound(request.AuctionId));
+        }
+
+        return auction.ToResponse();
     }
 
     private sealed record AuctionRows(
