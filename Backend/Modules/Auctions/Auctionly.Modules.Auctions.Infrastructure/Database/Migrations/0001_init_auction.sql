@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS auctions.auctions (
     currency TEXT NOT NULL,
         CHECK (currency IN ('USD', 'EUR', 'DKK')),
     status TEXT NOT NULL,
-        CHECK (status IN ('Draft', 'Active', 'Sold', 'Cancelled')),
+        CHECK (status IN ('Draft', 'Published', 'Sold', 'Cancelled')),
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
         CHECK (end_time > start_time),
@@ -51,14 +51,9 @@ CREATE TABLE IF NOT EXISTS auctions.business_cars (
 CREATE TABLE IF NOT EXISTS auctions.bids (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     auction_id INT NOT NULL REFERENCES auctions.auctions(id) ON DELETE CASCADE,
+    bidder_id INT NOT NULL,
     amount DECIMAL(18, 2) NOT NULL,
     currency TEXT NOT NULL,
         CHECK (currency IN ('USD', 'EUR', 'DKK')),
     created_at timestamptz DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS auctions.auction_bid_history (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    auction_id INT NOT NULL REFERENCES auctions.auctions(id) ON DELETE CASCADE,
-    bid_id INT NOT NULL REFERENCES auctions.bids(id) ON DELETE CASCADE
 );
