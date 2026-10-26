@@ -5,7 +5,7 @@ namespace Auctionly.Modules.Auctions.Domain.Vehicles;
 
 public class Vehicle
 {
-    public Vehicle()
+    private Vehicle()
     {
         
     }
