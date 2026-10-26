@@ -28,7 +28,7 @@ internal sealed class VehicleDataValidator : AbstractValidator<CreateAuctionComm
         RuleFor(x => x.Mileage).GreaterThanOrEqualTo(0);
         RuleFor(x => x.PurchasePrice).GreaterThan(0);
         RuleFor(x => x.Currency).IsInEnum();
-        RuleFor(x => x.EngineSize).GreaterThan(0);
+        RuleFor(x => x.EngineSize).GreaterThanOrEqualTo(0).WithMessage("Engine size must be non-negative.");
         RuleFor(x => x.FuelType).IsInEnum();
         RuleFor(x => x.Specifications).NotNull();
     }
