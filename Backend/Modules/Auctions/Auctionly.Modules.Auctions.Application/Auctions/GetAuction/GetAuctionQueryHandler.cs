@@ -46,7 +46,7 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
             WHERE a.id = @AuctionId AND a.is_deleted = FALSE
             """;
 
-            AuctionRows? auction = await connection.QuerySingleOrDefaultAsync<AuctionRows>(
+            AuctionItems? auction = await connection.QuerySingleOrDefaultAsync<AuctionItems>(
             new CommandDefinition(sql, new { request.AuctionId }, cancellationToken: ct));
 
         if (auction is null)
@@ -57,11 +57,11 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
         return auction.ToResponse();
     }
 
-    private sealed record AuctionRows(
+    private sealed record AuctionItems(
     int AuctionId, string Title, string Description, decimal Price, string Currency,
     DateTime StartTime, DateTime EndTime,
     int VehicleId, string Make, string Model, int Year, int Mileage,
-    decimal PurchasePrice, string vehicleCurrency, double EngineSize, string FuelType, string VehicleType,
+    decimal PurchasePrice, string VehicleCurrency, double EngineSize, string FuelType, string VehicleType,
     int? SeatCount, bool? Isofix, double? CargoVolume, double? MaxPayload)
     {
 
@@ -77,7 +77,7 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
             return new GetAuctionResponse(
                 AuctionId, Title, Description, Price, Enum.Parse<Currency>(Currency), StartTime, EndTime,
                 new GetAuctionVehicleResponse(
-                    VehicleId, Make, Model, Year, Mileage, PurchasePrice, Enum.Parse<Currency>(vehicleCurrency), EngineSize,
+                    VehicleId, Make, Model, Year, Mileage, PurchasePrice, Enum.Parse<Currency>(VehicleCurrency), EngineSize,
                     Enum.Parse<FuelType>(FuelType), spec));
         }
     }
