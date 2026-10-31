@@ -18,12 +18,23 @@ internal static class SearchAuctions
             DateTime? endTime,
             decimal? minPrice,
             decimal? maxPrice,
+            string? make,
+            string? model,
+            int? minYear,
+            int? maxYear,
+            int? minMileage,
+            int? maxMileage,
+            string? fuelType,
+            string? vehicleType,
             int page = 1,
             int pageSize = 15,
             CancellationToken ct = default) =>
         {
             Result<SearchAuctionResponse> result = await handler.Handle(
-                new SearchAuctionQuery(startTime, endTime, minPrice, maxPrice, page, pageSize),
+                new SearchAuctionQuery(
+                    startTime, endTime, minPrice, maxPrice,
+                    make, model, minYear, maxYear, minMileage, maxMileage, fuelType, vehicleType,
+                    page, pageSize),
                 ct
             );
 

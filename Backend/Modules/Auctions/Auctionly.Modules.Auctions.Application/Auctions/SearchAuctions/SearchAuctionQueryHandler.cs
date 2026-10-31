@@ -4,6 +4,7 @@ using Auctionly.Modules.Auctions.Application.Abstractions.Data;
 using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 using Auctionly.Modules.Auctions.Domain.Abstractions;
 using Auctionly.Modules.Auctions.Domain.Auctions;
+using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Dapper;
 
 namespace Auctionly.Modules.Auctions.Application.Auctions.SearchAuctions;
@@ -20,12 +21,34 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
             return Result.Failure<SearchAuctionResponse>(validationError);
         }
 
+        if (!TryParseEnum(request.FuelType, out FuelType? fuelType))
+        {
+            return Result.Failure<SearchAuctionResponse>(Error.Problem(
+                "Search.InvalidFuelType",
+                $"FuelType must be one of: {string.Join(", ", Enum.GetNames<FuelType>())}."));
+        }
+
+        if (!TryParseEnum(request.VehicleType, out VehicleType? vehicleType))
+        {
+            return Result.Failure<SearchAuctionResponse>(Error.Problem(
+                "Search.InvalidVehicleType",
+                $"VehicleType must be one of: {string.Join(", ", Enum.GetNames<VehicleType>())}."));
+        }
+
         var parameters = new SearchAuctionParameters(
             AuctionStatus.Published.ToString(),
             ToDbTimestamp(request.StartTime),
             ToDbTimestamp(request.EndTime),
             request.MinPrice,
             request.MaxPrice,
+            NullIfBlank(request.Make),
+            NullIfBlank(request.Model),
+            request.MinYear,
+            request.MaxYear,
+            request.MinMileage,
+            request.MaxMileage,
+            fuelType?.ToString(),
+            vehicleType?.ToString(),
             request.PageSize,
             (request.Page - 1) * request.PageSize
         );
@@ -63,8 +86,45 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
             return Error.Problem("Search.InvalidTimeRange", "StartTime cannot be after EndTime.");
         }
 
+        if (request.MinYear > request.MaxYear)
+        {
+            return Error.Problem("Search.InvalidYearRange", "MinYear cannot be greater than MaxYear.");
+        }
+
+        if (request.MinMileage < 0 || request.MaxMileage < 0)
+        {
+            return Error.Problem("Search.InvalidMileage", "Mileage filters cannot be negative.");
+        }
+
+        if (request.MinMileage > request.MaxMileage)
+        {
+            return Error.Problem("Search.InvalidMileageRange", "MinMileage cannot be greater than MaxMileage.");
+        }
+
         return null;
     }
+
+    // Case-insensitive, and only accepts names (not numbers like "7"). Blank means "no filter".
+    private static bool TryParseEnum<TEnum>(string? value, out TEnum? result) where TEnum : struct, Enum
+    {
+        result = null;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return true;
+        }
+
+        string? name = Enum.GetNames<TEnum>().FirstOrDefault(n => n.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase));
+        if (name is null)
+        {
+            return false;
+        }
+
+        result = Enum.Parse<TEnum>(name);
+        return true;
+    }
+
+    private static string? NullIfBlank(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private static DateTime? ToDbTimestamp(DateTime? value) => value switch
     {
@@ -73,15 +133,27 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
         _ => DateTime.SpecifyKind(value.Value.ToUniversalTime(), DateTimeKind.Unspecified)
     };
 
-    private const string FromClause = "FROM auctions.auctions";
+    private const string FromClause =
+    """
+        FROM auctions.auctions a
+        LEFT JOIN auctions.vehicles v ON v.auction_id = a.id
+    """;
     private const string FilterClause =
     """
-        WHERE status = @Status
-            AND (@StartTime::timestamp IS NULL OR start_time >= @StartTime)
-            AND (@EndTime::timestamp IS NULL OR end_time <= @EndTime)
-            AND (@MinPrice::decimal IS NULL OR price >= @MinPrice)
-            AND (@MaxPrice::decimal IS NULL OR price <= @MaxPrice)
-            AND is_deleted = FALSE
+        WHERE a.status = @Status
+            AND (@StartTime::timestamp IS NULL OR a.start_time >= @StartTime)
+            AND (@EndTime::timestamp IS NULL OR a.end_time <= @EndTime)
+            AND (@MinPrice::decimal IS NULL OR a.price >= @MinPrice)
+            AND (@MaxPrice::decimal IS NULL OR a.price <= @MaxPrice)
+            AND (@Make::text IS NULL OR v.make ILIKE @Make)
+            AND (@Model::text IS NULL OR v.model ILIKE '%' || @Model || '%')
+            AND (@MinYear::int IS NULL OR v.year >= @MinYear)
+            AND (@MaxYear::int IS NULL OR v.year <= @MaxYear)
+            AND (@MinMileage::int IS NULL OR v.mileage >= @MinMileage)
+            AND (@MaxMileage::int IS NULL OR v.mileage <= @MaxMileage)
+            AND (@FuelType::text IS NULL OR v.fuel_type = @FuelType)
+            AND (@VehicleType::text IS NULL OR v.vehicle_type = @VehicleType)
+            AND a.is_deleted = FALSE
     """;
 
     private static async Task<IReadOnlyList<SearchAuctionItem>> GetAuctionsAsync(DbConnection connection, SearchAuctionParameters parameters, CancellationToken ct)
@@ -89,16 +161,16 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
         const string query =
         $"""
         SELECT
-            id AS {nameof(SearchAuctionItem.Id)},
-            title AS {nameof(SearchAuctionItem.Title)},
-            description AS {nameof(SearchAuctionItem.Description)},
-            start_time AS {nameof(SearchAuctionItem.StartTime)},
-            end_time AS {nameof(SearchAuctionItem.EndTime)},
-            price AS {nameof(SearchAuctionItem.Price)},
-            currency AS {nameof(SearchAuctionItem.Currency)}
+            a.id AS {nameof(SearchAuctionItem.Id)},
+            a.title AS {nameof(SearchAuctionItem.Title)},
+            a.description AS {nameof(SearchAuctionItem.Description)},
+            a.start_time AS {nameof(SearchAuctionItem.StartTime)},
+            a.end_time AS {nameof(SearchAuctionItem.EndTime)},
+            a.price AS {nameof(SearchAuctionItem.Price)},
+            a.currency AS {nameof(SearchAuctionItem.Currency)}
         {FromClause}
         {FilterClause}
-        ORDER BY start_time
+        ORDER BY a.start_time, a.id
         LIMIT @Take
         OFFSET @Skip
         """;
@@ -124,6 +196,14 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
     DateTime? EndTime,
     decimal? MinPrice,
     decimal? MaxPrice,
+    string? Make,
+    string? Model,
+    int? MinYear,
+    int? MaxYear,
+    int? MinMileage,
+    int? MaxMileage,
+    string? FuelType,
+    string? VehicleType,
     int Take,
     int Skip
 );

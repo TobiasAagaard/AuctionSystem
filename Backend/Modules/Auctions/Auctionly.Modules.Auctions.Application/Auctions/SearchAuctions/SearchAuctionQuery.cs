@@ -6,6 +6,14 @@ public sealed record SearchAuctionQuery(
     DateTime? EndTime,
     decimal? MinPrice,
     decimal? MaxPrice,
+    string? Make,
+    string? Model,
+    int? MinYear,
+    int? MaxYear,
+    int? MinMileage,
+    int? MaxMileage,
+    string? FuelType,
+    string? VehicleType,
     int Page,
     int PageSize
 );
