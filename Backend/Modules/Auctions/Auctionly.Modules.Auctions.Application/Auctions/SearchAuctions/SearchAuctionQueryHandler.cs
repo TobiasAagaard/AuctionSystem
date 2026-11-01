@@ -4,6 +4,7 @@ using Auctionly.Modules.Auctions.Application.Abstractions.Data;
 using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 using Auctionly.Modules.Auctions.Domain.Abstractions;
 using Auctionly.Modules.Auctions.Domain.Auctions;
+using Auctionly.Modules.Auctions.Domain.ValueObjects.Enums;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Dapper;
 
@@ -161,22 +162,34 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
         const string query =
         $"""
         SELECT
-            a.id AS {nameof(SearchAuctionItem.Id)},
-            a.title AS {nameof(SearchAuctionItem.Title)},
-            a.description AS {nameof(SearchAuctionItem.Description)},
-            a.start_time AS {nameof(SearchAuctionItem.StartTime)},
-            a.end_time AS {nameof(SearchAuctionItem.EndTime)},
-            a.price AS {nameof(SearchAuctionItem.Price)},
-            a.currency AS {nameof(SearchAuctionItem.Currency)}
+            a.id AS {nameof(AuctionRow.Id)},
+            a.title AS {nameof(AuctionRow.Title)},
+            a.description AS {nameof(AuctionRow.Description)},
+            a.start_time AS {nameof(AuctionRow.StartTime)},
+            a.end_time AS {nameof(AuctionRow.EndTime)},
+            a.price AS {nameof(AuctionRow.Price)},
+            a.currency AS {nameof(AuctionRow.Currency)},
+            v.make AS {nameof(AuctionRow.Make)},
+            v.model AS {nameof(AuctionRow.Model)},
+            v.year AS {nameof(AuctionRow.Year)},
+            v.mileage AS {nameof(AuctionRow.Mileage)},
+            v.engine_size AS {nameof(AuctionRow.EngineSize)},
+            v.fuel_type AS {nameof(AuctionRow.FuelType)},
+            v.vehicle_type AS {nameof(AuctionRow.VehicleType)}
         {FromClause}
         {FilterClause}
         ORDER BY a.start_time, a.id
         LIMIT @Take
         OFFSET @Skip
         """;
-        List<SearchAuctionItem> auctions = (await connection.QueryAsync<SearchAuctionItem>(new CommandDefinition(query, parameters, cancellationToken: ct))).AsList();
-        return auctions;
+        IEnumerable<AuctionRow> rows = await connection.QueryAsync<AuctionRow>(new CommandDefinition(query, parameters, cancellationToken: ct));
+        return rows.Select(r => new SearchAuctionItem(
+            r.Id, r.Title, r.Description, r.StartTime, r.EndTime, r.Price, r.Currency,
+            new SearchAuctionVehicle(r.Make, r.Model, r.Year, r.Mileage, r.EngineSize, r.FuelType, r.VehicleType)))
+            .ToList();
     }
+
+
     
     private static async Task<int> GetTotalCountAsync(DbConnection connection, SearchAuctionParameters parameters, CancellationToken ct)
     {
@@ -190,6 +203,24 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
         return totalCount;
     }
     
+        private sealed record AuctionRow
+    {
+        public int Id { get; init; }
+        public string Title { get; init; } = "";
+        public string Description { get; init; } = "";
+        public DateTime StartTime { get; init; }
+        public DateTime EndTime { get; init; }
+        public decimal Price { get; init; }
+        public Currency Currency { get; init; }
+        public string Make { get; init; } = "";
+        public string Model { get; init; } = "";
+        public int Year { get; init; }
+        public int Mileage { get; init; }
+        public double EngineSize { get; init; }
+        public FuelType FuelType { get; init; }
+        public VehicleType VehicleType { get; init; }
+    }
+
     private sealed record SearchAuctionParameters(
     string Status,
     DateTime? StartTime,
