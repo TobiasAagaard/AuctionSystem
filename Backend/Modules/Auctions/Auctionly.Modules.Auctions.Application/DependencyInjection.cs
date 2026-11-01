@@ -23,7 +23,16 @@ public static class DependencyInjection
         // Register Query Handlers
         services.AddScoped<IQueryHandler<GetAuctionQuery, Result<GetAuctionResponse>>, GetAuctionQueryHandler>();
         services.AddScoped<IQueryHandler<ListAuctionsQuery, List<ListAuctionsResponse>>, ListAuctionsQueryHandler>();
-        services.AddScoped<IQueryHandler<SearchAuctionQuery, Result<SearchAuctionResponse>>, SearchAuctionQueryHandler>();
+        services.AddQueryHandler<SearchAuctionQuery, Result<SearchAuctionResponse>, SearchAuctionQueryHandler>();
+    }
+
+    private static void AddQueryHandler<TQuery, TResult, THandler>(this IServiceCollection services) where THandler : class, IQueryHandler<TQuery, TResult>
+    {
+        services.AddScoped<THandler>();
+        services.AddScoped<IQueryHandler<TQuery, TResult>>(serviceProvider =>
+            new ValidationQueryHandler<TQuery, TResult>(
+                serviceProvider.GetRequiredService<THandler>(),
+                serviceProvider.GetServices<IValidator<TQuery>>()));
     }
 
 

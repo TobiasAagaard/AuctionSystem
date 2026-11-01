@@ -12,34 +12,15 @@ namespace Auctionly.Modules.Auctions.Application.Auctions.SearchAuctions;
 
 internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectionFactory) : IQueryHandler<SearchAuctionQuery, Result<SearchAuctionResponse>>
 {
-    private const int MaxPageSize = 100;
-
     public async Task<Result<SearchAuctionResponse>> Handle(SearchAuctionQuery request, CancellationToken ct)
     {
-        Error? validationError = Validate(request);
-        if (validationError is not null)
-        {
-            return Result.Failure<SearchAuctionResponse>(validationError);
-        }
-
-        if (!TryParseEnum(request.FuelType, out FuelType? fuelType))
-        {
-            return Result.Failure<SearchAuctionResponse>(Error.Problem(
-                "Search.InvalidFuelType",
-                $"FuelType must be one of: {string.Join(", ", Enum.GetNames<FuelType>())}."));
-        }
-
-        if (!TryParseEnum(request.VehicleType, out VehicleType? vehicleType))
-        {
-            return Result.Failure<SearchAuctionResponse>(Error.Problem(
-                "Search.InvalidVehicleType",
-                $"VehicleType must be one of: {string.Join(", ", Enum.GetNames<VehicleType>())}."));
-        }
+        FuelType? fuelType = ParseEnum<FuelType>(request.FuelType);
+        VehicleType? vehicleType = ParseEnum<VehicleType>(request.VehicleType);
 
         var parameters = new SearchAuctionParameters(
             AuctionStatus.Published.ToString(),
-            ToDbTimestamp(request.StartTime),
-            ToDbTimestamp(request.EndTime),
+            request.StartTime,
+            request.EndTime,
             request.MinPrice,
             request.MaxPrice,
             NullIfBlank(request.Make),
@@ -63,81 +44,17 @@ internal sealed class SearchAuctionQueryHandler(IDbConnectionFactory dbConnectio
         return Result.Success(new SearchAuctionResponse(request.Page, request.PageSize, totalCount, auctions));
     }
 
-    private static Error? Validate(SearchAuctionQuery request)
-    {
-        if (request.Page < 1 || request.PageSize < 1 || request.PageSize > MaxPageSize)
-        {
-            return Error.Problem(
-                "Search.InvalidPagination",
-                $"Invalid pagination parameters. Page must be greater than 0 and PageSize must be between 1 and {MaxPageSize}.");
-        }
-
-        if (request.MinPrice < 0 || request.MaxPrice < 0)
-        {
-            return Error.Problem("Search.InvalidPrice", "Price filters cannot be negative.");
-        }
-
-        if (request.MinPrice > request.MaxPrice)
-        {
-            return Error.Problem("Search.InvalidPriceRange", "MinPrice cannot be greater than MaxPrice.");
-        }
-
-        if (request.StartTime > request.EndTime)
-        {
-            return Error.Problem("Search.InvalidTimeRange", "StartTime cannot be after EndTime.");
-        }
-
-        if (request.MinYear > request.MaxYear)
-        {
-            return Error.Problem("Search.InvalidYearRange", "MinYear cannot be greater than MaxYear.");
-        }
-
-        if (request.MinMileage < 0 || request.MaxMileage < 0)
-        {
-            return Error.Problem("Search.InvalidMileage", "Mileage filters cannot be negative.");
-        }
-
-        if (request.MinMileage > request.MaxMileage)
-        {
-            return Error.Problem("Search.InvalidMileageRange", "MinMileage cannot be greater than MaxMileage.");
-        }
-
-        return null;
-    }
-
-    // Case-insensitive, and only accepts names (not numbers like "7"). Blank means "no filter".
-    private static bool TryParseEnum<TEnum>(string? value, out TEnum? result) where TEnum : struct, Enum
-    {
-        result = null;
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return true;
-        }
-
-        string? name = Enum.GetNames<TEnum>().FirstOrDefault(n => n.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase));
-        if (name is null)
-        {
-            return false;
-        }
-
-        result = Enum.Parse<TEnum>(name);
-        return true;
-    }
+    private static TEnum? ParseEnum<TEnum>(string? value) where TEnum : struct, Enum =>
+        string.IsNullOrWhiteSpace(value) ? null : Enum.Parse<TEnum>(value.Trim(), ignoreCase: true);
 
     private static string? NullIfBlank(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
-    private static DateTime? ToDbTimestamp(DateTime? value) => value switch
-    {
-        null => null,
-        { Kind: DateTimeKind.Unspecified } => value,
-        _ => DateTime.SpecifyKind(value.Value.ToUniversalTime(), DateTimeKind.Unspecified)
-    };
 
     private const string FromClause =
     """
         FROM auctions.auctions a
-        LEFT JOIN auctions.vehicles v ON v.auction_id = a.id
+        JOIN auctions.vehicles v ON v.auction_id = a.id
     """;
     private const string FilterClause =
     """
