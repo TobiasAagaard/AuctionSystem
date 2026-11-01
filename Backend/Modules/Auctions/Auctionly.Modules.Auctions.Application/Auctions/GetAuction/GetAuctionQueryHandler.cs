@@ -16,29 +16,29 @@ internal sealed class GetAuctionQueryHandler (IDbConnectionFactory dbConnectionF
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(ct);
 
             const string sql =
-            """
+            $"""
             SELECT
-                a.id            AS AuctionId,
-                a.title         AS Title,
-                a.description   AS Description,
-                a.price         AS Price,
-                a.currency      AS Currency,
-                a.start_time    AS StartTime,
-                a.end_time      AS EndTime,
-                v.id            AS VehicleId,
-                v.make          AS Make,
-                v.model         AS Model,
-                v.year          AS Year,
-                v.mileage       AS Mileage,
-                v.purchase_price AS PurchasePrice,
-                v.currency      AS VehicleCurrency,
-                v.engine_size   AS EngineSize,
-                v.fuel_type     AS FuelType,
-                v.vehicle_type  AS VehicleType,
-                pc.seat_count   AS SeatCount,
-                pc.isofix       AS Isofix,
-                bc.cargo_volume AS CargoVolume,
-                bc.max_payload  AS MaxPayload
+                a.id AS {nameof(AuctionItems.AuctionId)},
+                a.title AS {nameof(AuctionItems.Title)},
+                a.description AS {nameof(AuctionItems.Description)},
+                a.price AS {nameof(AuctionItems.Price)},
+                a.currency AS {nameof(AuctionItems.Currency)},
+                a.start_time AS {nameof(AuctionItems.StartTime)},
+                a.end_time AS {nameof(AuctionItems.EndTime)},
+                v.id AS {nameof(AuctionItems.VehicleId)},
+                v.make AS {nameof(AuctionItems.Make)},
+                v.model AS {nameof(AuctionItems.Model)},
+                v.year AS {nameof(AuctionItems.Year)},
+                v.mileage AS {nameof(AuctionItems.Mileage)},
+                v.purchase_price AS {nameof(AuctionItems.PurchasePrice)},
+                v.currency AS {nameof(AuctionItems.VehicleCurrency)},
+                v.engine_size AS {nameof(AuctionItems.EngineSize)},
+                v.fuel_type AS {nameof(AuctionItems.FuelType)},
+                v.vehicle_type AS {nameof(AuctionItems.VehicleType)},
+                pc.seat_count AS {nameof(AuctionItems.SeatCount)},
+                pc.isofix AS {nameof(AuctionItems.Isofix)},
+                bc.cargo_volume AS {nameof(AuctionItems.CargoVolume)},
+                bc.max_payload AS {nameof(AuctionItems.MaxPayload)}
             FROM auctions.auctions a
             JOIN auctions.vehicles v            ON v.auction_id = a.id
             LEFT JOIN auctions.personal_cars pc ON pc.vehicle_id = v.id
