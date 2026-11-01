@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS auctions.auctions (
         CHECK (currency IN ('USD', 'EUR', 'DKK')),
     status TEXT NOT NULL,
         CHECK (status IN ('Draft', 'Published', 'Sold', 'Cancelled')),
-    start_time TIMESTAMP NOT NULL,
-    end_time TIMESTAMP NOT NULL,
+    start_time TIMESTAMPTZ NOT NULL,
+    end_time TIMESTAMPTZ NOT NULL,
         CHECK (end_time > start_time),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -55,5 +55,5 @@ CREATE TABLE IF NOT EXISTS auctions.bids (
     amount DECIMAL(18, 2) NOT NULL,
     currency TEXT NOT NULL,
         CHECK (currency IN ('USD', 'EUR', 'DKK')),
-    created_at timestamptz DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
