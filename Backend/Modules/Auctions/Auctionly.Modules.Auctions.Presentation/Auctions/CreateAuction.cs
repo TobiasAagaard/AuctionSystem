@@ -6,6 +6,7 @@ using Auctionly.Modules.Auctions.Presentation.ApiResults;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using System.Text.Json;
 using static Auctionly.Modules.Auctions.Presentation.Auctions.Requests.CreateAuctionRequest;
 
 namespace Auctionly.Modules.Auctions.Presentation.Auctions;
@@ -15,8 +16,32 @@ internal static class CreateAuction
 {
     public static void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/auctions", async (Request request, ICommandHandler<CreateAuctionCommand, Result<int>> handler, CancellationToken cancellationToken) =>
+        app.MapPost("/auctions", async (
+            HttpRequest httpRequest,
+            ICommandHandler<CreateAuctionCommand, Result<int>> handler, 
+            CancellationToken cancellationToken) =>
         {
+            Request? request;
+            try
+            {
+                 request = await httpRequest.ReadFromJsonAsync<Request>(cancellationToken);
+            }
+            catch (NotSupportedException)
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Invalid request body",
+                    detail: "The request body is missing a required 'type' discriminator."
+                );
+            }
+            if (request is null)
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Invalid request body",
+                    detail: "The request body is null."
+                );
+            }
             var command = new CreateAuctionCommand(
                 request.Title,
                 request.Description,
@@ -44,7 +69,8 @@ internal static class CreateAuction
                 ApiResults.ApiResults.Problem);
 
         })
-        .WithTags(Tags.Auctions);
+        .WithTags(Tags.Auctions)
+        .Accepts<Request>("application/json");
     }
 
     private static VehicleSpecifications ToSpecifications(VehicleRequest vehicle) =>
