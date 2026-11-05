@@ -34,6 +34,14 @@ internal static class CreateAuction
                     detail: "The request body is missing a required 'type' discriminator."
                 );
             }
+            catch (JsonException)
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Invalid request body",
+                    detail: "The request body contains invalid JSON."
+                );
+            }
             if (request is null)
             {
                 return Results.Problem(
