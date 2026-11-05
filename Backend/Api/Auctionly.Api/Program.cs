@@ -14,7 +14,6 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.AllowOutOfOrderMetadataProperties = true;
 });
 
-builder.Services.AddExceptionHandler<BodyBindingExceptionHandler>();
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 builder.Services.AddProblemDetails();
 
