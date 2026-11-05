@@ -19,8 +19,7 @@ internal sealed class BodyBindingExceptionHandler : IExceptionHandler
         {
             Status = StatusCodes.Status400BadRequest,
             Title = "Invalid request body",
-            Detail = "The request body is missing or has an unknown 'type' discriminator. " +
-                     "Expected 'PersonalCar' or 'BusinessCar'."
+            Detail = "The request body is missing a required 'type' discriminator."
         };
 
         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;

@@ -2,7 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Auctionly.Api.Extensions;
+namespace Auctionly.Api.Exceptions;
 
 internal sealed class ValidationExceptionHandler : IExceptionHandler
 {

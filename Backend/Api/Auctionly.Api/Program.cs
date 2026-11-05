@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Auctionly.Api.Extensions;
+using Auctionly.Api.Exceptions;
 using Auctionly.Modules.Auctions.Infrastructure;
 using Scalar.AspNetCore;
 
@@ -13,7 +14,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.AllowOutOfOrderMetadataProperties = true;
 });
 
-
+builder.Services.AddExceptionHandler<BodyBindingExceptionHandler>();
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 builder.Services.AddProblemDetails();
 
