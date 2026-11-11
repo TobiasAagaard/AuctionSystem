@@ -2,6 +2,7 @@ version: 2
 updates:
   - package-ecosystem: "nuget"
     directories:
+      - "/AppHost"
       - "/Auction.Avalonia"
       - "/Auction.Core"
       - "/Auction.Test"
