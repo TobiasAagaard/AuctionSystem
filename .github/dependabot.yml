@@ -10,4 +10,4 @@ updates:
       - "/Backend/Api/Auctionly.Api"
       - "/Backend/Modules/Auctions/Auctionly.Modules.Auctions.Api"
     schedule:
-      interval: "daily"
+      interval: "weekly"
