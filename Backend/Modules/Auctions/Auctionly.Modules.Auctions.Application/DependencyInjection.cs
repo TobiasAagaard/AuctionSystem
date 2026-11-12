@@ -1,3 +1,4 @@
+using Auctionly.Modules.Auctions.Application.Abstractions.Data;
 using Auctionly.Modules.Auctions.Application.Abstractions.Handlers;
 using Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
 using Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
@@ -36,13 +37,14 @@ public static class DependencyInjection
     }
 
 
-    // Helper method to register command handlers with validation
     private static void AddCommandHandler<TCommand, TResult, THandler>(this IServiceCollection services) where THandler : class, ICommandHandler<TCommand, TResult>
     {
         services.AddScoped<THandler>();
         services.AddScoped<ICommandHandler<TCommand, TResult>>(serviceProvider =>
             new ValidationCommandHandler<TCommand, TResult>(
-                serviceProvider.GetRequiredService<THandler>(),
+                new TransactionalCommandHandler<TCommand, TResult>(
+                    serviceProvider.GetRequiredService<THandler>(),
+                    serviceProvider.GetRequiredService<IUnitOfWork>()),
                 serviceProvider.GetServices<IValidator<TCommand>>()));
     }
 }
