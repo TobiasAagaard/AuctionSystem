@@ -24,7 +24,17 @@ internal sealed class UnitOfWork(IDbConnectionFactory connectionFactory) : IUnit
         }
 
         _connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
-        _transaction = await _connection.BeginTransactionAsync(cancellationToken);
+        
+        try
+        {
+            _transaction = await _connection.BeginTransactionAsync(cancellationToken);
+        }
+        catch
+        {
+            await CleanupAsync();
+            throw;
+        }
+        }
     }
 
     public async Task CommitAsync(CancellationToken cancellationToken = default)
