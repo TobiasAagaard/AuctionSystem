@@ -34,7 +34,6 @@ internal sealed class UnitOfWork(IDbConnectionFactory connectionFactory) : IUnit
             await CleanupAsync();
             throw;
         }
-        }
     }
 
     public async Task CommitAsync(CancellationToken cancellationToken = default)
@@ -45,12 +44,18 @@ internal sealed class UnitOfWork(IDbConnectionFactory connectionFactory) : IUnit
 
     public async Task RollbackAsync(CancellationToken cancellationToken = default)
     {
-        if (_transaction is not null)
+       try
         {
-            await _transaction.RollbackAsync(cancellationToken);
+            if (_transaction is not null)
+            {
+                await _transaction.RollbackAsync(cancellationToken);
+                _transaction = null;
+            }
         }
-
-        await CleanupAsync();
+        finally
+        {
+            await CleanupAsync();
+        }
     }
 
     public ValueTask DisposeAsync() => new(CleanupAsync());
