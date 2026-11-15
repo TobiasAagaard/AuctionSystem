@@ -70,6 +70,26 @@ internal sealed class AuctionRepository(IDbSession session) : IAuctionRepository
         return auctionId;
     }
 
+    public async Task<int> PublishAuctionAsync(Auction auction, CancellationToken cancellationToken = default)
+    {
+        DbConnection connection = session.Connection;
+        DbTransaction transaction = session.Transaction;
+
+        int auctionId = await connection.QuerySingleAsync<int>(new CommandDefinition(
+            """
+            UPDATE auctions.auctions
+            SET status = 'Published'
+            WHERE id = @AuctionId
+            RETURNING id
+            """
+            ,
+            new { AuctionId = auction.Id },
+            transaction,
+            cancellationToken: cancellationToken));
+
+        return auctionId;
+    }
+
     private static Task<int> InsertSpecificationsAsync(
         IDbConnection connection,
         IDbTransaction transaction,
@@ -102,4 +122,6 @@ internal sealed class AuctionRepository(IDbSession session) : IAuctionRepository
 
         return connection.ExecuteAsync(command);
     }
+
+
 }
