@@ -28,7 +28,15 @@ internal sealed class TransactionalCommandHandler<TCommand, TResult>(
             return result;
         }
 
-        await unitOfWork.CommitAsync(ct);
+        try
+        {
+            await unitOfWork.CommitAsync(ct);
+        }
+        catch
+        {
+            await unitOfWork.RollbackAsync(CancellationToken.None);
+            throw;
+        }
         return result;
     }
 }
