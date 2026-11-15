@@ -47,6 +47,8 @@ internal sealed class CreateAuctionCommandHandler(
             return Result.Failure<int>(auctionResult.Error);
         }
 
-        return await auctionRepository.AddAuctionAsync(auctionResult.Value, ct);
+        Auction auction = auctionResult.Value;
+        int auctionId = await auctionRepository.AddAuctionAsync(auction, ct);
+        return Result.Success(auctionId);
     }
 }
