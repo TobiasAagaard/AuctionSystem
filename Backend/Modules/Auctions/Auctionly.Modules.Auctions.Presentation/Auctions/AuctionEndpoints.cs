@@ -11,5 +11,6 @@ public static class AuctionEndpoints
         GetAuction.MapEndpoint(app);
         ListAuctions.MapEndpoints(app);
         SearchAuctions.MapEndpoint(app);
+        PublishAuction.MapEndpoints(app);
     }
 }

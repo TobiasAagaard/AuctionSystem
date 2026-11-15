@@ -14,4 +14,9 @@ public static class AuctionErrors
     public static readonly Error EndDatePrecedesStartDate = Error.Problem(
         "Auction.EndDatePrecedesStartDate",
         "The auction end date precedes the start date");
+
+    public static Error CannotPublish(int auctionId) =>
+        Error.Conflict(
+            "Auction.CannotPublish",
+            $"The auction with the identifier {auctionId} cannot be published because it is not in draft status");
 }

@@ -55,4 +55,5 @@ public class Auction
             Vehicle = vehicle
         };
     }
+
 }
