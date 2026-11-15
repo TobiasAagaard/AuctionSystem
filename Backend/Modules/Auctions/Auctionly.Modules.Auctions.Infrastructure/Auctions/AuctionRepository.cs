@@ -78,12 +78,13 @@ internal sealed class AuctionRepository(IDbSession session) : IAuctionRepository
         int auctionId = await connection.QuerySingleAsync<int>(new CommandDefinition(
             """
             UPDATE auctions.auctions
-            SET status = 'Published'
+            SET status = 'Published',
+            updated_at = @UpdatedAt
             WHERE id = @AuctionId
             RETURNING id
             """
             ,
-            new { AuctionId = auction.Id },
+            new { AuctionId = auction.Id, UpdatedAt = DateTime.UtcNow },
             transaction,
             cancellationToken: cancellationToken));
 

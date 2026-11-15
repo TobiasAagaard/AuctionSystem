@@ -14,4 +14,8 @@ public static class AuctionErrors
     public static readonly Error EndDatePrecedesStartDate = Error.Problem(
         "Auction.EndDatePrecedesStartDate",
         "The auction end date precedes the start date");
+
+    public static readonly Error InvalidStatus = Error.Problem(
+        "Auction.InvalidStatus",
+        "The auction status is invalid");
 }
