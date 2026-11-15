@@ -56,20 +56,4 @@ public class Auction
         };
     }
 
-    public static Result<Auction> Publish(
-        AuctionStatus status,
-        DateTime utcNow
-    )
-    {
-        if (status != AuctionStatus.Draft)
-        {
-            return Result.Failure<Auction>(AuctionErrors.InvalidStatus);
-        }
-
-        return Result.Success(new Auction
-        {
-            Status = AuctionStatus.Published,
-            UpdatedAt = utcNow
-        });
-    }
 }

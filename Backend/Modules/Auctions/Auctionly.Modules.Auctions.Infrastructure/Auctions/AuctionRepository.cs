@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.Common;
+using Auctionly.Modules.Auctions.Domain.Abstractions;
 using Auctionly.Modules.Auctions.Domain.Auctions;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Auctionly.Modules.Auctions.Domain.ValueObjects;
@@ -70,25 +71,45 @@ internal sealed class AuctionRepository(IDbSession session) : IAuctionRepository
         return auctionId;
     }
 
-    public async Task<int> PublishAuctionAsync(Auction auction, CancellationToken cancellationToken = default)
+    public async Task<Result<int>> PublishAuctionAsync(int auctionId, CancellationToken cancellationToken = default)
     {
         DbConnection connection = session.Connection;
         DbTransaction transaction = session.Transaction;
 
-        int auctionId = await connection.QuerySingleAsync<int>(new CommandDefinition(
+        int? publishedAuctionId = await connection.QuerySingleOrDefaultAsync<int?>(new CommandDefinition(
             """
             UPDATE auctions.auctions
-            SET status = 'Published',
-            updated_at = @UpdatedAt
+            SET status = 'Published', updated_at = CURRENT_TIMESTAMP
             WHERE id = @AuctionId
+              AND is_deleted = FALSE
+              AND status = 'Draft'
             RETURNING id
-            """
-            ,
-            new { AuctionId = auction.Id, UpdatedAt = DateTime.UtcNow },
+            """,
+            new { AuctionId = auctionId },
             transaction,
             cancellationToken: cancellationToken));
 
-        return auctionId;
+        if (publishedAuctionId is int publishedId)
+        {
+            return Result.Success(publishedId);
+        }
+
+        bool exists = await connection.ExecuteScalarAsync<bool>(new CommandDefinition(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM auctions.auctions
+                WHERE id = @AuctionId
+                  AND is_deleted = FALSE
+            )
+            """,
+            new { AuctionId = auctionId },
+            transaction,
+            cancellationToken: cancellationToken));
+
+        return exists
+            ? Result.Failure<int>(AuctionErrors.CannotPublish(auctionId))
+            : Result.Failure<int>(AuctionErrors.NotFound(auctionId));
     }
 
     private static Task<int> InsertSpecificationsAsync(

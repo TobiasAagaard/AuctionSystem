@@ -4,6 +4,7 @@ using Auctionly.Modules.Auctions.Application.Auctions.CreateAuction;
 using Auctionly.Modules.Auctions.Application.Auctions.GetAuction;
 using Auctionly.Modules.Auctions.Application.Auctions.ListAuctions;
 using Auctionly.Modules.Auctions.Application.Auctions.SearchAuctions;
+using Auctionly.Modules.Auctions.Application.Auctions.PublishAuction;
 using Auctionly.Modules.Auctions.Domain.Abstractions;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ public static class DependencyInjection
 
         // Register Command Handlers
         services.AddCommandHandler<CreateAuctionCommand, Result<int>, CreateAuctionCommandHandler>();
+        services.AddCommandHandler<PublishAuctionCommand, Result<int>, PublishAuctionCommandHandler>();
 
         // Register Query Handlers
         services.AddScoped<IQueryHandler<GetAuctionQuery, Result<GetAuctionResponse>>, GetAuctionQueryHandler>();
