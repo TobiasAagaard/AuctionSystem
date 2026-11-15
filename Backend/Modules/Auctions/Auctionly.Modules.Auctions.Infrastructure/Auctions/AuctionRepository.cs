@@ -3,17 +3,17 @@ using System.Data.Common;
 using Auctionly.Modules.Auctions.Domain.Auctions;
 using Auctionly.Modules.Auctions.Domain.Vehicles;
 using Auctionly.Modules.Auctions.Domain.ValueObjects;
-using Auctionly.Modules.Auctions.Application.Abstractions.Data;
+using Auctionly.Modules.Auctions.Infrastructure.Database;
 using Dapper;
 
 namespace Auctionly.Modules.Auctions.Infrastructure.Auctions;
 
-internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) : IAuctionRepository
+internal sealed class AuctionRepository(IDbSession session) : IAuctionRepository
 {
     public async Task<int> AddAuctionAsync(Auction auction, CancellationToken cancellationToken = default)
     {
-        await using DbConnection connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
-        await using DbTransaction transaction = await connection.BeginTransactionAsync(cancellationToken);
+        DbConnection connection = session.Connection;
+        DbTransaction transaction = session.Transaction;
 
         int auctionId = await connection.QuerySingleAsync<int>(new CommandDefinition(
             """
@@ -66,8 +66,6 @@ internal sealed class AuctionRepository(IDbConnectionFactory connectionFactory) 
             cancellationToken: cancellationToken));
 
         await InsertSpecificationsAsync(connection, transaction, vehicleId, vehicle.VehicleDetails, cancellationToken);
-
-        await transaction.CommitAsync(cancellationToken);
 
         return auctionId;
     }

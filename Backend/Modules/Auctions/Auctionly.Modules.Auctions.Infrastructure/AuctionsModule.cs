@@ -42,6 +42,10 @@ public static class AuctionsModule
 
         services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
 
+        services.AddScoped<UnitOfWork>();
+        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UnitOfWork>());
+        services.AddScoped<IDbSession>(sp => sp.GetRequiredService<UnitOfWork>());
+
         services.TryAddSingleton<IDateTimeProvider, DateTimeProvider>();
 
         services.AddScoped<IAuctionRepository, AuctionRepository>();
